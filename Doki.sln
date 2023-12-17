@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki", "src\Doki\Doki.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.CommandLine", "src\Doki.CommandLine\Doki.CommandLine.csproj", "{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Abstractions", "src\Doki.Output.Abstractions\Doki.Output.Abstractions.csproj", "{57EF4554-C84D-4988-94CF-9D6E908BE10C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +31,9 @@ Global
 		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57EF4554-C84D-4988-94CF-9D6E908BE10C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57EF4554-C84D-4988-94CF-9D6E908BE10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57EF4554-C84D-4988-94CF-9D6E908BE10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57EF4554-C84D-4988-94CF-9D6E908BE10C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
