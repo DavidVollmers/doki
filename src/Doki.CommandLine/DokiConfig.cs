@@ -1,9 +1,11 @@
-﻿namespace Doki.CommandLine;
+﻿using System.Text.Json.Serialization;
+
+namespace Doki.CommandLine;
 
 internal class DokiConfig
 {
-    public DokiConfigOutput[]? Outputs { get; set; }
-    
+    [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; set; }
+
     public class DokiConfigOutput
     {
         public string? Type { get; set; }

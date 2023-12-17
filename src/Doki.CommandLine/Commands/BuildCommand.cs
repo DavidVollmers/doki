@@ -11,6 +11,11 @@ namespace Doki.CommandLine.Commands;
 
 internal class BuildCommand : Command
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     private readonly Argument<FileInfo?> _projectArgument = new("PROJECT", "The project to build.")
     {
         Arity = ArgumentArity.ZeroOrOne
@@ -98,7 +103,8 @@ internal class BuildCommand : Command
 
         var generator = new DocumentationGenerator(assembly, documentationFile);
 
-        await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, cancellationToken);
+        await ConfigureDocumentationGeneratorAsync(generator, projectFile.Directory!, dokiConfigFile,
+            cancellationToken);
 
         AnsiConsole.MarkupLine($"Generating documentation for project {projectFile.Name}...");
 
@@ -106,10 +112,10 @@ internal class BuildCommand : Command
     }
 
     private static async Task ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
-        FileInfo dokiConfigFile, CancellationToken cancellationToken)
+        FileSystemInfo projectDirectory, FileInfo dokiConfigFile, CancellationToken cancellationToken)
     {
         var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
-            cancellationToken: cancellationToken);
+            JsonSerializerOptions, cancellationToken);
 
         if (dokiConfig == null)
         {
@@ -137,7 +143,7 @@ internal class BuildCommand : Command
                 return;
             }
 
-            var instance = await LoadOutputAsync(output, cancellationToken);
+            var instance = await LoadOutputAsync(projectDirectory, output, cancellationToken);
 
             if (instance == null)
             {
@@ -149,19 +155,26 @@ internal class BuildCommand : Command
         }
     }
 
-    private static async Task<IOutput?> LoadOutputAsync(DokiConfig.DokiConfigOutput output,
-        CancellationToken cancellationToken)
+    private static async Task<IOutput?> LoadOutputAsync(FileSystemInfo projectDirectory,
+        DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
     {
-        var fileInfo = new FileInfo(output.From!);
-
-        if (fileInfo is { Exists: true, Extension: ".csproj" })
+        if (output.From!.EndsWith(".csproj"))
         {
+            var fileInfo = new FileInfo(Path.Combine(projectDirectory.FullName, output.From));
+
             await BuildProjectAsync(fileInfo, "Release", cancellationToken);
 
-            var assembly = Assembly.LoadFrom(Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net5.0",
+            var assembly = Assembly.LoadFrom(Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
                 $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll"));
 
             var outputType = assembly.GetType(output.Type!);
+            if (outputType == null)
+            {
+                outputType = assembly
+                    .GetExportedTypes()
+                    .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
+            }
+
             if (outputType == null) return null;
 
             return Activator.CreateInstance(outputType) as IOutput;
