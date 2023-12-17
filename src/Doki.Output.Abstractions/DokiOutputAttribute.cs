@@ -1,4 +1,4 @@
-﻿namespace Doki.Output.Abstractions;
+﻿namespace Doki.Output;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class DokiOutputAttribute : Attribute

@@ -1,15 +1,18 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Doki.CommandLine;
 
-internal class DokiConfig
+internal record DokiConfig
 {
     [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; set; }
 
-    public class DokiConfigOutput
+    public record DokiConfigOutput
     {
         public string? Type { get; set; }
 
         public string? From { get; set; }
+
+        public JsonElement? Options { get; set; }
     }
 }

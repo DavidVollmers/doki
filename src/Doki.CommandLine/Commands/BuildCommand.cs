@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
-using Doki.Output.Abstractions;
+using Doki.Output;
 using Spectre.Console;
 
 namespace Doki.CommandLine.Commands;
@@ -177,7 +177,7 @@ internal class BuildCommand : Command
 
             if (outputType == null) return null;
 
-            return Activator.CreateInstance(outputType) as IOutput;
+            return Activator.CreateInstance(outputType, new[] { output.Options }) as IOutput;
         }
 
         return null;

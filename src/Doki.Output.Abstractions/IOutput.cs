@@ -1,6 +1,8 @@
-﻿namespace Doki.Output.Abstractions;
+﻿using Doki.Elements;
+
+namespace Doki.Output;
 
 public interface IOutput
 {
-    
+    Task WriteAsync(TableOfContents tableOfContents, CancellationToken cancellationToken = default);
 }
