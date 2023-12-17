@@ -10,8 +10,4 @@
       <ProjectReference Include="..\Doki.Output.Abstractions\Doki.Output.Abstractions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Elements\" />
-    </ItemGroup>
-
 </Project>

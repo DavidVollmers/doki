@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Doki.Elements;
+using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
@@ -29,9 +30,23 @@ public sealed class MarkdownOutput : IOutput
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
-        var markdown = "TODO";
+        var markdown = new MarkdownBuilder()
+            .Add(new Heading(tableOfContents.Name, 1))
+            .Add(new List
+            {
+                Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(x, 0)).ToList()
+            });
 
-        await File.WriteAllTextAsync(tableOfContentsFile.FullName, markdown, cancellationToken).ConfigureAwait(false);
+        await File.WriteAllTextAsync(tableOfContentsFile.FullName, markdown.ToString(), cancellationToken);
+    }
+
+    private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
+    {
+        if (toc.Children.Length == 0) return new Link(toc.Name, BuildPath(toc));
+        return new SubList(toc.Name, indent)
+        {
+            Items = toc.Children.Select(x => BuildMarkdownTableOfContents(x, indent + 1)).ToList()
+        };
     }
 
     private static string BuildPath(DokiElement element)
