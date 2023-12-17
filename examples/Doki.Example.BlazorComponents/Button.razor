@@ -1,0 +1,33 @@
+﻿<button onclick="@OnClick">
+    @ChildContent
+</button>
+
+@code {
+
+    /// <summary>
+    /// The content of the button.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The action to be performed when the button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// A Button component that can be used to trigger an action.
+    /// </summary>
+    /// <example>
+    /// <code lang="cshtml">
+    /// <Button OnClick="() => {}">
+    ///   Click me!
+    /// </Button>
+    /// </code>
+    /// </example>
+    public Button()
+    {
+    }
+
+}

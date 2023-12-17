@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{18CE0909-BC81-4366-8381-70C1FBB5E72B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Example.BlazorComponents", "examples\Doki.Example.BlazorComponents\Doki.Example.BlazorComponents.csproj", "{87193A9E-0C9F-48D9-BC80-7505A34AF895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki", "src\Doki\Doki.csproj", "{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.CommandLine", "src\Doki.CommandLine\Doki.CommandLine.csproj", "{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{87193A9E-0C9F-48D9-BC80-7505A34AF895} = {18CE0909-BC81-4366-8381-70C1FBB5E72B}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F78CDE3-BC56-4AE0-95AB-D4A061DC7028}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
