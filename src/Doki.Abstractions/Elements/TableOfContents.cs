@@ -2,5 +2,5 @@
 
 public sealed record TableOfContents : DokiElement
 {
-    public TableOfContents[] Children { get; init; } = Array.Empty<TableOfContents>();
+    public TableOfContents[] Children { get; set; } = Array.Empty<TableOfContents>();
 }

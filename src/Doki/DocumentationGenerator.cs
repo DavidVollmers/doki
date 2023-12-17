@@ -34,25 +34,49 @@ public sealed class DocumentationGenerator
 
     public async Task GenerateAsync(CancellationToken cancellationToken = default)
     {
-        var exportedTypes = _assembly.GetExportedTypes();
+        var types = _assembly.GetTypes().Where(t => t.IsPublic).ToArray();
 
-        var namespaces = exportedTypes.Select(t => t.Namespace).Distinct().ToList();
+        await GenerateNamespaceDocumentationAsync(types, cancellationToken);
+
+        foreach (var exportedType in types)
+        {
+            await GenerateTypeDocumentationAsync(exportedType, cancellationToken);
+        }
+    }
+
+    private async Task GenerateTypeDocumentationAsync(Type type, CancellationToken cancellationToken)
+    {
+        var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}]");
+    }
+
+    private async Task GenerateNamespaceDocumentationAsync(Type[] types, CancellationToken cancellationToken)
+    {
+        var namespaces = types.Select(t => t.Namespace).Distinct().ToList();
 
         var namespacesTableOfContents = new TableOfContents
         {
             Id = Guid.NewGuid(),
             Name = "Namespaces",
-            Children = namespaces.Select(n => new TableOfContents
+        };
+
+        namespacesTableOfContents.Children = namespaces.Select(n =>
+        {
+            var subToC = new TableOfContents
             {
                 Id = Guid.NewGuid(),
                 Name = n!,
-                Children = exportedTypes.Where(t => t.Namespace == n).Select(t => new TableOfContents
-                {
-                    Id = t.GUID,
-                    Name = t.Name,
-                }).ToArray()
-            }).ToArray()
-        };
+                Parent = namespacesTableOfContents
+            };
+
+            subToC.Children = types.Where(t => t.Namespace == n).Select(t => new TableOfContents
+            {
+                Id = t.GUID,
+                Name = t.Name,
+                Parent = subToC
+            }).ToArray();
+
+            return subToC;
+        }).ToArray();
 
         foreach (var output in _outputs)
         {
@@ -60,15 +84,5 @@ public sealed class DocumentationGenerator
         }
 
         //TODO generate ToCs for types in namespaces
-
-        foreach (var exportedType in exportedTypes)
-        {
-            await GenerateTypeDocumentationAsync(exportedType, cancellationToken);
-        }
-    }
-
-    private async Task GenerateTypeDocumentationAsync(Type type, CancellationToken cancellationToken = default)
-    {
-        var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}]");
     }
 }

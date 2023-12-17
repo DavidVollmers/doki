@@ -4,7 +4,7 @@ public record DokiElement
 {
     public Guid Id { get; internal init; }
 
-    public string Name { get; internal init; }
+    public string Name { get; internal init; } = null!;
 
     public DokiElement? Parent { get; internal init; }
 }

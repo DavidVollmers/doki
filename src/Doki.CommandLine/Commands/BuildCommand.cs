@@ -96,7 +96,7 @@ internal class BuildCommand : Command
         var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
 
         var projectName = projectFile.Name[..^projectFile.Extension.Length];
-        var assembly = Assembly.LoadFrom(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
+        var assembly = Assembly.LoadFile(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
             latestTargetFramework, $"{projectName}.dll"));
         var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
             latestTargetFramework, $"{projectName}.xml"));
@@ -167,17 +167,13 @@ internal class BuildCommand : Command
             var assembly = Assembly.LoadFrom(Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
                 $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll"));
 
-            var outputType = assembly.GetType(output.Type!);
-            if (outputType == null)
-            {
-                outputType = assembly
-                    .GetExportedTypes()
-                    .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
-            }
+            var outputType = assembly.GetType(output.Type!) ?? assembly
+                .GetExportedTypes()
+                .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
 
             if (outputType == null) return null;
 
-            return Activator.CreateInstance(outputType, new[] { output.Options }) as IOutput;
+            return Activator.CreateInstance(outputType, output.Options) as IOutput;
         }
 
         return null;
