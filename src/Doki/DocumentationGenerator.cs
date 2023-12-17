@@ -46,7 +46,7 @@ public sealed class DocumentationGenerator
 
     private async Task GenerateTypeDocumentationAsync(Type type, CancellationToken cancellationToken)
     {
-        var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}]");
+        var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
     }
 
     private async Task GenerateNamespaceDocumentationAsync(Type[] types, CancellationToken cancellationToken)

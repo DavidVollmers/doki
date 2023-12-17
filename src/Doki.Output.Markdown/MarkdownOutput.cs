@@ -27,14 +27,11 @@ public sealed class MarkdownOutput : IOutput
         var tableOfContentsFile =
             new FileInfo(Path.Combine(outputDirectoryInfo.FullName, BuildPath(tableOfContents), "README.md"));
 
+        if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
+
         var markdown = "TODO";
 
         await File.WriteAllTextAsync(tableOfContentsFile.FullName, markdown, cancellationToken).ConfigureAwait(false);
-
-        foreach (var child in tableOfContents.Children)
-        {
-            await WriteAsync(child, cancellationToken).ConfigureAwait(false);
-        }
     }
 
     private static string BuildPath(DokiElement element)
