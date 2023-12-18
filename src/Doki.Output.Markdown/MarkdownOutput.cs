@@ -1,40 +1,18 @@
-﻿using System.Text.Json;
-using Doki.Elements;
+﻿using Doki.Elements;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
 [DokiOutput("Doki.Output.Markdown")]
-public sealed class MarkdownOutput : IOutput
+public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
 {
-    private readonly OutputOptions _options;
-    private readonly OutputContext _context;
-
-    public MarkdownOutput(OutputContext context)
-    {
-        ArgumentNullException.ThrowIfNull(context);
-
-        _context = context;
-
-        if (context.Options == null) _options = OutputOptions.Default;
-        else
-            _options = JsonSerializer.Deserialize<OutputOptions>(context.Options.Value.GetRawText()) ??
-                       OutputOptions.Default;
-    }
-
-    public async Task WriteAsync(TableOfContents tableOfContents, CancellationToken cancellationToken = default)
+    public override async Task WriteAsync(TableOfContents tableOfContents,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(tableOfContents);
 
-        if (_options.OutputPath == null) throw new InvalidOperationException("Output directory not set.");
-
-        var outputDirectoryInfo = new DirectoryInfo(Path.Combine(_context.ProjectDirectory.FullName,
-            _options.OutputPath));
-
-        if (!outputDirectoryInfo.Exists) outputDirectoryInfo.Create();
-
         var tableOfContentsFile =
-            new FileInfo(Path.Combine(outputDirectoryInfo.FullName, BuildPath(tableOfContents), "README.md"));
+            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents), "README.md"));
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
