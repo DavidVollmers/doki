@@ -2,6 +2,7 @@
 using System.Xml.XPath;
 using Doki.Elements;
 using Doki.Output;
+using Microsoft.Extensions.Logging;
 
 namespace Doki;
 
@@ -32,11 +33,19 @@ public sealed class DocumentationGenerator
         _outputs.Add(output);
     }
 
-    public async Task GenerateAsync(CancellationToken cancellationToken = default)
+    public async Task GenerateAsync(ILogger logger, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(logger);
+        
         var types = _assembly.GetTypes().Where(t => t.IsPublic).ToArray();
 
+        logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
+        
+        logger.LogInformation("Generating namespace documentation...");
+        
         await GenerateNamespaceDocumentationAsync(types, cancellationToken);
+        
+        logger.LogInformation("Generating type documentation...");
 
         foreach (var exportedType in types)
         {

@@ -8,11 +8,11 @@ internal record SubList(string Value, int Indent) : List
     {
         var builder = new StringBuilder();
 
-        builder.AppendLine($"{new string(' ', Indent)}- {Value}");
+        builder.AppendLine($"{new string(' ', Indent * 2)}- {Value}");
 
         foreach (var item in Items)
         {
-            builder.AppendLine($"{new string(' ', Indent + 1)}- {item}");
+            builder.AppendLine($"{new string(' ', (Indent + 1) * 2)}- {item}");
         }
 
         return builder.ToString();

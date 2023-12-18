@@ -112,7 +112,11 @@ internal class BuildCommand : Command
 
         AnsiConsole.MarkupLine($"Generating documentation for project {projectFile.Name}...");
 
-        await generator.GenerateAsync(cancellationToken);
+        var logger = new AnsiConsoleLogger();
+
+        await generator.GenerateAsync(logger, cancellationToken);
+
+        AnsiConsole.MarkupLine("[bold green]Documentation generated.[/]");
     }
 
     private static async Task ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,

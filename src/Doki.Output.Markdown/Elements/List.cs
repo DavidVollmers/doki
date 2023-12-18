@@ -12,6 +12,12 @@ internal record List : Element
 
         foreach (var item in Items)
         {
+            if (item is List)
+            {
+                builder.AppendLine(item.ToString());
+                continue;
+            }
+            
             builder.AppendLine($"- {item}");
         }
 
