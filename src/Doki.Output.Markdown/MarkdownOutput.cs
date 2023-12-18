@@ -28,14 +28,14 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
     private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
     {
-        if (toc.Children.Length == 0) return new Link(toc.Name, BuildPath(toc));
+        if (toc.Children.Length == 0) return new Link(toc.Name, BuildPath(toc, ".md"));
         return new SubList(toc.Name, indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(x, indent + 1)).ToList()
         };
     }
 
-    private static string BuildPath(DokiElement element)
+    private static string BuildPath(DokiElement element, string? extension = null)
     {
         var path = new List<string>();
 
@@ -50,6 +50,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         path.Reverse();
 
-        return Path.Combine(path.ToArray());
+        var result = Path.Combine(path.ToArray());
+        return extension == null ? result : $"{result}{extension}";
     }
 }
