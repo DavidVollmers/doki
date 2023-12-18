@@ -8,20 +8,28 @@ namespace Doki.Output.Markdown;
 public sealed class MarkdownOutput : IOutput
 {
     private readonly OutputOptions _options;
+    private readonly OutputContext _context;
 
-    public MarkdownOutput(JsonElement? options)
+    public MarkdownOutput(OutputContext context)
     {
-        if (options == null) _options = OutputOptions.Default;
-        else _options = JsonSerializer.Deserialize<OutputOptions>(options.Value.GetRawText()) ?? OutputOptions.Default;
+        ArgumentNullException.ThrowIfNull(context);
+
+        _context = context;
+
+        if (context.Options == null) _options = OutputOptions.Default;
+        else
+            _options = JsonSerializer.Deserialize<OutputOptions>(context.Options.Value.GetRawText()) ??
+                       OutputOptions.Default;
     }
 
     public async Task WriteAsync(TableOfContents tableOfContents, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(tableOfContents);
 
-        if (_options.OutputDirectory == null) throw new InvalidOperationException("Output directory not set.");
+        if (_options.OutputPath == null) throw new InvalidOperationException("Output directory not set.");
 
-        var outputDirectoryInfo = new DirectoryInfo(_options.OutputDirectory);
+        var outputDirectoryInfo = new DirectoryInfo(Path.Combine(_context.ProjectDirectory.FullName,
+            _options.OutputPath));
 
         if (!outputDirectoryInfo.Exists) outputDirectoryInfo.Create();
 

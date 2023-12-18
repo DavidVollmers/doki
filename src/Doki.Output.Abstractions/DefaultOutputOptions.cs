@@ -4,6 +4,6 @@ internal record DefaultOutputOptions : OutputOptions
 {
     public DefaultOutputOptions()
     {
-        OutputDirectory = "docs";
+        OutputPath = "docs";
     }
 }

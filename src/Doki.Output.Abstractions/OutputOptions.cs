@@ -4,7 +4,7 @@ namespace Doki.Output;
 
 public abstract record OutputOptions
 {
-    [JsonPropertyName("outputDirectory")] public string? OutputDirectory { get; set; }
+    [JsonPropertyName("outputPath")] public string? OutputPath { get; set; }
     
     public static OutputOptions Default { get; } = new DefaultOutputOptions();
 }

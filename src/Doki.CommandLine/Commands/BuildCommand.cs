@@ -120,7 +120,7 @@ internal class BuildCommand : Command
     }
 
     private static async Task ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
-        FileSystemInfo projectDirectory, FileInfo dokiConfigFile, CancellationToken cancellationToken)
+        DirectoryInfo projectDirectory, FileInfo dokiConfigFile, CancellationToken cancellationToken)
     {
         var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
             JsonSerializerOptions, cancellationToken);
@@ -163,9 +163,11 @@ internal class BuildCommand : Command
         }
     }
 
-    private static async Task<IOutput?> LoadOutputAsync(FileSystemInfo projectDirectory,
+    private static async Task<IOutput?> LoadOutputAsync(DirectoryInfo projectDirectory,
         DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
     {
+        var outputContext = new OutputContext(projectDirectory, output.Options);
+        
         if (output.From!.EndsWith(".csproj"))
         {
             var fileInfo = new FileInfo(Path.Combine(projectDirectory.FullName, output.From));
@@ -181,7 +183,7 @@ internal class BuildCommand : Command
 
             if (outputType == null) return null;
 
-            return Activator.CreateInstance(outputType, output.Options) as IOutput;
+            return Activator.CreateInstance(outputType, outputContext) as IOutput;
         }
 
         return null;

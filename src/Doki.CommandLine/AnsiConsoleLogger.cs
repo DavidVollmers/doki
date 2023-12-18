@@ -16,6 +16,7 @@ internal class AnsiConsoleLogger : ILogger
             LogLevel.Warning => "[yellow]",
             LogLevel.Error => "[red]",
             LogLevel.Critical => "[red]",
+            LogLevel.None => "[white]",
             _ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null)
         };
         
