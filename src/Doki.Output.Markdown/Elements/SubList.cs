@@ -2,7 +2,7 @@
 
 namespace Doki.Output.Markdown.Elements;
 
-internal record SubList(string Value, int Indent) : List
+internal record SubList(Element Value, int Indent) : List
 {
     public override string ToString()
     {

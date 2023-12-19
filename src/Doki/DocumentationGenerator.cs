@@ -8,7 +8,7 @@ namespace Doki;
 
 public sealed class DocumentationGenerator
 {
-    private readonly IDictionary<Assembly, XPathDocument> _assemblies = new Dictionary<Assembly, XPathDocument>();
+    private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
     private readonly List<IOutput> _outputs = [];
 
     public DocumentationGenerator()
@@ -25,7 +25,7 @@ public sealed class DocumentationGenerator
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(documentation);
 
-        _assemblies.Add(assembly, documentation);
+        _assemblies.Add(assembly, documentation.CreateNavigator());
     }
 
     public void AddOutput(IOutput output)
@@ -43,9 +43,7 @@ public sealed class DocumentationGenerator
 
         logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
 
-        logger.LogInformation("Generating namespace documentation...");
-
-        await GenerateNamespaceDocumentationAsync(types, cancellationToken);
+        await GenerateNamespaceDocumentationAsync(types, logger, cancellationToken);
 
         logger.LogInformation("Generating type documentation...");
 
@@ -57,44 +55,53 @@ public sealed class DocumentationGenerator
 
     private async Task GenerateTypeDocumentationAsync(Type type, CancellationToken cancellationToken)
     {
-        // var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
+        var navigator = _assemblies[type.Assembly];
+
+        var typeDocumentation = navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
     }
 
-    private async Task GenerateNamespaceDocumentationAsync(Type[] types, CancellationToken cancellationToken)
+    private async Task GenerateNamespaceDocumentationAsync(Type[] types, ILogger logger,
+        CancellationToken cancellationToken)
     {
+        logger.LogInformation("Generating namespace documentation...");
+
         var namespaces = types.Select(t => t.Namespace).Distinct().ToList();
 
-        var namespacesTableOfContents = new TableOfContents
+        var namespacesToC = new TableOfContents
         {
             Id = Guid.NewGuid(),
-            Name = "Namespaces",
+            Name = TableOfContents.Namespaces,
+            Content = DokiContent.Namespaces
         };
 
-        namespacesTableOfContents.Children = namespaces.Select(n =>
+        var children = new List<TableOfContents>();
+        foreach (var @namespace in namespaces)
         {
-            var subToC = new TableOfContents
+            var namespaceToC = new TableOfContents
             {
                 Id = Guid.NewGuid(),
-                Name = n!,
-                Parent = namespacesTableOfContents
+                Name = @namespace!,
+                Parent = namespacesToC,
+                Content = DokiContent.Namespace
             };
 
-            subToC.Children = types.Where(t => t.Namespace == n).Select(t => new TableOfContents
+            namespaceToC.Children = types.Where(t => t.Namespace == @namespace).Select(t => new TableOfContents
             {
                 Id = t.GUID,
                 Name = t.Name,
-                Parent = subToC
+                Parent = namespaceToC,
+                Content = DokiContent.TypeReference
             }).ToArray();
 
-            return subToC;
-        }).ToArray();
+            children.Add(namespaceToC);
+        }
+
+        namespacesToC.Children = children.ToArray();
 
         foreach (var output in _outputs)
         {
-            await output.WriteAsync(namespacesTableOfContents, cancellationToken);
+            await output.WriteAsync(namespacesToC, cancellationToken);
         }
-
-        //TODO generate ToCs for types in namespaces
     }
 
     //TODO support exclude filtering

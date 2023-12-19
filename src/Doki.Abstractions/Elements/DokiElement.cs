@@ -7,4 +7,6 @@ public record DokiElement
     public string Name { get; internal init; } = null!;
 
     public DokiElement? Parent { get; internal init; }
+
+    public DokiContent Content { get; internal init; }
 }

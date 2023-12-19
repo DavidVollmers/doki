@@ -12,16 +12,38 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         ArgumentNullException.ThrowIfNull(tableOfContents);
 
         var tableOfContentsFile =
-            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents), "README.md"));
+            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents, "README.md")));
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
         var markdown = new MarkdownBuilder()
-            .Add(new Heading(tableOfContents.Name, 1))
-            .Add(new List
-            {
-                Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(x, 0)).ToList()
-            });
+            .Add(new Heading(tableOfContents.Name, 1));
+
+        switch (tableOfContents.Content)
+        {
+            case DokiContent.Namespaces:
+                var items = new List<Element>();
+                foreach (var namespaceToC in tableOfContents.Children)
+                {
+                    await WriteAsync(namespaceToC, cancellationToken);
+
+                    items.Add(new Link(namespaceToC.Name, BuildPath(namespaceToC, "README.md")));
+                }
+
+                markdown.Add(new List
+                {
+                    Items = items
+                });
+                break;
+            case DokiContent.Namespace:
+            case DokiContent.TypeReference:
+            default:
+                markdown.Add(new List
+                {
+                    Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(x, 0)).ToList()
+                });
+                break;
+        }
 
         await File.WriteAllTextAsync(tableOfContentsFile.FullName, markdown.ToString(), cancellationToken);
     }
@@ -29,13 +51,14 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
     private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
     {
         if (toc.Children.Length == 0) return new Link(toc.Name, BuildPath(toc, ".md"));
-        return new SubList(toc.Name, indent)
+        return new SubList(new Link(toc.Name, BuildPath(toc, ".md")), indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(x, indent + 1)).ToList()
         };
     }
 
-    private static string BuildPath(DokiElement element, string? extension = null)
+    //TODO build relative path to current path
+    private static string BuildPath(DokiElement element, string? suffix = null)
     {
         var path = new List<string>();
 
@@ -51,6 +74,6 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         path.Reverse();
 
         var result = Path.Combine(path.ToArray());
-        return extension == null ? result : $"{result}{extension}";
+        return suffix == null ? result : $"{result}{suffix}";
     }
 }
