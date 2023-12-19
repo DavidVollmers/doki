@@ -5,7 +5,9 @@ namespace Doki.CommandLine;
 
 internal record DokiConfig
 {
-    [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; set; }
+    [JsonPropertyName("input")] public string[]? Inputs { get; init; }
+    
+    [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; init; }
 
     public record DokiConfigOutput
     {

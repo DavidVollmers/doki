@@ -8,27 +8,29 @@ namespace Doki;
 
 public sealed class DocumentationGenerator
 {
-    private readonly Assembly _assembly;
-    private readonly XPathDocument _documentation;
+    private readonly IDictionary<Assembly, XPathDocument> _assemblies = new Dictionary<Assembly, XPathDocument>();
     private readonly List<IOutput> _outputs = [];
 
-    private XPathNavigator? _navigator;
-    private XPathNavigator Navigator => _navigator ??= _documentation.CreateNavigator();
+    public DocumentationGenerator()
+    {
+    }
 
     public DocumentationGenerator(Assembly assembly, XPathDocument documentation)
+    {
+        AddAssembly(assembly, documentation);
+    }
+
+    public void AddAssembly(Assembly assembly, XPathDocument documentation)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(documentation);
 
-        _assembly = assembly;
-        _documentation = documentation;
+        _assemblies.Add(assembly, documentation);
     }
 
     public void AddOutput(IOutput output)
     {
         ArgumentNullException.ThrowIfNull(output);
-
-        if (_outputs.Contains(output)) throw new ArgumentException("Output already added.", nameof(output));
 
         _outputs.Add(output);
     }
@@ -36,15 +38,15 @@ public sealed class DocumentationGenerator
     public async Task GenerateAsync(ILogger logger, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(logger);
-        
-        var types = _assembly.GetTypes().Where(t => t.IsPublic).ToArray();
+
+        var types = CollectTypesToDocument().ToArray();
 
         logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
-        
+
         logger.LogInformation("Generating namespace documentation...");
-        
+
         await GenerateNamespaceDocumentationAsync(types, cancellationToken);
-        
+
         logger.LogInformation("Generating type documentation...");
 
         foreach (var exportedType in types)
@@ -55,7 +57,7 @@ public sealed class DocumentationGenerator
 
     private async Task GenerateTypeDocumentationAsync(Type type, CancellationToken cancellationToken)
     {
-        var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
+        // var typeDocumentation = Navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
     }
 
     private async Task GenerateNamespaceDocumentationAsync(Type[] types, CancellationToken cancellationToken)
@@ -93,5 +95,13 @@ public sealed class DocumentationGenerator
         }
 
         //TODO generate ToCs for types in namespaces
+    }
+
+    //TODO support exclude filtering
+    private IEnumerable<Type> CollectTypesToDocument()
+    {
+        if (_assemblies.Count == 0) throw new InvalidOperationException("No assemblies added for documentation.");
+
+        return _assemblies.SelectMany(assembly => assembly.Key.GetTypes().Where(a => a.IsPublic));
     }
 }

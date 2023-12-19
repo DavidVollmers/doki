@@ -1,4 +1,7 @@
 {
+  "input": [
+    "Doki.Example.BlazorComponents.csproj"
+  ],
   "output": [
     {
       "type": "Doki.Output.Markdown",

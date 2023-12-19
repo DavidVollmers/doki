@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
 using Doki.Output;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Spectre.Console;
 
 namespace Doki.CommandLine.Commands;
@@ -16,28 +18,22 @@ internal class BuildCommand : Command
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly Argument<FileInfo?> _projectArgument = new("PROJECT", "The project to build.")
-    {
-        Arity = ArgumentArity.ZeroOrOne
-    };
-
-    private readonly Option<string> _buildConfigurationOption =
-        new(new[] { "-c", "--configuration" }, "The build configuration to use.")
+    private readonly Argument<FileInfo?> _targetArgument =
+        new("CONFIG", "The doki.config.json file to use for documentation generation.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
-    private readonly Option<FileInfo?> _dokiConfigOption =
-        new(new[] { "-d", "--doki-config" }, "The doki config file to use.")
+    private readonly Option<string> _buildConfigurationOption =
+        new(new[] {"-c", "--configuration"}, "The build configuration to use when building projects.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
     public BuildCommand() : base("build", "Builds documentation for a project.")
     {
-        AddArgument(_projectArgument);
+        AddArgument(_targetArgument);
 
-        AddOption(_dokiConfigOption);
         AddOption(_buildConfigurationOption);
 
         this.SetHandler(HandleCommandAsync);
@@ -45,72 +41,25 @@ internal class BuildCommand : Command
 
     private async Task HandleCommandAsync(InvocationContext context)
     {
-        var projectFile = context.ParseResult.GetValueForArgument(_projectArgument);
-        var dokiConfigFile = context.ParseResult.GetValueForOption(_dokiConfigOption);
+        var dokiConfigFile = context.ParseResult.GetValueForArgument(_targetArgument);
         var buildConfiguration = context.ParseResult.GetValueForOption(_buildConfigurationOption) ?? "Release";
-
-        if (projectFile == null)
-        {
-            var projectFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.csproj");
-
-            switch (projectFiles.Length)
-            {
-                case 0:
-                    AnsiConsole.MarkupLine("[bold red]No project file found.[/]");
-                    return;
-                case > 1:
-                    AnsiConsole.MarkupLine("[bold red]Multiple project files found.[/]");
-                    return;
-                default:
-                    projectFile = new FileInfo(projectFiles[0]);
-                    break;
-            }
-        }
 
         if (dokiConfigFile == null)
         {
-            dokiConfigFile = new FileInfo(Path.Combine(projectFile.DirectoryName!, "doki.config.json"));
+            dokiConfigFile = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "doki.config.json"));
 
-            if (!dokiConfigFile.Exists) throw new FileNotFoundException("Could not find doki config file.");
-        }
-
-        var navigator = new XPathDocument(projectFile.FullName).CreateNavigator();
-        if (navigator.SelectSingleNode("/Project/PropertyGroup/GenerateDocumentationFile")?.Value != "true")
-        {
-            AnsiConsole.MarkupLine("[bold red]Documentation generation is not enabled for this project.[/]");
-            return;
-        }
-
-        var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
-                               navigator.SelectSingleNode("/Project/PropertyGroup/TargetFrameworks")?.Value;
-        if (targetFrameworks == null)
-        {
-            AnsiConsole.MarkupLine("[bold red]Could not determine target framework.[/]");
-            return;
+            if (!dokiConfigFile.Exists)
+            {
+                AnsiConsole.MarkupLine("[bold red]Could not find doki.config.json file.[/]");
+                return;
+            }
         }
 
         var cancellationToken = context.GetCancellationToken();
 
-        await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+        var generator = new DocumentationGenerator();
 
-        var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
-
-        var projectName = projectFile.Name[..^projectFile.Extension.Length];
-
-        var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
-            latestTargetFramework, $"{projectName}.dll");
-        var loadContext = new DokiAssemblyLoadContext(assemblyPath);
-        var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
-
-        var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
-            latestTargetFramework, $"{projectName}.xml"));
-
-        var generator = new DocumentationGenerator(assembly, documentationFile);
-
-        await ConfigureDocumentationGeneratorAsync(generator, projectFile.Directory!, dokiConfigFile,
-            cancellationToken);
-
-        AnsiConsole.MarkupLine($"Generating documentation for project {projectFile.Name}...");
+        await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration, cancellationToken);
 
         var logger = new AnsiConsoleLogger();
 
@@ -119,8 +68,9 @@ internal class BuildCommand : Command
         AnsiConsole.MarkupLine("[bold green]Documentation generated.[/]");
     }
 
+    //TODO return int for error handling
     private static async Task ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
-        DirectoryInfo projectDirectory, FileInfo dokiConfigFile, CancellationToken cancellationToken)
+        FileInfo dokiConfigFile, string buildConfiguration, CancellationToken cancellationToken)
     {
         var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
             JsonSerializerOptions, cancellationToken);
@@ -131,13 +81,72 @@ internal class BuildCommand : Command
             return;
         }
 
-        if (dokiConfig.Outputs == null)
+        await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs, cancellationToken);
+
+        await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
+    }
+
+    private static async Task LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
+        string[]? inputs, CancellationToken cancellationToken)
+    {
+        if (inputs == null)
+        {
+            AnsiConsole.MarkupLine("[bold red]No inputs configured.[/]");
+            return;
+        }
+
+        var matcher = new Matcher();
+        foreach (var input in inputs)
+        {
+            if (input.StartsWith('!')) matcher.AddExclude(input[1..]);
+            else matcher.AddInclude(input);
+        }
+
+        var result = matcher.Execute(new DirectoryInfoWrapper(workingDirectory));
+        if (!result.HasMatches)
+        {
+            AnsiConsole.MarkupLine("[bold red]No inputs matched.[/]");
+            return;
+        }
+
+        foreach (var file in result.Files)
+        {
+            Console.WriteLine(file);
+
+            // var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
+            //                        navigator.SelectSingleNode("/Project/PropertyGroup/TargetFrameworks")?.Value;
+            // if (targetFrameworks == null)
+            // {
+            //     AnsiConsole.MarkupLine("[bold red]Could not determine target framework.[/]");
+            //     return;
+            // }
+
+            // await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+            //
+            // var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
+            //
+            // var projectName = projectFile.Name[..^projectFile.Extension.Length];
+            //
+            // var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
+            //     latestTargetFramework, $"{projectName}.dll");
+            // var loadContext = new DokiAssemblyLoadContext(assemblyPath);
+            // var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
+            //
+            // var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
+            //     latestTargetFramework, $"{projectName}.xml"));
+        }
+    }
+
+    private static async Task LoadOutputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
+        DokiConfig.DokiConfigOutput[]? outputs, CancellationToken cancellationToken)
+    {
+        if (outputs == null)
         {
             AnsiConsole.MarkupLine("[bold red]No outputs configured.[/]");
             return;
         }
 
-        foreach (var output in dokiConfig.Outputs)
+        foreach (var output in outputs)
         {
             if (output.From == null)
             {
@@ -151,7 +160,7 @@ internal class BuildCommand : Command
                 return;
             }
 
-            var instance = await LoadOutputAsync(projectDirectory, output, cancellationToken);
+            var instance = await LoadOutputAsync(workingDirectory, output, cancellationToken);
 
             if (instance == null)
             {
@@ -163,14 +172,14 @@ internal class BuildCommand : Command
         }
     }
 
-    private static async Task<IOutput?> LoadOutputAsync(DirectoryInfo projectDirectory,
+    private static async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
     {
-        var outputContext = new OutputContext(projectDirectory, output.Options);
-        
+        var outputContext = new OutputContext(workingDirectory, output.Options);
+
         if (output.From!.EndsWith(".csproj"))
         {
-            var fileInfo = new FileInfo(Path.Combine(projectDirectory.FullName, output.From));
+            var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
             await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
 
@@ -190,12 +199,12 @@ internal class BuildCommand : Command
     }
 
     private static async Task BuildProjectAsync(FileSystemInfo projectFile, string buildConfiguration,
-        bool copyLocalLockFileAssemblies, CancellationToken cancellationToken)
+        bool buildForDoki, CancellationToken cancellationToken)
     {
         AnsiConsole.MarkupLine($"Building project {projectFile.Name}...");
 
         var arguments = $"build \"{projectFile.FullName}\" -c {buildConfiguration}";
-        if (copyLocalLockFileAssemblies) arguments += " /p:CopyLocalLockFileAssemblies=true";
+        if (buildForDoki) arguments += " /p:CopyLocalLockFileAssemblies=true /p:GenerateDocumentationFile=true";
 
         var process = Process.Start(new ProcessStartInfo
         {
