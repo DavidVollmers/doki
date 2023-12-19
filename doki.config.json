@@ -1,6 +1,7 @@
 {
   "input": [
-    "src/**/*.csproj"
+    "src/**/*.csproj",
+    "!src/Doki.CommandLine/Doki.CommandLine.csproj"
   ],
   "output": [
     {

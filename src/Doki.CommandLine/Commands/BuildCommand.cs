@@ -113,9 +113,13 @@ internal class BuildCommand : Command
             return;
         }
 
+        var builtProjects = new List<string>();
+
         foreach (var file in result.Files)
         {
             var projectFile = new FileInfo(Path.Combine(workingDirectory.FullName, file.Path));
+
+            if (builtProjects.Contains(projectFile.FullName)) continue;
 
             var navigator = new XPathDocument(projectFile.FullName).CreateNavigator();
 
@@ -128,6 +132,9 @@ internal class BuildCommand : Command
             }
 
             await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+
+            //TODO add project dependencies
+            builtProjects.Add(projectFile.FullName);
 
             var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
 

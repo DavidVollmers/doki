@@ -88,7 +88,7 @@ public sealed class DocumentationGenerator
             namespaceToC.Children = types.Where(t => t.Namespace == @namespace).Select(t => new TableOfContents
             {
                 Id = t.GUID,
-                Name = t.Name,
+                Name = t.GetTypeInfo().GetSanitizedName(),
                 Parent = namespaceToC,
                 Content = DokiContent.TypeReference
             }).ToArray();

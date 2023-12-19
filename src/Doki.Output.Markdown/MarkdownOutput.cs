@@ -12,7 +12,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         ArgumentNullException.ThrowIfNull(tableOfContents);
 
         var tableOfContentsFile =
-            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents, "README.md")));
+            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents), "README.md"));
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
@@ -27,7 +27,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 {
                     await WriteAsync(namespaceToC, cancellationToken);
 
-                    items.Add(new Link(namespaceToC.Name, BuildPath(namespaceToC, "README.md")));
+                    items.Add(new Link(namespaceToC.Name, Path.Combine(BuildPath(namespaceToC), "README.md")));
                 }
 
                 markdown.Add(new List
