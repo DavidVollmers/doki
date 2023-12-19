@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Spectre.Console;
 
-namespace Doki.CommandLine;
+namespace Doki.CommandLine.Logging;
 
 internal class AnsiConsoleLogger : ILogger
 {
