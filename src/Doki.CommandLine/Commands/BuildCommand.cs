@@ -84,13 +84,14 @@ internal class BuildCommand : Command
             return;
         }
 
-        await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs, cancellationToken);
+        await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs, buildConfiguration,
+            cancellationToken);
 
         await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
     }
 
     private async Task LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
-        string[]? inputs, CancellationToken cancellationToken)
+        string[]? inputs, string buildConfiguration, CancellationToken cancellationToken)
     {
         if (inputs == null)
         {
@@ -116,27 +117,31 @@ internal class BuildCommand : Command
         {
             var projectFile = new FileInfo(Path.Combine(workingDirectory.FullName, file.Path));
 
-            // var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
-            //                        navigator.SelectSingleNode("/Project/PropertyGroup/TargetFrameworks")?.Value;
-            // if (targetFrameworks == null)
-            // {
-            //     AnsiConsole.MarkupLine("[bold red]Could not determine target framework.[/]");
-            //     return;
-            // }
+            var navigator = new XPathDocument(projectFile.FullName).CreateNavigator();
 
-            // await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
-            //
-            // var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
-            //
-            // var projectName = projectFile.Name[..^projectFile.Extension.Length];
-            //
-            // var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
-            //     latestTargetFramework, $"{projectName}.dll");
-            // var loadContext = new DokiAssemblyLoadContext(assemblyPath);
-            // var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
-            //
-            // var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
-            //     latestTargetFramework, $"{projectName}.xml"));
+            var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
+                                   navigator.SelectSingleNode("/Project/PropertyGroup/TargetFrameworks")?.Value;
+            if (targetFrameworks == null)
+            {
+                _logger.LogError("Could not determine target framework.");
+                return;
+            }
+
+            await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+
+            var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
+
+            var projectName = projectFile.Name[..^projectFile.Extension.Length];
+
+            var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
+                latestTargetFramework, $"{projectName}.dll");
+            var loadContext = new DokiAssemblyLoadContext(assemblyPath);
+            var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
+
+            var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin",
+                buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
+
+            generator.AddAssembly(assembly, documentationFile);
         }
     }
 
