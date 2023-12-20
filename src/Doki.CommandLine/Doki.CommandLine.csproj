@@ -17,6 +17,7 @@
         <Nullable>enable</Nullable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>doki</ToolCommandName>
+        <PackageOutputPath>..\..\nuget</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>

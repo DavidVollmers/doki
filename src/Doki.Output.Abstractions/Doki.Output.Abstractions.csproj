@@ -15,6 +15,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Doki.Output</RootNamespace>
+        <PackageOutputPath>..\..\nuget</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
