@@ -121,7 +121,9 @@ internal class BuildCommand : Command
 
             if (builtProjects.Contains(projectFile.FullName)) continue;
 
-            var navigator = new XPathDocument(projectFile.FullName).CreateNavigator();
+            var projectMetadata = new XPathDocument(projectFile.FullName);
+            
+            var navigator = projectMetadata.CreateNavigator();
 
             var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
                                    navigator.SelectSingleNode("/Project/PropertyGroup/TargetFrameworks")?.Value;
@@ -148,7 +150,7 @@ internal class BuildCommand : Command
             var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin",
                 buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
 
-            generator.AddAssembly(assembly, documentationFile);
+            generator.AddAssembly(assembly, documentationFile, projectMetadata);
         }
     }
 

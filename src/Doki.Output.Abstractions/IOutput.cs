@@ -1,6 +1,4 @@
-﻿using Doki.Elements;
-
-namespace Doki.Output;
+﻿namespace Doki.Output;
 
 public interface IOutput
 {
