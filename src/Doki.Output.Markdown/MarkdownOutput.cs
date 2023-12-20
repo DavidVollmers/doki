@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Doki.Elements;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
@@ -18,18 +17,18 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
         var markdown = new MarkdownBuilder()
-            .Add(new Heading(tableOfContents.Name, 1));
+            .Add(new Heading(tableOfContents.Id, 1));
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (tableOfContents.Content)
         {
-            case DokiContent.Namespaces:
+            case DokiContent.Assemblies:
                 var items = new List<Element>();
-                foreach (var namespaceToC in tableOfContents.Children)
+                foreach (var assemblyToC in tableOfContents.Children)
                 {
-                    await WriteAsync(namespaceToC, cancellationToken);
+                    await WriteAsync(assemblyToC, cancellationToken);
 
-                    items.Add(new Link(namespaceToC.Name, Path.Combine(BuildPath(namespaceToC), "README.md")));
+                    items.Add(new Link(assemblyToC.Id, Path.Combine(BuildPath(assemblyToC), "README.md")));
                 }
 
                 markdown.Add(new List
@@ -72,8 +71,8 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
     private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
     {
-        if (toc.Children.Length == 0) return new Link(toc.Name, BuildPath(toc, ".md"));
-        return new SubList(new Link(toc.Name, BuildPath(toc, ".md")), indent)
+        if (toc.Children.Length == 0) return new Link(toc.Id, BuildPath(toc, ".md"));
+        return new SubList(new Link(toc.Id, BuildPath(toc, ".md")), indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(x, indent + 1)).ToList()
         };
@@ -88,7 +87,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
         while (current.Parent != null)
         {
-            path.Add(current.Name);
+            path.Add(current.Id);
 
             current = current.Parent;
         }
