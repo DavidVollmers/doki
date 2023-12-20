@@ -1,10 +1,11 @@
-﻿using Doki.Elements;
+﻿using System.Text.RegularExpressions;
+using Doki.Elements;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
 [DokiOutput("Doki.Output.Markdown")]
-public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
+public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
 {
     public override async Task WriteAsync(TableOfContents tableOfContents,
         CancellationToken cancellationToken = default)
@@ -19,6 +20,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         var markdown = new MarkdownBuilder()
             .Add(new Heading(tableOfContents.Name, 1));
 
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (tableOfContents.Content)
         {
             case DokiContent.Namespaces:
@@ -35,8 +37,6 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                     Items = items
                 });
                 break;
-            case DokiContent.Namespace:
-            case DokiContent.TypeReference:
             default:
                 markdown.Add(new List
                 {
@@ -45,7 +45,29 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 break;
         }
 
-        await File.WriteAllTextAsync(tableOfContentsFile.FullName, markdown.ToString(), cancellationToken);
+        await WriteMarkdownAsync(tableOfContentsFile, markdown, cancellationToken);
+    }
+
+    private static async Task WriteMarkdownAsync(FileSystemInfo fileInfo, MarkdownBuilder markdown,
+        CancellationToken cancellationToken)
+    {
+        if (fileInfo.Exists)
+        {
+            var content = await File.ReadAllTextAsync(fileInfo.FullName, cancellationToken);
+
+            var replacementRegex = ReplacementMarkRegex();
+            var result = replacementRegex.Matches(content);
+            if (result is [{Groups.Count: 3}])
+            {
+                content = replacementRegex.Replace(content,
+                    $"{result[0].Groups[1].Value}{Environment.NewLine}{markdown}{Environment.NewLine}{result[0].Groups[2].Value}");
+
+                await File.WriteAllTextAsync(fileInfo.FullName, content, cancellationToken);
+                return;
+            }
+        }
+
+        await File.WriteAllTextAsync(fileInfo.FullName, markdown.ToString(), cancellationToken);
     }
 
     private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
@@ -76,4 +98,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         var result = Path.Combine(path.ToArray());
         return suffix == null ? result : $"{result}{suffix}";
     }
+
+    [GeneratedRegex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline)]
+    private static partial Regex ReplacementMarkRegex();
 }
