@@ -4,7 +4,7 @@ internal static class InternalExtensions
 {
     public static string BuildRelativePath(this MarkdownBuilder builder, DokiElement to, string? extension = null)
     {
-        return builder.BuildRelativePath(to.GetPath());
+        return builder.BuildRelativePath(to.GetPath(extension));
     }
 
     public static string GetPath(this DokiElement element, string? extension = null)
