@@ -1,13 +1,21 @@
 # Doki.Example.BlazorComponents
 
-This project is an example of how to use the Doki for Blazor components.
+This project is an example of how to use `doki` for Blazor components.
 
-## Build the Documentation
+## Install doki
+
+Install the `doki` Command-Line Interface:
+
+```bash
+dotnet tool install --global Doki.CommandLine
+```
+
+## Use doki
 
 To build the documentation, run the following command from the root of the repository:
 
 ```bash
-dotnet doki build
+doki build
 ```
 
 The documentation will be built into the `docs` folder.
