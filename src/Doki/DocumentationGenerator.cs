@@ -30,7 +30,7 @@ public sealed class DocumentationGenerator
 
         if (projectMetadata != null)
         {
-            _projectMetadata.Add(assembly.FullName!, projectMetadata.CreateNavigator());
+            _projectMetadata.Add(assembly.GetName().Name!, projectMetadata.CreateNavigator());
         }
     }
 
@@ -59,7 +59,7 @@ public sealed class DocumentationGenerator
         foreach (var (assembly, _) in _assemblies)
         {
             string? description = null;
-            var assemblyId = assembly.FullName!;
+            var assemblyId = assembly.GetName().Name!;
             if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
             {
                 var packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;

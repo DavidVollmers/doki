@@ -18,6 +18,11 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
         var markdown = new MarkdownBuilder()
             .Add(new Heading(tableOfContents.Id, 1));
+        
+        if (tableOfContents.Properties?.TryGetValue("Description", out var description) == true)
+        {
+            markdown.Add(new Text(description?.ToString()!));
+        }
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (tableOfContents.Content)
