@@ -18,7 +18,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
         var markdown = new MarkdownBuilder()
             .Add(new Heading(tableOfContents.Id, 1));
-        
+
         if (tableOfContents.Properties?.TryGetValue("Description", out var description) == true)
         {
             markdown.Add(new Text(description?.ToString()!));
@@ -28,20 +28,14 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         switch (tableOfContents.Content)
         {
             case DokiContent.Assemblies:
-                var items = new List<Element>();
-                foreach (var assemblyToC in tableOfContents.Children)
-                {
-                    await WriteAsync(assemblyToC, cancellationToken);
-
-                    items.Add(new Link(assemblyToC.Id, Path.Combine(BuildPath(assemblyToC), "README.md")));
-                }
-
-                markdown.Add(new List
-                {
-                    Items = items
-                });
+                await BuildAssembliesTableOfContentsAsync(tableOfContents, markdown, cancellationToken);
                 break;
             default:
+                if (tableOfContents.Content == DokiContent.Assembly)
+                {
+                    markdown.Add(new Heading("Namespaces", 2));
+                }
+                
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(x, 0)).ToList()
@@ -50,6 +44,32 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         }
 
         await WriteMarkdownAsync(tableOfContentsFile, markdown, cancellationToken);
+    }
+
+    private async Task BuildAssembliesTableOfContentsAsync(TableOfContents tableOfContents, MarkdownBuilder markdown,
+        CancellationToken cancellationToken)
+    {
+        var items = new List<Element>();
+        foreach (var assemblyToC in tableOfContents.Children)
+        {
+            await WriteAsync(assemblyToC, cancellationToken);
+
+            var container = new IndentContainer(1, false);
+            container.Add(new Link(assemblyToC.Id, Path.Combine(BuildPath(assemblyToC), "README.md")));
+
+            if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
+            {
+                container.Add(Text.Empty);
+                container.Add(new Text(description?.ToString()!));
+            }
+
+            items.Add(container);
+        }
+
+        markdown.Add(new List
+        {
+            Items = items
+        });
     }
 
     private static async Task WriteMarkdownAsync(FileSystemInfo fileInfo, MarkdownBuilder markdown,

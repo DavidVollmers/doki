@@ -31,6 +31,7 @@ internal class BuildCommand : Command
             Arity = ArgumentArity.ZeroOrOne
         };
 
+    private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
     public BuildCommand(ILogger<BuildCommand> logger) : base("build", "Builds documentation for a project.")
@@ -113,13 +114,9 @@ internal class BuildCommand : Command
             return;
         }
 
-        var builtProjects = new List<string>();
-
         foreach (var file in result.Files)
         {
             var projectFile = new FileInfo(Path.Combine(workingDirectory.FullName, file.Path));
-
-            if (builtProjects.Contains(projectFile.FullName)) continue;
 
             var projectMetadata = new XPathDocument(projectFile.FullName);
             
@@ -134,9 +131,6 @@ internal class BuildCommand : Command
             }
 
             await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
-
-            //TODO add project dependencies
-            builtProjects.Add(projectFile.FullName);
 
             var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
 
@@ -218,7 +212,13 @@ internal class BuildCommand : Command
     private async Task BuildProjectAsync(FileSystemInfo projectFile, string buildConfiguration,
         bool buildForDoki, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Building project {projectFile.Name}...");
+        if (_builtProjects.Contains(projectFile.FullName))
+        {
+            _logger.LogDebug("Project already built: {ProjectFileName}", projectFile.Name);
+            return;
+        }
+        
+        _logger.LogInformation("Building project {ProjectFileName}...", projectFile.Name);
 
         var arguments = $"build \"{projectFile.FullName}\" -c {buildConfiguration}";
         if (buildForDoki) arguments += " /p:CopyLocalLockFileAssemblies=true /p:GenerateDocumentationFile=true";
@@ -250,5 +250,8 @@ internal class BuildCommand : Command
         }
 
         _logger.LogInformation("[bold green]Build succeeded.[/]");
+        
+        //TODO add project dependencies
+        _builtProjects.Add(projectFile.FullName);
     }
 }

@@ -65,7 +65,7 @@ public sealed class DocumentationGenerator
                 var packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
                 if (packageId != null) assemblyId = packageId;
 
-                description = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
+                description = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
             }
 
             var assemblyToC = new TableOfContents
