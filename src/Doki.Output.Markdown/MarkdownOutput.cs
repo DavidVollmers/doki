@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
@@ -11,12 +12,14 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
     {
         ArgumentNullException.ThrowIfNull(tableOfContents);
 
+        var currentPath = tableOfContents.GetPath();
+
         var tableOfContentsFile =
-            new FileInfo(Path.Combine(OutputDirectory.FullName, BuildPath(tableOfContents), "README.md"));
+            new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
-        var markdown = new MarkdownBuilder()
+        var markdown = new MarkdownBuilder(currentPath)
             .Add(new Heading(tableOfContents.Id, 1));
 
         if (tableOfContents.Properties?.TryGetValue("Description", out var description) == true)
@@ -28,17 +31,17 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         switch (tableOfContents.Content)
         {
             case DokiContent.Assemblies:
-                await BuildAssembliesTableOfContentsAsync(tableOfContents, markdown, cancellationToken);
+                await BuildAssembliesTableOfContentsAsync(markdown, tableOfContents, cancellationToken);
                 break;
             default:
                 if (tableOfContents.Content == DokiContent.Assembly)
                 {
                     markdown.Add(new Heading("Namespaces", 2));
                 }
-                
+
                 markdown.Add(new List
                 {
-                    Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(x, 0)).ToList()
+                    Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, 0)).ToList()
                 });
                 break;
         }
@@ -46,7 +49,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         await WriteMarkdownAsync(tableOfContentsFile, markdown, cancellationToken);
     }
 
-    private async Task BuildAssembliesTableOfContentsAsync(TableOfContents tableOfContents, MarkdownBuilder markdown,
+    private async Task BuildAssembliesTableOfContentsAsync(MarkdownBuilder markdown, TableOfContents tableOfContents,
         CancellationToken cancellationToken)
     {
         var items = new List<Element>();
@@ -55,7 +58,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             await WriteAsync(assemblyToC, cancellationToken);
 
             var container = new IndentContainer(1, false);
-            container.Add(new Link(assemblyToC.Id, Path.Combine(BuildPath(assemblyToC), "README.md")));
+            container.Add(new Link(assemblyToC.Id, Path.Combine(markdown.BuildRelativePath(assemblyToC), "README.md")));
 
             if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
             {
@@ -94,33 +97,14 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         await File.WriteAllTextAsync(fileInfo.FullName, markdown.ToString(), cancellationToken);
     }
 
-    private static Element BuildMarkdownTableOfContents(TableOfContents toc, int indent)
+    private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, TableOfContents toc, int indent)
     {
-        if (toc.Children.Length == 0) return new Link(toc.Id, BuildPath(toc, ".md"));
-        return new SubList(new Link(toc.Id, BuildPath(toc, ".md")), indent)
+        var relativePath = markdown.BuildRelativePath(toc, ".md");
+        if (toc.Children.Length == 0) return new Link(toc.Id, relativePath);
+        return new SubList(new Link(toc.Id, relativePath), indent)
         {
-            Items = toc.Children.Select(x => BuildMarkdownTableOfContents(x, indent + 1)).ToList()
+            Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
         };
-    }
-
-    //TODO build relative path to current path
-    private static string BuildPath(DokiElement element, string? suffix = null)
-    {
-        var path = new List<string>();
-
-        var current = element;
-
-        while (current.Parent != null)
-        {
-            path.Add(current.Id);
-
-            current = current.Parent;
-        }
-
-        path.Reverse();
-
-        var result = Path.Combine(path.ToArray());
-        return suffix == null ? result : $"{result}{suffix}";
     }
 
     [GeneratedRegex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline)]
