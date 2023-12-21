@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Spectre.Console;
 
 namespace Doki.CommandLine.Logging;
 
-internal class AnsiConsoleLogger : ILogger
+internal partial class AnsiConsoleLogger : ILogger
 {
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
         Func<TState, Exception?, string> formatter)
@@ -19,9 +20,12 @@ internal class AnsiConsoleLogger : ILogger
             LogLevel.None => "[white]",
             _ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null)
         };
-        
+
         var message = formatter(state, exception);
-        
+
+        var escapeRegex = EscapeRegex();
+        message = escapeRegex.Replace(message, "`1[[$1]]");
+
         AnsiConsole.MarkupLine($"{markup}{message}[/]");
     }
 
@@ -34,4 +38,7 @@ internal class AnsiConsoleLogger : ILogger
     {
         return null;
     }
+
+    [GeneratedRegex(@"`1\[([a-zA-Z]+?)\]")]
+    private static partial Regex EscapeRegex();
 }
