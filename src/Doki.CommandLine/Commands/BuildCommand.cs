@@ -45,7 +45,7 @@ internal class BuildCommand : Command
         this.SetHandler(HandleCommandAsync);
     }
 
-    private async Task HandleCommandAsync(InvocationContext context)
+    private async Task<int> HandleCommandAsync(InvocationContext context)
     {
         var dokiConfigFile = context.ParseResult.GetValueForArgument(_targetArgument);
         var buildConfiguration = context.ParseResult.GetValueForOption(_buildConfigurationOption) ?? "Release";
@@ -57,7 +57,7 @@ internal class BuildCommand : Command
             if (!dokiConfigFile.Exists)
             {
                 _logger.LogError("Could not find doki.config.json file.");
-                return;
+                return -1;
             }
         }
 
@@ -65,15 +65,19 @@ internal class BuildCommand : Command
 
         var generator = new DocumentationGenerator();
 
-        await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration, cancellationToken);
+        var configureResult =
+            await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration,
+                cancellationToken);
+        if (configureResult != 0) return configureResult;
 
         await generator.GenerateAsync(_logger, cancellationToken);
 
         _logger.LogInformation("[bold green]Documentation generated.[/]");
+
+        return 0;
     }
 
-    //TODO return int for error handling
-    private async Task ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
+    private async Task<int> ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
         FileInfo dokiConfigFile, string buildConfiguration, CancellationToken cancellationToken)
     {
         var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
@@ -82,22 +86,27 @@ internal class BuildCommand : Command
         if (dokiConfig == null)
         {
             _logger.LogError("Could not deserialize doki config file.");
-            return;
+            return -1;
         }
 
-        await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs, buildConfiguration,
-            cancellationToken);
+        var inputResult = await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs,
+            buildConfiguration, cancellationToken);
+        if (inputResult != 0) return inputResult;
 
-        await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
+        var outputResult =
+            await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
+        if (outputResult != 0) return outputResult;
+
+        return 0;
     }
 
-    private async Task LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
+    private async Task<int> LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
         string[]? inputs, string buildConfiguration, CancellationToken cancellationToken)
     {
         if (inputs == null)
         {
             _logger.LogError("No inputs configured.");
-            return;
+            return -1;
         }
 
         var matcher = new Matcher();
@@ -111,7 +120,7 @@ internal class BuildCommand : Command
         if (!result.HasMatches)
         {
             _logger.LogError("No inputs matched.");
-            return;
+            return -1;
         }
 
         foreach (var file in result.Files)
@@ -119,7 +128,7 @@ internal class BuildCommand : Command
             var projectFile = new FileInfo(Path.Combine(workingDirectory.FullName, file.Path));
 
             var projectMetadata = new XPathDocument(projectFile.FullName);
-            
+
             var navigator = projectMetadata.CreateNavigator();
 
             var targetFrameworks = navigator.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.Value ??
@@ -127,10 +136,11 @@ internal class BuildCommand : Command
             if (targetFrameworks == null)
             {
                 _logger.LogError("Could not determine target framework.");
-                return;
+                return -1;
             }
 
-            await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+            var buildResult = await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+            if (buildResult != 0) return buildResult;
 
             var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
 
@@ -146,15 +156,17 @@ internal class BuildCommand : Command
 
             generator.AddAssembly(assembly, documentationFile, projectMetadata);
         }
+
+        return 0;
     }
 
-    private async Task LoadOutputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
+    private async Task<int> LoadOutputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
         DokiConfig.DokiConfigOutput[]? outputs, CancellationToken cancellationToken)
     {
         if (outputs == null)
         {
             _logger.LogError("No outputs configured.");
-            return;
+            return -1;
         }
 
         foreach (var output in outputs)
@@ -162,13 +174,13 @@ internal class BuildCommand : Command
             if (output.From == null)
             {
                 _logger.LogError("No from configured.");
-                return;
+                return -1;
             }
 
             if (output.Type == null)
             {
                 _logger.LogError("No type configured.");
-                return;
+                return -1;
             }
 
             var instance = await LoadOutputAsync(workingDirectory, output, cancellationToken);
@@ -176,11 +188,13 @@ internal class BuildCommand : Command
             if (instance == null)
             {
                 _logger.LogError("Could not load output.");
-                return;
+                return -1;
             }
 
             generator.AddOutput(instance);
         }
+
+        return 0;
     }
 
     private async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
@@ -192,7 +206,8 @@ internal class BuildCommand : Command
         {
             var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
-            await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
+            var buildResult = await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
+            if (buildResult != 0) return null;
 
             var assembly = Assembly.LoadFrom(Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
                 $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll"));
@@ -209,15 +224,15 @@ internal class BuildCommand : Command
         return null;
     }
 
-    private async Task BuildProjectAsync(FileSystemInfo projectFile, string buildConfiguration,
+    private async Task<int> BuildProjectAsync(FileSystemInfo projectFile, string buildConfiguration,
         bool buildForDoki, CancellationToken cancellationToken)
     {
         if (_builtProjects.Contains(projectFile.FullName))
         {
             _logger.LogDebug("Project already built: {ProjectFileName}", projectFile.Name);
-            return;
+            return 0;
         }
-        
+
         _logger.LogInformation("Building project {ProjectFileName}...", projectFile.Name);
 
         var arguments = $"build \"{projectFile.FullName}\" -c {buildConfiguration}";
@@ -235,7 +250,7 @@ internal class BuildCommand : Command
         if (process == null)
         {
             _logger.LogError("Could not start dotnet process.");
-            return;
+            return -1;
         }
 
         var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
@@ -246,12 +261,14 @@ internal class BuildCommand : Command
         {
             _logger.LogError("Build failed.");
             _logger.LogError(output);
-            return;
+            return -1;
         }
 
         _logger.LogInformation("[bold green]Build succeeded.[/]");
-        
+
         //TODO add project dependencies
         _builtProjects.Add(projectFile.FullName);
+
+        return 0;
     }
 }
