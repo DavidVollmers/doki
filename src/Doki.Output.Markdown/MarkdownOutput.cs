@@ -33,17 +33,18 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             case DokiContent.Assemblies:
                 await BuildAssembliesTableOfContentsAsync(markdown, tableOfContents, cancellationToken);
                 break;
-            default:
-                if (tableOfContents.Content == DokiContent.Assembly)
+            case DokiContent.Assembly:
+                foreach (var namespaceToC in tableOfContents.Children)
                 {
-                    foreach (var namespaceToC in tableOfContents.Children)
-                    {
-                        await WriteAsync(namespaceToC, cancellationToken);
-                    }
-                    
-                    markdown.Add(new Heading("Namespaces", 2));
+                    await WriteAsync(namespaceToC, cancellationToken);
                 }
-
+                    
+                markdown.Add(new Heading("Namespaces", 2));
+                goto case default;
+            case DokiContent.Namespace:
+                markdown.Add(new Heading("Types", 2));
+                goto case default;
+            default:
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, 0)).ToList()
