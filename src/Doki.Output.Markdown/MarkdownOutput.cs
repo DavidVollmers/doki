@@ -39,6 +39,11 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 }
 
                 markdown.Add(new Heading("Namespaces", 2));
+                markdown.Add(new List
+                {
+                    Items = tableOfContents.Children.Select(x =>
+                        (Element) new Link(x.Id, Path.Combine(markdown.BuildRelativePath(x), "README.md"))).ToList()
+                });
                 break;
             case DokiContent.Namespace:
                 markdown.Add(new Heading("Types", 2));
@@ -75,8 +80,9 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>();
         if (namespaceToC != null)
         {
-            markdown.Add(new Link(namespaceToC.Id,
-                Path.Combine(markdown.BuildRelativePath(namespaceToC), "README.md")));
+            markdown.Add(new Text("Namespace: ")
+                .Append(new Link(namespaceToC.Id,
+                    Path.Combine(markdown.BuildRelativePath(namespaceToC), "README.md"))));
         }
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
