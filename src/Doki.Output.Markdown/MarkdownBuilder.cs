@@ -22,6 +22,7 @@ internal class MarkdownBuilder(string currentPath)
         return this;
     }
 
+    //TODO fix this
     public string BuildRelativePath(string to)
     {
         var path = to.Split(Path.DirectorySeparatorChar);

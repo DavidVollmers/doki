@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Doki;
 
+/// <summary>
+/// Generates documentation for assemblies.
+/// </summary>
 public sealed class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
@@ -163,7 +166,7 @@ public sealed class DocumentationGenerator
             {
                 {"Name", typeInfo.GetSanitizedName()},
                 {"FullName", typeInfo.GetSanitizedName(true)},
-                {"Summary", summary}
+                {"Summary", summary?.Trim()}
             }
         };
 
