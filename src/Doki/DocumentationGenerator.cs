@@ -121,11 +121,12 @@ public sealed class DocumentationGenerator
             var children = new List<TableOfContents>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
-                var typeDocumentation = await GenerateTypeDocumentationAsync(type, logger, cancellationToken);
+                var typeDocumentation =
+                    await GenerateTypeDocumentationAsync(type, namespaceToC, logger, cancellationToken);
 
                 children.Add(new TableOfContents
                 {
-                    Id = type.FullName!,
+                    Id = typeDocumentation.Id,
                     Parent = namespaceToC,
                     Content = DokiContent.TypeReference,
                     Properties = typeDocumentation.Properties
@@ -138,14 +139,40 @@ public sealed class DocumentationGenerator
         }
     }
 
-    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, ILogger logger,
+    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DokiElement parent, ILogger logger,
         CancellationToken cancellationToken)
     {
+        var typeInfo = type.GetTypeInfo();
+
         var navigator = _assemblies[type.Assembly];
 
         var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
 
-        return new TypeDocumentation();
+        var summary = typeXml?.SelectSingleNode("summary")?.Value;
+        if (summary == null)
+        {
+            logger.LogWarning("No summary found for type {Type}.", type);
+        }
+
+        var typeDocumentation = new TypeDocumentation
+        {
+            Id = type.FullName!,
+            Content = DokiContent.Type,
+            Parent = parent,
+            Properties = new Dictionary<string, object?>
+            {
+                {"Name", typeInfo.GetSanitizedName()},
+                {"FullName", typeInfo.GetSanitizedName(true)},
+                {"Summary", summary}
+            }
+        };
+
+        foreach (var output in _outputs)
+        {
+            await output.WriteAsync(typeDocumentation, cancellationToken);
+        }
+
+        return typeDocumentation;
     }
 
     //TODO support exclude filtering

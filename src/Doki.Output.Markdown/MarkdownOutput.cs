@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
@@ -38,12 +37,12 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 {
                     await WriteAsync(namespaceToC, cancellationToken);
                 }
-                    
+
                 markdown.Add(new Heading("Namespaces", 2));
-                goto case default;
+                break;
             case DokiContent.Namespace:
                 markdown.Add(new Heading("Types", 2));
-                goto case default;
+                goto default;
             default:
                 markdown.Add(new List
                 {
@@ -53,6 +52,39 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         }
 
         await WriteMarkdownAsync(tableOfContentsFile, markdown, cancellationToken);
+    }
+
+    public override async Task WriteAsync(TypeDocumentation typeDocumentation,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(typeDocumentation);
+
+        var currentPath = typeDocumentation.GetPath(".md");
+
+        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath));
+
+        if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
+
+        var name = typeDocumentation.Properties?.TryGetValue("Name", out var nameProperty) == true
+            ? nameProperty?.ToString()!
+            : typeDocumentation.Id;
+
+        var markdown = new MarkdownBuilder(currentPath)
+            .Add(new Heading(name, 1));
+
+        var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>();
+        if (namespaceToC != null)
+        {
+            markdown.Add(new Link(namespaceToC.Id,
+                Path.Combine(markdown.BuildRelativePath(namespaceToC), "README.md")));
+        }
+
+        if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
+        {
+            markdown.Add(new Text(summary?.ToString()!));
+        }
+
+        await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
 
     private async Task BuildAssembliesTableOfContentsAsync(MarkdownBuilder markdown, TableOfContents tableOfContents,

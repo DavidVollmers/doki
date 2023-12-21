@@ -5,5 +5,6 @@ public enum DokiContent
     Assemblies,
     Assembly,
     Namespace,
-    TypeReference
+    TypeReference,
+    Type
 }
