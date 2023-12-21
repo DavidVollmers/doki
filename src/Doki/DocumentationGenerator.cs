@@ -58,14 +58,20 @@ public sealed class DocumentationGenerator
         var children = new List<TableOfContents>();
         foreach (var (assembly, _) in _assemblies)
         {
-            string? description = null;
             var assemblyId = assembly.GetName().Name!;
+            var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
             if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
             {
                 var packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
                 if (packageId != null) assemblyId = packageId;
 
-                description = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
+                var packageDescription = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
+                if (packageDescription != null) description = packageDescription;
+            }
+
+            if (description == null)
+            {
+                logger.LogWarning("No description found for assembly {Assembly}.", assemblyId);
             }
 
             var assemblyToC = new TableOfContents
