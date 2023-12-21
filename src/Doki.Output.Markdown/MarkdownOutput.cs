@@ -36,6 +36,11 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             default:
                 if (tableOfContents.Content == DokiContent.Assembly)
                 {
+                    foreach (var namespaceToC in tableOfContents.Children)
+                    {
+                        await WriteAsync(namespaceToC, cancellationToken);
+                    }
+                    
                     markdown.Add(new Heading("Namespaces", 2));
                 }
 
