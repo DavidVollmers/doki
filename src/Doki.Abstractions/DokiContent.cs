@@ -6,5 +6,9 @@ public enum DokiContent
     Assembly,
     Namespace,
     TypeReference,
-    Type
+    Class,
+    Enum,
+    Struct,
+    Interface,
+    Type,
 }

@@ -160,7 +160,15 @@ public sealed class DocumentationGenerator
         var typeDocumentation = new TypeDocumentation
         {
             Id = type.FullName!,
-            Content = DokiContent.Type,
+            Content = type.IsClass
+                ? DokiContent.Class
+                : type.IsEnum
+                    ? DokiContent.Enum
+                    : type.IsInterface
+                        ? DokiContent.Interface
+                        : type.IsValueType
+                            ? DokiContent.Struct
+                            : DokiContent.Type,
             Parent = parent,
             Properties = new Dictionary<string, object?>
             {

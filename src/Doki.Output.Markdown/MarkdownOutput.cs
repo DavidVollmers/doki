@@ -75,9 +75,10 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             : typeDocumentation.Id;
 
         var markdown = new MarkdownBuilder(currentPath)
-            .Add(new Heading(name, 1));
+            .Add(new Heading(name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
+            .Add(new Heading("Definition", 2));
 
-        var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>();
+        var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Namespace);
         if (namespaceToC != null)
         {
             markdown.Add(new Text("Namespace: ")
@@ -85,10 +86,24 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                     Path.Combine(markdown.BuildRelativePath(namespaceToC), "README.md"))));
         }
 
+        var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
+        if (assemblyToC != null)
+        {
+            markdown.Add(new Text("Assembly: ")
+                .Append(new Link(assemblyToC.Id,
+                    Path.Combine(markdown.BuildRelativePath(assemblyToC), "README.md"))));
+        }
+
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
         {
             markdown.Add(new Text(summary?.ToString()!));
         }
+
+        //TODO definition with links
+        // if (typeDocumentation.Properties?.TryGetValue("Definition", out var definition) == true)
+        // {
+        //     markdown.Add(new Code(definition?.ToString()!));
+        // }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
