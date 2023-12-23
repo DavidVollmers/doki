@@ -8,7 +8,6 @@ using Doki.Output;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Extensions.Logging;
-using Spectre.Console;
 
 namespace Doki.CommandLine.Commands;
 
@@ -253,7 +252,7 @@ internal class BuildCommand : Command
             return -1;
         }
 
-        var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
+        var output = await process.StandardOutput.ReadToEndAsync();
 
         await process.WaitForExitAsync(cancellationToken);
 
