@@ -97,11 +97,10 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             markdown.Add(new Text(summary?.ToString()!));
         }
 
-        //TODO definition with links
-        // if (typeDocumentation.Properties?.TryGetValue("Definition", out var definition) == true)
-        // {
-        //     markdown.Add(new Code(definition?.ToString()!));
-        // }
+        if (typeDocumentation.Properties?.TryGetValue("Definition", out var definition) == true)
+        {
+            markdown.Add(new Code(definition?.ToString()!));
+        }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }

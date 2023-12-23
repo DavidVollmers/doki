@@ -84,7 +84,7 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Assembly,
                 Properties = new Dictionary<string, object?>
                 {
-                    {"Description", description}
+                    { "Description", description }
                 }
             };
 
@@ -172,9 +172,10 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Properties = new Dictionary<string, object?>
             {
-                {"Name", typeInfo.GetSanitizedName()},
-                {"FullName", typeInfo.GetSanitizedName(true)},
-                {"Summary", summary?.Trim()}
+                { "Name", typeInfo.GetSanitizedName() },
+                { "FullName", typeInfo.GetSanitizedName(true) },
+                { "Summary", summary?.Trim() },
+                { "Definition", typeInfo.GetDefinition() }
             }
         };
 
