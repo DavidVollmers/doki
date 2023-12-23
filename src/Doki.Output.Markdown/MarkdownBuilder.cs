@@ -5,7 +5,7 @@ namespace Doki.Output.Markdown;
 
 internal class MarkdownBuilder(string currentPath)
 {
-    private readonly string[] _currentPathParts = currentPath.Split(Path.DirectorySeparatorChar);
+    private readonly string[] _currentPathParts = currentPath.Split('/');
     private readonly List<Element> _elements = [];
 
     public MarkdownBuilder Add(Element element)
@@ -22,10 +22,9 @@ internal class MarkdownBuilder(string currentPath)
         return this;
     }
 
-    //TODO fix this
     public string BuildRelativePath(string to)
     {
-        var path = to.Split(Path.DirectorySeparatorChar);
+        var path = to.Split('/');
 
         var currentPathIndex = _currentPathParts.Length - 1;
         var pathIndex = 0;
@@ -49,7 +48,7 @@ internal class MarkdownBuilder(string currentPath)
             resultPath.Add(path[i]);
         }
 
-        return Path.Combine(resultPath.ToArray());
+        return string.Join('/', resultPath);
     }
 
     public override string ToString()

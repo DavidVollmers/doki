@@ -42,7 +42,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x =>
-                        (Element)new Link(x.Id, Path.Combine(markdown.BuildRelativePath(x), "README.md"))).ToList()
+                        (Element)new Link(x.Id, markdown.BuildRelativePath(x) + "/README.md")).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -82,16 +82,14 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         if (namespaceToC != null)
         {
             markdown.Add(new Text("Namespace: ")
-                .Append(new Link(namespaceToC.Id,
-                    Path.Combine(markdown.BuildRelativePath(namespaceToC), "README.md"))));
+                .Append(new Link(namespaceToC.Id, markdown.BuildRelativePath(namespaceToC) + "/README.md")));
         }
 
         var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
         if (assemblyToC != null)
         {
             markdown.Add(new Text("Assembly: ")
-                .Append(new Link(assemblyToC.Id,
-                    Path.Combine(markdown.BuildRelativePath(assemblyToC), "README.md"))));
+                .Append(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC) + "/README.md")));
         }
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
@@ -117,7 +115,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             await WriteAsync(assemblyToC, cancellationToken);
 
             var container = new IndentContainer(1, false);
-            container.Add(new Link(assemblyToC.Id, Path.Combine(markdown.BuildRelativePath(assemblyToC), "README.md")));
+            container.Add(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC) + "/README.md"));
 
             if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
             {

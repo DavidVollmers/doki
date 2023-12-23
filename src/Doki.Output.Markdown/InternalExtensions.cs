@@ -22,7 +22,7 @@ internal static class InternalExtensions
 
         pathParts.Reverse();
 
-        var path = Path.Combine(pathParts.ToArray());
+        var path = string.Join('/', pathParts);
         if (extension != null) path += extension;
 
         return path;
