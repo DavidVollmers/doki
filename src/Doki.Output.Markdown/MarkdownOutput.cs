@@ -42,7 +42,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x =>
-                        (Element) new Link(x.Id, Path.Combine(markdown.BuildRelativePath(x), "README.md"))).ToList()
+                        (Element)new Link(x.Id, Path.Combine(markdown.BuildRelativePath(x), "README.md"))).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -141,9 +141,9 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         {
             var content = await File.ReadAllTextAsync(fileInfo.FullName, cancellationToken);
 
-            var replacementRegex = ReplacementMarkRegex();
+            var replacementRegex = new Regex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline);
             var result = replacementRegex.Matches(content);
-            if (result is [{Groups.Count: 3}])
+            if (result is [{ Groups.Count: 3 }])
             {
                 content = replacementRegex.Replace(content,
                     $"{result[0].Groups[1].Value}{Environment.NewLine}{markdown}{Environment.NewLine}{result[0].Groups[2].Value}");
@@ -165,7 +165,4 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
         };
     }
-
-    [GeneratedRegex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline)]
-    private static partial Regex ReplacementMarkRegex();
 }
