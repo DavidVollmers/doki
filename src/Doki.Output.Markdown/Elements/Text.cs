@@ -31,6 +31,7 @@ internal record Text : Element
 
     public override string ToString()
     {
+        if (IsEmpty) return string.Empty;
         return IsBold ? $"**{Builder}**" : Builder.ToString();
     }
 }

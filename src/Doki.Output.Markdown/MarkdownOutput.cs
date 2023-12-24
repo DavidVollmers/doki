@@ -105,9 +105,12 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             {
                 markdown.Add(new Text("Package: ")
                     //TODO support other package sources
+                    // ReSharper disable once UseStringInterpolation
                     .Append(new Link(packageId, string.Format("https://www.nuget.org/packages/{0}", packageId))));
             }
         }
+        
+        markdown.Add(Element.Separator);
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
         {
