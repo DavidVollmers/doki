@@ -88,8 +88,23 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
         if (assemblyToC != null)
         {
+            var assemblyName = assemblyToC.Properties?.TryGetValue("FileName", out var assemblyNameProperty) == true
+                ? assemblyNameProperty?.ToString()!
+                : assemblyToC.Id;
+
             markdown.Add(new Text("Assembly: ")
-                .Append(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC) + "/README.md")));
+                .Append(new Link(assemblyName, markdown.BuildRelativePath(assemblyToC) + "/README.md")));
+
+            var packageId = assemblyToC.Properties?.TryGetValue("PackageId", out var packageIdProperty) == true
+                ? packageIdProperty?.ToString()!
+                : null;
+
+            if (packageId != null)
+            {
+                markdown.Add(new Text("Package: ")
+                    //TODO support other package sources
+                    .Append(new Link(packageId, string.Format("https://www.nuget.org/packages/{0}", packageId))));
+            }
         }
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)

@@ -61,12 +61,20 @@ public sealed class DocumentationGenerator
         var children = new List<TableOfContents>();
         foreach (var (assembly, _) in _assemblies)
         {
-            var assemblyId = assembly.GetName().Name!;
+            var assemblyName = assembly.GetName();
+
+            var assemblyId = assemblyName.Name;
+            if (assemblyId == null)
+            {
+                logger.LogWarning("No name found for assembly {Assembly}.", assembly);
+                continue;
+            }
+
+            string? packageId = null;
             var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
             if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
             {
-                var packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
-                if (packageId != null) assemblyId = packageId;
+                packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
 
                 var packageDescription = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
                 if (packageDescription != null) description = packageDescription;
@@ -84,7 +92,11 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Assembly,
                 Properties = new Dictionary<string, object?>
                 {
-                    { "Description", description }
+                    { "Description", description },
+                    { "FileName", assembly.Location.Split(Path.DirectorySeparatorChar).Last() },
+                    { "Name", assemblyName.Name },
+                    { "Version", assemblyName.Version?.ToString() },
+                    { "PackageId", packageId }
                 }
             };
 
