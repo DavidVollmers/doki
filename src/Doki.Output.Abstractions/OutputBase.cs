@@ -27,7 +27,7 @@ public abstract class OutputBase<T> : IOutput where T : OutputOptions
 
         if (context.Options != null) Options = JsonSerializer.Deserialize<T>(context.Options.Value.GetRawText());
 
-        _outputDirectory = new DirectoryInfo(Path.Combine(Context.ProjectDirectory.FullName,
+        _outputDirectory = new DirectoryInfo(Path.Combine(Context.WorkingDirectory.FullName,
             Options?.OutputPath ?? OutputOptions.Default.OutputPath!));
     }
 

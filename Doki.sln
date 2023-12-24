@@ -14,6 +14,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Markdown", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Abstractions", "src\Doki.Abstractions\Doki.Abstractions.csproj", "{2102459F-D7AB-4B7A-98A6-D76812E6C745}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C7B5305-B599-4F08-B28B-DD9F1715DD51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Tests.Snapshots", "tests\Doki.Tests.Snapshots\Doki.Tests.Snapshots.csproj", "{CAB123B6-8D28-4F18-8C23-F9BCBF434821}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssemblies", "{08041208-BE3D-4BE8-9AF7-806B73985275}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.TestAssembly.ParentRootNamespace", "tests\assemblies\Doki.TestAssembly.ParentRootNamespace\Doki.TestAssembly.ParentRootNamespace.csproj", "{2DD37B99-1A80-4F0E-B817-BA277DFC6454}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +29,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{87193A9E-0C9F-48D9-BC80-7505A34AF895} = {18CE0909-BC81-4366-8381-70C1FBB5E72B}
+		{CAB123B6-8D28-4F18-8C23-F9BCBF434821} = {8C7B5305-B599-4F08-B28B-DD9F1715DD51}
+		{08041208-BE3D-4BE8-9AF7-806B73985275} = {8C7B5305-B599-4F08-B28B-DD9F1715DD51}
+		{2DD37B99-1A80-4F0E-B817-BA277DFC6454} = {08041208-BE3D-4BE8-9AF7-806B73985275}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,5 +58,13 @@ Global
 		{2102459F-D7AB-4B7A-98A6-D76812E6C745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2102459F-D7AB-4B7A-98A6-D76812E6C745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2102459F-D7AB-4B7A-98A6-D76812E6C745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAB123B6-8D28-4F18-8C23-F9BCBF434821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB123B6-8D28-4F18-8C23-F9BCBF434821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB123B6-8D28-4F18-8C23-F9BCBF434821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB123B6-8D28-4F18-8C23-F9BCBF434821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

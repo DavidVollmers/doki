@@ -2,4 +2,4 @@
 
 namespace Doki.Output;
 
-public sealed record OutputContext(DirectoryInfo ProjectDirectory, JsonElement? Options);
+public sealed record OutputContext(DirectoryInfo WorkingDirectory, JsonElement? Options);
