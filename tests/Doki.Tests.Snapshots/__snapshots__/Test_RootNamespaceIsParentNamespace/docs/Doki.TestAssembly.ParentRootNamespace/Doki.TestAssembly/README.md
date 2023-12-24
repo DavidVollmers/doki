@@ -2,6 +2,6 @@
 
 ## Types
 
-- [Doki.TestAssembly.TestParentRootNamespaceClass](Doki.TestAssembly.TestParentRootNamespaceClass.md)
+- [TestParentRootNamespaceClass](Doki.TestAssembly.TestParentRootNamespaceClass.md)
 
 

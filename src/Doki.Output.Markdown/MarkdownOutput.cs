@@ -89,7 +89,8 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         {
             markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyToC, DokiProperties.FileName)));
 
-            var packageId = assemblyToC.Properties?.TryGetValue(DokiProperties.PackageId, out var packageIdProperty) == true
+            var packageId = assemblyToC.Properties?.TryGetValue(DokiProperties.PackageId, out var packageIdProperty) ==
+                            true
                 ? packageIdProperty?.ToString()!
                 : null;
 
@@ -204,21 +205,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             {
                 if (baseType is not TypeDocumentationReference typeDocumentationReference) yield break;
 
-                if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsDocumented, out var isDocumented) == true &&
-                    isDocumented is true)
-                {
-                    yield return markdown.BuildLinkTo(typeDocumentationReference);
-                }
-                else if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsMicrosoft, out var isMicrosoft) ==
-                         true && isMicrosoft is true)
-                {
-                    yield return new Link(typeDocumentationReference.Id,
-                        $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.Id}");
-                }
-                else
-                {
-                    yield return new Text(typeDocumentationReference.Id);
-                }
+                yield return markdown.BuildLinkTo(typeDocumentationReference);
 
                 element = typeDocumentationReference;
                 continue;

@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.TestAssembly.ParentRootNamespace", "tests\assemblies\Doki.TestAssembly.ParentRootNamespace\Doki.TestAssembly.ParentRootNamespace.csproj", "{2DD37B99-1A80-4F0E-B817-BA277DFC6454}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.TestAssembly.InheritanceChain", "tests\assemblies\Doki.TestAssembly.InheritanceChain\Doki.TestAssembly.InheritanceChain.csproj", "{4ED3E654-E076-463C-B744-A1F5111820E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.TestAssembly.InheritanceChain.Abstractions", "tests\assemblies\Doki.TestAssembly.InheritanceChain.Abstractions\Doki.TestAssembly.InheritanceChain.Abstractions.csproj", "{200E8D34-D772-4D46-A87C-6AD84F8AE731}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,8 @@ Global
 		{CAB123B6-8D28-4F18-8C23-F9BCBF434821} = {8C7B5305-B599-4F08-B28B-DD9F1715DD51}
 		{08041208-BE3D-4BE8-9AF7-806B73985275} = {8C7B5305-B599-4F08-B28B-DD9F1715DD51}
 		{2DD37B99-1A80-4F0E-B817-BA277DFC6454} = {08041208-BE3D-4BE8-9AF7-806B73985275}
+		{4ED3E654-E076-463C-B744-A1F5111820E3} = {08041208-BE3D-4BE8-9AF7-806B73985275}
+		{200E8D34-D772-4D46-A87C-6AD84F8AE731} = {08041208-BE3D-4BE8-9AF7-806B73985275}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{87193A9E-0C9F-48D9-BC80-7505A34AF895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -66,5 +72,13 @@ Global
 		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD37B99-1A80-4F0E-B817-BA277DFC6454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED3E654-E076-463C-B744-A1F5111820E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED3E654-E076-463C-B744-A1F5111820E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED3E654-E076-463C-B744-A1F5111820E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED3E654-E076-463C-B744-A1F5111820E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{200E8D34-D772-4D46-A87C-6AD84F8AE731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{200E8D34-D772-4D46-A87C-6AD84F8AE731}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{200E8D34-D772-4D46-A87C-6AD84F8AE731}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{200E8D34-D772-4D46-A87C-6AD84F8AE731}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

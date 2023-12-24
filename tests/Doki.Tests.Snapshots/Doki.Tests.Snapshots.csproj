@@ -26,6 +26,11 @@
       <ProjectReference Include="..\..\src\Doki.Output.Markdown\Doki.Output.Markdown.csproj" />
       <ProjectReference Include="..\..\src\Doki\Doki.csproj" />
       <ProjectReference Include="..\assemblies\Doki.TestAssembly.ParentRootNamespace\Doki.TestAssembly.ParentRootNamespace.csproj" />
+      <ProjectReference Include="..\assemblies\Doki.TestAssembly.InheritanceChain\Doki.TestAssembly.InheritanceChain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="__snapshots__\" />
     </ItemGroup>
 
 </Project>

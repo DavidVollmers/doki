@@ -16,5 +16,5 @@ Package: [Doki.Output.Markdown](https://www.nuget.org/packages/Doki.Output.Markd
 public sealed class MarkdownOutput : Doki.Output.OutputBase<Doki.Output.OutputOptions>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → Doki.Output.OutputBase`1[[Doki.Output.OutputOptions, Doki.Output.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]] → MarkdownOutput
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → Doki.Output.OutputBase&lt;Doki.Output.OutputOptions&gt; → MarkdownOutput
 
