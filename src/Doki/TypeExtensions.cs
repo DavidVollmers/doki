@@ -48,7 +48,7 @@ internal static class TypeExtensions
 
         if (type is {IsAbstract: true, IsSealed: true}) builder.Append(" static");
         else if (type.IsAbstract) builder.Append(" abstract");
-        else if (type.IsSealed) builder.Append(" sealed");
+        else if (type is {IsSealed: true, IsEnum: false}) builder.Append(" sealed");
 
         if (type.IsClass) builder.Append(" class");
         else if (type.IsEnum) builder.Append(" enum");
