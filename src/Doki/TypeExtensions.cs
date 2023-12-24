@@ -49,14 +49,18 @@ internal static class TypeExtensions
 
         var types = new List<string>();
 
-        if (type.BaseType != null && type.BaseType != typeof(object))
+        var interfaces = type.ImplementedInterfaces.ToArray();
+        if (type.BaseType != null)
         {
-            types.Add(type.BaseType.GetTypeInfo().GetSanitizedName(true));
+            if (type.BaseType != typeof(object))
+                types.Add(type.BaseType.GetTypeInfo().GetSanitizedName(true));
+
+            interfaces = interfaces.Except(type.BaseType.GetTypeInfo().ImplementedInterfaces).ToArray();
         }
 
-        if (type.ImplementedInterfaces.Any())
+        if (interfaces.Any())
         {
-            types.AddRange(type.ImplementedInterfaces.Select(i => i.GetTypeInfo().GetSanitizedName(true)));
+            types.AddRange(interfaces.Select(i => i.GetTypeInfo().GetSanitizedName(true)));
         }
 
         // ReSharper disable once InvertIf
