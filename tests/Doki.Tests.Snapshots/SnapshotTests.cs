@@ -24,6 +24,6 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
 
         await generator.GenerateAsync(NullLogger.Instance);
 
-        await snapshot.CreateIfNotExists().MatchSnapshotAsync(testOutputHelper);
+        await snapshot.SaveIfNotExists().MatchSnapshotAsync(testOutputHelper);
     }
 }

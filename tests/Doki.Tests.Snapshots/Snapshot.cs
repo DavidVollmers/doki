@@ -6,8 +6,9 @@ namespace Doki.Tests.Snapshots;
 
 public class Snapshot
 {
-    private bool _created;
-    private DirectoryInfo _snapshotDirectory;
+    private readonly DirectoryInfo _snapshotDirectory;
+
+    private bool _saved;
 
     public string Name { get; init; }
 
@@ -24,11 +25,11 @@ public class Snapshot
         _snapshotDirectory = new DirectoryInfo(Path.Combine(projectPath, "__snapshots__", Name));
     }
 
-    public Snapshot CreateIfNotExists()
+    public Snapshot SaveIfNotExists()
     {
         if (_snapshotDirectory.Exists) return this;
 
-        _created = true;
+        _saved = true;
 
         _snapshotDirectory.Create();
 
@@ -50,11 +51,14 @@ public class Snapshot
 
     public async Task MatchSnapshotAsync(ITestOutputHelper testOutputHelper)
     {
-        if (_created)
+        if (_saved)
         {
             throw new Exception(
-                "Cannot match snapshot when creating a new snapshot. Please verify the snapshot manually and/or run the test again.");
+                "Cannot match snapshot when saving a new snapshot. Please verify the snapshot manually and/or run the test again.");
         }
+
+        testOutputHelper.WriteLine($"Verifying snapshot '{Name}'");
+        testOutputHelper.WriteLine($"Generated snapshot directory: {Context.WorkingDirectory.FullName}");
 
         var snapshotFiles = _snapshotDirectory.GetFiles("*.*", SearchOption.AllDirectories);
         foreach (var snapshotFile in snapshotFiles)

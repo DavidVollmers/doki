@@ -5,13 +5,16 @@ namespace Doki.Output.Markdown;
 
 internal class MarkdownBuilder
 {
+    private static readonly Func<string, bool>
+        PathPartFilter = p => !string.IsNullOrWhiteSpace(p) && !p.EndsWith(".md");
+
     private readonly string[] _currentPathParts;
     private readonly List<Element> _elements = [];
 
     public MarkdownBuilder(string currentPath)
     {
         var currentPathParts = currentPath.Split('/');
-        _currentPathParts = currentPathParts.Where(p => !p.EndsWith(".md")).ToArray();
+        _currentPathParts = currentPathParts.Where(PathPartFilter).ToArray();
     }
 
     public MarkdownBuilder Add(Element element)
@@ -28,34 +31,24 @@ internal class MarkdownBuilder
         return this;
     }
 
-    public string BuildRelativePath(string to)
+    public string BuildRelativePath(string to, params string[] additionalParts)
     {
-        var path = to.Split('/').Where(p => !p.EndsWith(".md")).ToArray();
+        var path = to.Split('/').Where(PathPartFilter).ToArray();
 
-        var currentPathIndex = _currentPathParts.Length - 1;
-        var pathIndex = 0;
+        var commonPathParts = _currentPathParts.Zip(path, (a, b) => a == b).TakeWhile(x => x).Count();
 
-        //TODO fix this
-        while (currentPathIndex >= 0 && pathIndex < path.Length &&
-               _currentPathParts[currentPathIndex] == path[pathIndex])
+        var relativePathParts = new List<string>();
+
+        for (var i = 0; i < _currentPathParts.Length - commonPathParts; i++)
         {
-            currentPathIndex--;
-            pathIndex++;
+            relativePathParts.Add("..");
         }
 
-        var resultPath = new List<string>();
+        relativePathParts.AddRange(path.Skip(commonPathParts));
+        
+        relativePathParts.AddRange(additionalParts);
 
-        for (var i = 0; i < currentPathIndex; i++)
-        {
-            resultPath.Add("..");
-        }
-
-        for (var i = pathIndex; i < path.Length; i++)
-        {
-            resultPath.Add(path[i]);
-        }
-
-        return string.Join('/', resultPath);
+        return relativePathParts.CombineToPath();
     }
 
     public override string ToString()

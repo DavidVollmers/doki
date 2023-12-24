@@ -4,7 +4,7 @@ using Doki.Output.Markdown.Elements;
 namespace Doki.Output.Markdown;
 
 [DokiOutput("Doki.Output.Markdown")]
-public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
+public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
 {
     public override async Task WriteAsync(TableOfContents tableOfContents,
         CancellationToken cancellationToken = default)
@@ -13,8 +13,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
         var currentPath = tableOfContents.GetPath();
 
-        var tableOfContentsFile =
-            new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
+        var tableOfContentsFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
 
         if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
 
@@ -44,7 +43,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x =>
-                        (Element) new Link(x.Id, markdown.BuildRelativePath(x) + "/README.md")).ToList()
+                        (Element) new Link(x.Id, markdown.BuildRelativePath(x, "README.md"))).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -66,9 +65,9 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
 
-        var currentPath = typeDocumentation.GetPath(".md");
+        var currentPath = typeDocumentation.GetPath();
 
-        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath));
+        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath + ".md"));
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
@@ -84,7 +83,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         if (namespaceToC != null)
         {
             markdown.Add(new Text("Namespace: ")
-                .Append(new Link(namespaceToC.Id, markdown.BuildRelativePath(namespaceToC) + "/README.md")));
+                .Append(new Link(namespaceToC.Id, markdown.BuildRelativePath(namespaceToC, "README.md"))));
         }
 
         var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
@@ -95,7 +94,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 : assemblyToC.Id;
 
             markdown.Add(new Text("Assembly: ")
-                .Append(new Link(assemblyName, markdown.BuildRelativePath(assemblyToC) + "/README.md")));
+                .Append(new Link(assemblyName, markdown.BuildRelativePath(assemblyToC, "README.md"))));
 
             var packageId = assemblyToC.Properties?.TryGetValue("PackageId", out var packageIdProperty) == true
                 ? packageIdProperty?.ToString()!
@@ -109,7 +108,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                     .Append(new Link(packageId, string.Format("https://www.nuget.org/packages/{0}", packageId))));
             }
         }
-        
+
         markdown.Add(Element.Separator);
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
@@ -155,7 +154,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             await WriteAsync(assemblyToC, cancellationToken);
 
             var container = new IndentContainer(1, false);
-            container.Add(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC) + "/README.md"));
+            container.Add(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC, "README.md")));
 
             if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
             {
@@ -196,7 +195,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
     private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, DokiElement element, int indent)
     {
-        var relativePath = markdown.BuildRelativePath(element, ".md");
+        var relativePath = markdown.BuildRelativePath(element) + ".md";
         if (element is not TableOfContents toc || toc.Children.Length == 0) return new Link(element.Id, relativePath);
         return new SubList(new Link(toc.Id, relativePath), indent)
         {
@@ -216,7 +215,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                     isDocumented is true)
                 {
                     yield return new Link(typeDocumentationReference.Id,
-                        markdown.BuildRelativePath(typeDocumentationReference, ".md"));
+                        markdown.BuildRelativePath(typeDocumentationReference) + ".md");
                 }
                 else if (typeDocumentationReference.Properties?.TryGetValue("IsMicrosoft", out var isMicrosoft) ==
                          true && isMicrosoft is true)

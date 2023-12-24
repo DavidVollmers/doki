@@ -2,12 +2,13 @@
 
 internal static class InternalExtensions
 {
-    public static string BuildRelativePath(this MarkdownBuilder builder, DokiElement to, string? extension = null)
+    public static string BuildRelativePath(this MarkdownBuilder builder, DokiElement to,
+        params string[] additionalParts)
     {
-        return builder.BuildRelativePath(to.GetPath(extension));
+        return builder.BuildRelativePath(to.GetPath(), additionalParts);
     }
 
-    public static string GetPath(this DokiElement element, string? extension = null)
+    public static string GetPath(this DokiElement element)
     {
         var pathParts = new List<string>();
 
@@ -22,9 +23,11 @@ internal static class InternalExtensions
 
         pathParts.Reverse();
 
-        var path = string.Join('/', pathParts);
-        if (extension != null) path += extension;
+        return pathParts.CombineToPath();
+    }
 
-        return path;
+    public static string CombineToPath(this ICollection<string> parts)
+    {
+        return parts.Count == 0 ? string.Empty : string.Join('/', parts);
     }
 }
