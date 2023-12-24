@@ -2,9 +2,9 @@
 
 ## Definition
 
-Namespace: [Doki.TestAssembly](../../Doki.TestAssembly.ParentRootNamespace/Doki.TestAssembly/README.md)
+Namespace: [Doki.TestAssembly](README.md)
 
-Assembly: [Doki.TestAssembly.ParentRootNamespace.dll](../../Doki.TestAssembly.ParentRootNamespace/README.md)
+Assembly: [Doki.TestAssembly.ParentRootNamespace.dll](../README.md)
 
 ---
 

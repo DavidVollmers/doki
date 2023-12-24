@@ -3,10 +3,16 @@ using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
-internal class MarkdownBuilder(string currentPath)
+internal class MarkdownBuilder
 {
-    private readonly string[] _currentPathParts = currentPath.Split('/');
+    private readonly string[] _currentPathParts;
     private readonly List<Element> _elements = [];
+
+    public MarkdownBuilder(string currentPath)
+    {
+        var currentPathParts = currentPath.Split('/');
+        _currentPathParts = currentPathParts.Where(p => !p.EndsWith(".md")).ToArray();
+    }
 
     public MarkdownBuilder Add(Element element)
     {
@@ -24,11 +30,12 @@ internal class MarkdownBuilder(string currentPath)
 
     public string BuildRelativePath(string to)
     {
-        var path = to.Split('/');
+        var path = to.Split('/').Where(p => !p.EndsWith(".md")).ToArray();
 
         var currentPathIndex = _currentPathParts.Length - 1;
         var pathIndex = 0;
 
+        //TODO fix this
         while (currentPathIndex >= 0 && pathIndex < path.Length &&
                _currentPathParts[currentPathIndex] == path[pathIndex])
         {
