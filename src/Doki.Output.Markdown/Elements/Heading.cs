@@ -11,6 +11,6 @@ internal record Heading : Text
 
     public override string ToString()
     {
-        return $"{new string('#', _level)} {Builder}";
+        return $"{new string('#', _level)} {GetText()}";
     }
 }

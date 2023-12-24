@@ -6,32 +6,38 @@ internal record Text : Element
 {
     public static Text Empty => new(string.Empty);
 
-    protected StringBuilder Builder { get; } = new();
+    private readonly StringBuilder _builder = new();
 
-    public bool IsEmpty => Builder.Length == 0;
-    
+    public bool IsEmpty => _builder.Length == 0;
+
     public bool IsBold { get; init; }
-    
+
     public Text(string value)
     {
-        Builder.Append(value);
+        _builder.Append(value);
     }
 
     public Text Append(string value)
     {
-        Builder.Append(value);
+        _builder.Append(value);
         return this;
     }
 
     public Text Append(Element element)
     {
-        Builder.Append(element);
+        _builder.Append(element);
         return this;
     }
 
     public override string ToString()
     {
+        return GetText();
+    }
+
+    protected string GetText()
+    {
         if (IsEmpty) return string.Empty;
-        return IsBold ? $"**{Builder}**" : Builder.ToString();
+        var escaped = _builder.ToString().Replace("<", "&lt;").Replace(">", "&gt;");
+        return IsBold ? $"**{escaped}**" : escaped;
     }
 }
