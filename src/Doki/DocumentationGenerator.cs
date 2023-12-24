@@ -188,7 +188,8 @@ public sealed class DocumentationGenerator
                 {"FullName", typeInfo.GetSanitizedName(true)},
                 {"Summary", summary?.Trim()},
                 {"Definition", typeInfo.GetDefinition()},
-                {"IsDocumented", true}
+                {"IsDocumented", true},
+                {"IsMicrosoft", false}
             }
         };
 
@@ -197,6 +198,10 @@ public sealed class DocumentationGenerator
         while (baseType != null)
         {
             var baseTypeInfo = baseType.GetTypeInfo();
+
+            var baseTypeAssembly = baseTypeInfo.Assembly.GetName();
+            var isMicrosoft = baseTypeAssembly.Name!.StartsWith("System") ||
+                              baseTypeAssembly.Name.StartsWith("Microsoft");
 
             var typeReference = new TypeDocumentationReference
             {
@@ -208,7 +213,8 @@ public sealed class DocumentationGenerator
                     {"Name", baseTypeInfo.GetSanitizedName()},
                     {"FullName", baseTypeInfo.GetSanitizedName(true)},
                     {"Definition", baseTypeInfo.GetDefinition()},
-                    {"IsDocumented", _assemblies.ContainsKey(baseTypeInfo.Assembly)}
+                    {"IsDocumented", _assemblies.ContainsKey(baseTypeInfo.Assembly)},
+                    {"IsMicrosoft", isMicrosoft}
                 }
             };
 

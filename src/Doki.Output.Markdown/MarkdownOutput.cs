@@ -129,6 +129,9 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 inheritanceText.Append(inheritanceChain[i]);
             }
 
+            inheritanceText.Append(" \u2192 ");
+            inheritanceText.Append(name);
+
             markdown.Add(inheritanceText);
         }
 
@@ -187,9 +190,8 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
     private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, DokiElement element, int indent)
     {
-        if (element is not TableOfContents toc) return new Text(element.Id);
-        var relativePath = markdown.BuildRelativePath(toc, ".md");
-        if (toc.Children.Length == 0) return new Link(toc.Id, relativePath);
+        var relativePath = markdown.BuildRelativePath(element, ".md");
+        if (element is not TableOfContents toc || toc.Children.Length == 0) return new Link(element.Id, relativePath);
         return new SubList(new Link(toc.Id, relativePath), indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
@@ -209,6 +211,12 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 {
                     yield return new Link(typeDocumentationReference.Id,
                         markdown.BuildRelativePath(typeDocumentationReference, ".md"));
+                }
+                else if (typeDocumentationReference.Properties?.TryGetValue("IsMicrosoft", out var isMicrosoft) ==
+                         true && isMicrosoft is true)
+                {
+                    yield return new Link(typeDocumentationReference.Id,
+                        $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.Id}");
                 }
                 else
                 {

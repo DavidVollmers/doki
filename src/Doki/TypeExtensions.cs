@@ -26,7 +26,7 @@ internal static class TypeExtensions
             name += $"<{string.Join(", ", args)}>";
         }
 
-        if (!withNamespace) FullNameCache.Add(type.FullName!, name);
+        if (withNamespace) FullNameCache.Add(type.FullName!, name);
         else NameCache.Add(type.FullName!, name);
         return name;
     }
