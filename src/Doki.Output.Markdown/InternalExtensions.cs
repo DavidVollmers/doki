@@ -19,10 +19,10 @@ internal static class InternalExtensions
 
         if (textProperty == null && to is TypeDocumentationReference typeDocumentationReference)
         {
-            textProperty = "FullName";
-            if (typeDocumentationReference.Properties?.TryGetValue("IsDocumented", out var isDocumented) == true &&
+            textProperty = DokiProperties.FullName;
+            if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsDocumented, out var isDocumented) == true &&
                 isDocumented is true)
-                textProperty = "Name";
+                textProperty = DokiProperties.Name;
         }
 
         var text = to.Id;

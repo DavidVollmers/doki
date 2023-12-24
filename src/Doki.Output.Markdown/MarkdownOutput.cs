@@ -20,7 +20,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         var markdown = new MarkdownBuilder(currentPath)
             .Add(new Heading(tableOfContents.Id, 1));
 
-        if (tableOfContents.Properties?.TryGetValue("Description", out var description) == true)
+        if (tableOfContents.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
         {
             markdown.Add(new Text(description?.ToString()!));
         }
@@ -70,13 +70,13 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
-        var name = typeDocumentation.Properties?.TryGetValue("Name", out var nameProperty) == true
+        var name = typeDocumentation.Properties?.TryGetValue(DokiProperties.Name, out var nameProperty) == true
             ? nameProperty?.ToString()!
             : typeDocumentation.Id;
 
         var markdown = new MarkdownBuilder(currentPath)
             .Add(new Heading(name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
-            .Add(new Heading("Definition", 2));
+            .Add(new Heading(DokiProperties.Definition, 2));
 
         var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Namespace);
         if (namespaceToC != null)
@@ -87,9 +87,9 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
         if (assemblyToC != null)
         {
-            markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyToC, "FileName")));
+            markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyToC, DokiProperties.FileName)));
 
-            var packageId = assemblyToC.Properties?.TryGetValue("PackageId", out var packageIdProperty) == true
+            var packageId = assemblyToC.Properties?.TryGetValue(DokiProperties.PackageId, out var packageIdProperty) == true
                 ? packageIdProperty?.ToString()!
                 : null;
 
@@ -104,7 +104,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         markdown.Add(Element.Separator);
 
-        if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
+        if (typeDocumentation.Properties?.TryGetValue(DokiProperties.Summary, out var summary) == true)
         {
             markdown.Add(new Text(summary?.ToString()!)
             {
@@ -112,7 +112,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             });
         }
 
-        if (typeDocumentation.Properties?.TryGetValue("Definition", out var definition) == true)
+        if (typeDocumentation.Properties?.TryGetValue(DokiProperties.Definition, out var definition) == true)
         {
             markdown.Add(new Code(definition?.ToString()!));
         }
@@ -149,7 +149,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             var container = new IndentContainer(1, false);
             container.Add(markdown.BuildLinkTo(assemblyToC));
 
-            if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
+            if (assemblyToC.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
             {
                 container.Add(Text.Empty);
                 container.Add(new Text(description?.ToString()!));
@@ -204,12 +204,12 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             {
                 if (baseType is not TypeDocumentationReference typeDocumentationReference) yield break;
 
-                if (typeDocumentationReference.Properties?.TryGetValue("IsDocumented", out var isDocumented) == true &&
+                if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsDocumented, out var isDocumented) == true &&
                     isDocumented is true)
                 {
                     yield return markdown.BuildLinkTo(typeDocumentationReference);
                 }
-                else if (typeDocumentationReference.Properties?.TryGetValue("IsMicrosoft", out var isMicrosoft) ==
+                else if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsMicrosoft, out var isMicrosoft) ==
                          true && isMicrosoft is true)
                 {
                     yield return new Link(typeDocumentationReference.Id,

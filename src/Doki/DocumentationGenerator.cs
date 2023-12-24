@@ -92,11 +92,11 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Assembly,
                 Properties = new Dictionary<string, object?>
                 {
-                    {"Description", description},
-                    {"FileName", assembly.Location.Split(Path.DirectorySeparatorChar).Last()},
-                    {"Name", assemblyName.Name},
-                    {"Version", assemblyName.Version?.ToString()},
-                    {"PackageId", packageId}
+                    {DokiProperties.Description, description},
+                    {DokiProperties.FileName, assembly.Location.Split(Path.DirectorySeparatorChar).Last()},
+                    {DokiProperties.Name, assemblyName.Name},
+                    {DokiProperties.Version, assemblyName.Version?.ToString()},
+                    {DokiProperties.PackageId, packageId}
                 }
             };
 
@@ -184,12 +184,12 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Properties = new Dictionary<string, object?>
             {
-                {"Name", typeInfo.GetSanitizedName()},
-                {"FullName", typeInfo.GetSanitizedName(true)},
-                {"Summary", summary?.Trim()},
-                {"Definition", typeInfo.GetDefinition()},
-                {"IsDocumented", true},
-                {"IsMicrosoft", false}
+                {DokiProperties.Name, typeInfo.GetSanitizedName()},
+                {DokiProperties.FullName, typeInfo.GetSanitizedName(true)},
+                {DokiProperties.Summary, summary?.Trim()},
+                {DokiProperties.Definition, typeInfo.GetDefinition()},
+                {DokiProperties.IsDocumented, true},
+                {DokiProperties.IsMicrosoft, false}
             }
         };
 
@@ -210,11 +210,11 @@ public sealed class DocumentationGenerator
                 Parent = baseParent,
                 Properties = new Dictionary<string, object?>
                 {
-                    {"Name", baseTypeInfo.GetSanitizedName()},
-                    {"FullName", baseTypeInfo.GetSanitizedName(true)},
-                    {"Definition", baseTypeInfo.GetDefinition()},
-                    {"IsDocumented", _assemblies.ContainsKey(baseTypeInfo.Assembly)},
-                    {"IsMicrosoft", isMicrosoft}
+                    {DokiProperties.Name, baseTypeInfo.GetSanitizedName()},
+                    {DokiProperties.FullName, baseTypeInfo.GetSanitizedName(true)},
+                    {DokiProperties.Definition, baseTypeInfo.GetDefinition()},
+                    {DokiProperties.IsDocumented, _assemblies.ContainsKey(baseTypeInfo.Assembly)},
+                    {DokiProperties.IsMicrosoft, isMicrosoft}
                 }
             };
 
