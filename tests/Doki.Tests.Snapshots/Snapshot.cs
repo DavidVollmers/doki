@@ -7,6 +7,7 @@ namespace Doki.Tests.Snapshots;
 public class Snapshot
 {
     private bool _created;
+    private DirectoryInfo _snapshotDirectory;
 
     public string Name { get; init; }
 
@@ -16,23 +17,23 @@ public class Snapshot
     private Snapshot(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+
+        var projectPath = Path.Combine(new FileInfo(typeof(Snapshot).Assembly.Location).DirectoryName!, "..", "..",
+            "..");
+
+        _snapshotDirectory = new DirectoryInfo(Path.Combine(projectPath, "__snapshots__", Name));
     }
 
     public Snapshot CreateIfNotExists()
     {
-        var projectPath = Path.Combine(new FileInfo(typeof(Snapshot).Assembly.Location).DirectoryName!, "..", "..",
-            "..");
-
-        var snapshotDirectory = new DirectoryInfo(Path.Combine(projectPath, "__snapshots__", Name));
-
-        if (snapshotDirectory.Exists) return this;
+        if (_snapshotDirectory.Exists) return this;
 
         _created = true;
 
-        snapshotDirectory.Create();
+        _snapshotDirectory.Create();
 
         var sourcePath = Context.WorkingDirectory.FullName;
-        var targetPath = snapshotDirectory.FullName;
+        var targetPath = _snapshotDirectory.FullName;
 
         foreach (var dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
         {
@@ -55,7 +56,32 @@ public class Snapshot
                 "Cannot match snapshot when creating a new snapshot. Please verify the snapshot manually and/or run the test again.");
         }
 
-        Assert.False(true);
+        var snapshotFiles = _snapshotDirectory.GetFiles("*.*", SearchOption.AllDirectories);
+        foreach (var snapshotFile in snapshotFiles)
+        {
+            var relativePath = snapshotFile.FullName.Replace(_snapshotDirectory.FullName, "");
+            var sourceFile = new FileInfo(Context.WorkingDirectory.FullName + relativePath);
+
+            if (!sourceFile.Exists)
+            {
+                throw new FileNotFoundException($"Missing snapshot file: {relativePath}");
+            }
+
+            var snapshotContent = await File.ReadAllTextAsync(snapshotFile.FullName);
+            var sourceContent = await File.ReadAllTextAsync(sourceFile.FullName);
+
+            if (snapshotContent != sourceContent)
+            {
+                testOutputHelper.WriteLine($"Snapshot file '{snapshotFile.FullName}' does not match.");
+                testOutputHelper.WriteLine("Expected:");
+                testOutputHelper.WriteLine(snapshotContent);
+                testOutputHelper.WriteLine("Actual:");
+                testOutputHelper.WriteLine(sourceContent);
+
+                throw new Exception(
+                    $"Snapshot file '{snapshotFile.FullName}' does not match. See test output for details.");
+            }
+        }
     }
 
     public static Snapshot Create([CallerMemberName] string? name = null)
