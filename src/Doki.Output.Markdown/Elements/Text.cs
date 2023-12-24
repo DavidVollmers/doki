@@ -10,6 +10,8 @@ internal record Text : Element
 
     public bool IsEmpty => Builder.Length == 0;
     
+    public bool IsBold { get; init; }
+    
     public Text(string value)
     {
         Builder.Append(value);
@@ -29,6 +31,6 @@ internal record Text : Element
 
     public override string ToString()
     {
-        return Builder.ToString();
+        return IsBold ? $"**{Builder}**" : Builder.ToString();
     }
 }

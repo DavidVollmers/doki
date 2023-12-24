@@ -111,7 +111,10 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
         if (typeDocumentation.Properties?.TryGetValue("Summary", out var summary) == true)
         {
-            markdown.Add(new Text(summary?.ToString()!));
+            markdown.Add(new Text(summary?.ToString()!)
+            {
+                IsBold = true
+            });
         }
 
         if (typeDocumentation.Properties?.TryGetValue("Definition", out var definition) == true)
