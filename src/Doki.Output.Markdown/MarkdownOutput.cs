@@ -65,9 +65,9 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
 
-        var currentPath = typeDocumentation.GetPath();
+        var currentPath = typeDocumentation.GetPath() + ".md";
 
-        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath + ".md"));
+        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath));
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
