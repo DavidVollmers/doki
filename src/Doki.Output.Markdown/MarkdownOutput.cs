@@ -42,8 +42,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 markdown.Add(new Heading("Namespaces", 2));
                 markdown.Add(new List
                 {
-                    Items = tableOfContents.Children.Select(x =>
-                        (Element) new Link(x.Id, markdown.BuildRelativePath(x, "README.md"))).ToList()
+                    Items = tableOfContents.Children.Select(x => (Element) markdown.BuildLinkTo(x)).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -82,19 +81,13 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Namespace);
         if (namespaceToC != null)
         {
-            markdown.Add(new Text("Namespace: ")
-                .Append(new Link(namespaceToC.Id, markdown.BuildRelativePath(namespaceToC, "README.md"))));
+            markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceToC)));
         }
 
         var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
         if (assemblyToC != null)
         {
-            var assemblyName = assemblyToC.Properties?.TryGetValue("FileName", out var assemblyNameProperty) == true
-                ? assemblyNameProperty?.ToString()!
-                : assemblyToC.Id;
-
-            markdown.Add(new Text("Assembly: ")
-                .Append(new Link(assemblyName, markdown.BuildRelativePath(assemblyToC, "README.md"))));
+            markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyToC, "FileName")));
 
             var packageId = assemblyToC.Properties?.TryGetValue("PackageId", out var packageIdProperty) == true
                 ? packageIdProperty?.ToString()!
@@ -154,7 +147,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             await WriteAsync(assemblyToC, cancellationToken);
 
             var container = new IndentContainer(1, false);
-            container.Add(new Link(assemblyToC.Id, markdown.BuildRelativePath(assemblyToC, "README.md")));
+            container.Add(markdown.BuildLinkTo(assemblyToC));
 
             if (assemblyToC.Properties?.TryGetValue("Description", out var description) == true)
             {
@@ -195,9 +188,9 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
     private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, DokiElement element, int indent)
     {
-        var relativePath = markdown.BuildRelativePath(element) + ".md";
-        if (element is not TableOfContents toc || toc.Children.Length == 0) return new Link(element.Id, relativePath);
-        return new SubList(new Link(toc.Id, relativePath), indent)
+        var link = markdown.BuildLinkTo(element);
+        if (element is not TableOfContents toc || toc.Children.Length == 0) return link;
+        return new SubList(link, indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
         };
@@ -214,8 +207,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 if (typeDocumentationReference.Properties?.TryGetValue("IsDocumented", out var isDocumented) == true &&
                     isDocumented is true)
                 {
-                    yield return new Link(typeDocumentationReference.Id,
-                        markdown.BuildRelativePath(typeDocumentationReference) + ".md");
+                    yield return markdown.BuildLinkTo(typeDocumentationReference);
                 }
                 else if (typeDocumentationReference.Properties?.TryGetValue("IsMicrosoft", out var isMicrosoft) ==
                          true && isMicrosoft is true)

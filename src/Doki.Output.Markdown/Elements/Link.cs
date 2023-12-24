@@ -4,6 +4,6 @@ internal record Link(string Text, string Url) : Element
 {
     public override string ToString()
     {
-        return $"[{Text}]({Url})";
+        return $"[{Text.Replace("`", "\\`")}]({Url})";
     }
 }

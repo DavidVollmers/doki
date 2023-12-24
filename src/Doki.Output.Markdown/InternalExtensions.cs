@@ -1,4 +1,6 @@
-﻿namespace Doki.Output.Markdown;
+﻿using Doki.Output.Markdown.Elements;
+
+namespace Doki.Output.Markdown;
 
 internal static class InternalExtensions
 {
@@ -6,6 +8,28 @@ internal static class InternalExtensions
         params string[] additionalParts)
     {
         return builder.BuildRelativePath(to.GetPath(), additionalParts);
+    }
+
+    public static Link BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? textProperty = null)
+    {
+        var indexFile = to.Content is DokiContent.Assemblies or DokiContent.Assembly or DokiContent.Namespace;
+
+        var relativePath =
+            indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
+
+        if (textProperty == null && to is TypeDocumentationReference typeDocumentationReference)
+        {
+            textProperty = "FullName";
+            if (typeDocumentationReference.Properties?.TryGetValue("IsDocumented", out var isDocumented) == true &&
+                isDocumented is true)
+                textProperty = "Name";
+        }
+
+        var text = to.Id;
+        if (textProperty != null && to.Properties?.TryGetValue(textProperty, out var name) == true && name != null)
+            text = name.ToString()!;
+
+        return new Link(text, relativePath);
     }
 
     public static string GetPath(this DokiElement element)
