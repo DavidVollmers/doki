@@ -1,5 +1,5 @@
 ﻿namespace Doki;
 
-public sealed record TypeDocumentation : DokiElement
+public sealed record TypeDocumentation : TypeDocumentationReference
 {
 }

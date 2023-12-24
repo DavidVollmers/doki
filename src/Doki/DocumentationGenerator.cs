@@ -92,11 +92,11 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Assembly,
                 Properties = new Dictionary<string, object?>
                 {
-                    { "Description", description },
-                    { "FileName", assembly.Location.Split(Path.DirectorySeparatorChar).Last() },
-                    { "Name", assemblyName.Name },
-                    { "Version", assemblyName.Version?.ToString() },
-                    { "PackageId", packageId }
+                    {"Description", description},
+                    {"FileName", assembly.Location.Split(Path.DirectorySeparatorChar).Last()},
+                    {"Name", assemblyName.Name},
+                    {"Version", assemblyName.Version?.ToString()},
+                    {"PackageId", packageId}
                 }
             };
 
@@ -133,13 +133,13 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Namespace
             };
 
-            var children = new List<TableOfContents>();
+            var children = new List<DokiElement>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
                 var typeDocumentation =
                     await GenerateTypeDocumentationAsync(type, namespaceToC, logger, cancellationToken);
 
-                children.Add(new TableOfContents
+                children.Add(new TypeDocumentationReference
                 {
                     Id = typeDocumentation.Id,
                     Parent = namespaceToC,
@@ -184,12 +184,39 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Properties = new Dictionary<string, object?>
             {
-                { "Name", typeInfo.GetSanitizedName() },
-                { "FullName", typeInfo.GetSanitizedName(true) },
-                { "Summary", summary?.Trim() },
-                { "Definition", typeInfo.GetDefinition() }
+                {"Name", typeInfo.GetSanitizedName()},
+                {"FullName", typeInfo.GetSanitizedName(true)},
+                {"Summary", summary?.Trim()},
+                {"Definition", typeInfo.GetDefinition()},
+                {"IsDocumented", true}
             }
         };
+
+        var baseType = typeInfo.BaseType;
+        DokiElement baseParent = typeDocumentation;
+        while (baseType != null)
+        {
+            var baseTypeInfo = baseType.GetTypeInfo();
+
+            var typeReference = new TypeDocumentationReference
+            {
+                Id = baseTypeInfo.FullName!,
+                Content = DokiContent.TypeReference,
+                Parent = baseParent,
+                Properties = new Dictionary<string, object?>
+                {
+                    {"Name", baseTypeInfo.GetSanitizedName()},
+                    {"FullName", baseTypeInfo.GetSanitizedName(true)},
+                    {"Definition", baseTypeInfo.GetDefinition()},
+                    {"IsDocumented", _assemblies.ContainsKey(baseTypeInfo.Assembly)}
+                }
+            };
+
+            ((Dictionary<string, object?>) baseParent.Properties).Add("BaseType", typeReference);
+
+            baseType = baseTypeInfo.BaseType;
+            baseParent = typeReference;
+        }
 
         foreach (var output in _outputs)
         {

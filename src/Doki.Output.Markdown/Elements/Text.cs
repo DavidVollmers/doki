@@ -4,10 +4,12 @@ namespace Doki.Output.Markdown.Elements;
 
 internal record Text : Element
 {
-    public static readonly Text Empty = new(string.Empty);
+    public static Text Empty => new(string.Empty);
 
     protected StringBuilder Builder { get; } = new();
 
+    public bool IsEmpty => Builder.Length == 0;
+    
     public Text(string value)
     {
         Builder.Append(value);

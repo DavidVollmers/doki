@@ -5,8 +5,15 @@ namespace Doki;
 
 internal static class TypeExtensions
 {
+    private static readonly Dictionary<string, string> NameCache = new();
+    private static readonly Dictionary<string, string> FullNameCache = new();
+    private static readonly Dictionary<string, string> DefinitionCache = new();
+
     public static string GetSanitizedName(this TypeInfo type, bool withNamespace = false)
     {
+        if (!withNamespace && NameCache.TryGetValue(type.FullName!, out var cached)) return cached;
+        if (withNamespace && FullNameCache.TryGetValue(type.FullName!, out cached)) return cached;
+
         var name = withNamespace ? type.FullName! : type.Name;
         // ReSharper disable once InvertIf
         if (type.IsGenericType)
@@ -19,11 +26,15 @@ internal static class TypeExtensions
             name += $"<{string.Join(", ", args)}>";
         }
 
+        if (!withNamespace) FullNameCache.Add(type.FullName!, name);
+        else NameCache.Add(type.FullName!, name);
         return name;
     }
 
     public static string GetDefinition(this TypeInfo type)
     {
+        if (DefinitionCache.TryGetValue(type.FullName!, out var cached)) return cached;
+
         var builder = new StringBuilder();
 
         if (type.IsPublic) builder.Append("public");
@@ -35,7 +46,7 @@ internal static class TypeExtensions
         else if (type.IsNestedFamANDAssem) builder.Append("private protected");
         else if (type.IsNestedFamORAssem) builder.Append("protected internal");
 
-        if (type is { IsAbstract: true, IsSealed: true }) builder.Append(" static");
+        if (type is {IsAbstract: true, IsSealed: true}) builder.Append(" static");
         else if (type.IsAbstract) builder.Append(" abstract");
         else if (type.IsSealed) builder.Append(" sealed");
 
@@ -58,18 +69,18 @@ internal static class TypeExtensions
             interfaces = interfaces.Except(type.BaseType.GetTypeInfo().ImplementedInterfaces).ToArray();
         }
 
-        if (interfaces.Any())
+        if (interfaces.Length != 0)
         {
             types.AddRange(interfaces.Select(i => i.GetTypeInfo().GetSanitizedName(true)));
         }
 
-        // ReSharper disable once InvertIf
-        if (types.Any())
+        if (types.Count != 0)
         {
             builder.Append(" : ");
             builder.Append(string.Join(", ", types));
         }
 
+        DefinitionCache.Add(type.FullName!, builder.ToString());
         return builder.ToString();
     }
 }

@@ -33,8 +33,10 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 await BuildAssembliesTableOfContentsAsync(markdown, tableOfContents, cancellationToken);
                 break;
             case DokiContent.Assembly:
-                foreach (var namespaceToC in tableOfContents.Children)
+                foreach (var child in tableOfContents.Children)
                 {
+                    if (child is not TableOfContents namespaceToC) continue;
+
                     await WriteAsync(namespaceToC, cancellationToken);
                 }
 
@@ -42,7 +44,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
                 markdown.Add(new List
                 {
                     Items = tableOfContents.Children.Select(x =>
-                        (Element)new Link(x.Id, markdown.BuildRelativePath(x) + "/README.md")).ToList()
+                        (Element) new Link(x.Id, markdown.BuildRelativePath(x) + "/README.md")).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -117,6 +119,19 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
             markdown.Add(new Code(definition?.ToString()!));
         }
 
+        var inheritanceChain = BuildInheritanceChain(markdown, typeDocumentation).Reverse().ToArray();
+        if (inheritanceChain.Length != 0)
+        {
+            var inheritanceText = new Text("Inheritance: ");
+            for (var i = 0; i < inheritanceChain.Length; i++)
+            {
+                if (i != 0) inheritanceText.Append(" \u2192 ");
+                inheritanceText.Append(inheritanceChain[i]);
+            }
+
+            markdown.Add(inheritanceText);
+        }
+
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
 
@@ -124,8 +139,10 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         CancellationToken cancellationToken)
     {
         var items = new List<Element>();
-        foreach (var assemblyToC in tableOfContents.Children)
+        foreach (var child in tableOfContents.Children)
         {
+            if (child is not TableOfContents assemblyToC) continue;
+
             await WriteAsync(assemblyToC, cancellationToken);
 
             var container = new IndentContainer(1, false);
@@ -155,7 +172,7 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
 
             var replacementRegex = new Regex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline);
             var result = replacementRegex.Matches(content);
-            if (result is [{ Groups.Count: 3 }])
+            if (result is [{Groups.Count: 3}])
             {
                 content = replacementRegex.Replace(content,
                     $"{result[0].Groups[1].Value}{Environment.NewLine}{markdown}{Environment.NewLine}{result[0].Groups[2].Value}");
@@ -168,13 +185,41 @@ public sealed partial class MarkdownOutput(OutputContext context) : OutputBase<O
         await File.WriteAllTextAsync(fileInfo.FullName, markdown.ToString(), cancellationToken);
     }
 
-    private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, TableOfContents toc, int indent)
+    private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, DokiElement element, int indent)
     {
+        if (element is not TableOfContents toc) return new Text(element.Id);
         var relativePath = markdown.BuildRelativePath(toc, ".md");
         if (toc.Children.Length == 0) return new Link(toc.Id, relativePath);
         return new SubList(new Link(toc.Id, relativePath), indent)
         {
             Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
         };
+    }
+
+    private static IEnumerable<Element> BuildInheritanceChain(MarkdownBuilder markdown, DokiElement element)
+    {
+        while (true)
+        {
+            if (element.Properties?.TryGetValue("BaseType", out var baseType) == true)
+            {
+                if (baseType is not TypeDocumentationReference typeDocumentationReference) yield break;
+
+                if (typeDocumentationReference.Properties?.TryGetValue("IsDocumented", out var isDocumented) == true &&
+                    isDocumented is true)
+                {
+                    yield return new Link(typeDocumentationReference.Id,
+                        markdown.BuildRelativePath(typeDocumentationReference, ".md"));
+                }
+                else
+                {
+                    yield return new Text(typeDocumentationReference.Id);
+                }
+
+                element = typeDocumentationReference;
+                continue;
+            }
+
+            break;
+        }
     }
 }
