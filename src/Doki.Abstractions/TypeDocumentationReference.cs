@@ -1,6 +1,6 @@
 ﻿namespace Doki;
 
-public record TypeDocumentationReference : DokiElement
+public record TypeDocumentationReference : DocumentationObject
 {
     public string Name { get; internal init; } = null!;
 
@@ -20,12 +20,12 @@ public record TypeDocumentationReference : DokiElement
     
     public TypeDocumentationReference()
     {
-        Content = DokiContent.TypeReference;
+        Content = DocumentationContent.TypeReference;
     }
 
     public TypeDocumentationReference(TypeDocumentationReference reference) : base(reference)
     {
-        Content = DokiContent.TypeReference;
+        Content = DocumentationContent.TypeReference;
         Name = reference.Name;
         FullName = reference.FullName;
         Definition = reference.Definition;

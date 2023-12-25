@@ -55,10 +55,10 @@ public sealed class DocumentationGenerator
         {
             Id = ContentList.Assemblies,
             Name = ContentList.Assemblies,
-            Content = DokiContent.Assemblies
+            Content = DocumentationContent.Assemblies
         };
 
-        var items = new List<DokiElement>();
+        var items = new List<DocumentationObject>();
         foreach (var (assembly, _) in _assemblies)
         {
             var assemblyDocumentation =
@@ -77,7 +77,7 @@ public sealed class DocumentationGenerator
         }
     }
 
-    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly, DokiElement parent,
+    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly, DocumentationObject parent,
         ILogger logger, CancellationToken cancellationToken)
     {
         var assemblyName = assembly.GetName();
@@ -113,7 +113,7 @@ public sealed class DocumentationGenerator
             Id = assemblyId,
             Name = assemblyId,
             Parent = parent,
-            Content = DokiContent.Assembly,
+            Content = DocumentationContent.Assembly,
             Description = description,
             FileName = assembly.Location.Split(Path.DirectorySeparatorChar).Last(),
             Version = assemblyName.Version?.ToString(),
@@ -124,7 +124,7 @@ public sealed class DocumentationGenerator
 
         var namespaces = types.Select(t => t.Namespace!).Distinct().ToList();
 
-        var namespaceItems = new List<DokiElement>();
+        var namespaceItems = new List<DocumentationObject>();
         foreach (var @namespace in namespaces)
         {
             var namespaceDocumentation = new ContentList
@@ -132,10 +132,10 @@ public sealed class DocumentationGenerator
                 Id = @namespace,
                 Name = @namespace,
                 Parent = assemblyDocumentation,
-                Content = DokiContent.Namespace
+                Content = DocumentationContent.Namespace
             };
 
-            var items = new List<DokiElement>();
+            var items = new List<DocumentationObject>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
                 var typeDocumentation =
@@ -157,7 +157,7 @@ public sealed class DocumentationGenerator
         return assemblyDocumentation;
     }
 
-    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DokiElement parent, ILogger logger,
+    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent, ILogger logger,
         CancellationToken cancellationToken)
     {
         var typeInfo = type.GetTypeInfo();
@@ -180,14 +180,14 @@ public sealed class DocumentationGenerator
         {
             Id = typeId,
             Content = type.IsClass
-                ? DokiContent.Class
+                ? DocumentationContent.Class
                 : type.IsEnum
-                    ? DokiContent.Enum
+                    ? DocumentationContent.Enum
                     : type.IsInterface
-                        ? DokiContent.Interface
+                        ? DocumentationContent.Interface
                         : type.IsValueType
-                            ? DokiContent.Struct
-                            : DokiContent.Type,
+                            ? DocumentationContent.Struct
+                            : DocumentationContent.Type,
             Parent = parent,
             Name = typeInfo.GetSanitizedName(),
             FullName = typeInfo.GetSanitizedName(true),
@@ -213,7 +213,7 @@ public sealed class DocumentationGenerator
             var typeReference = new TypeDocumentationReference
             {
                 Id = baseTypeInfo.GetSanitizedName(true, false),
-                Content = DokiContent.TypeReference,
+                Content = DocumentationContent.TypeReference,
                 Parent = baseParent,
                 Name = baseTypeInfo.GetSanitizedName(),
                 FullName = baseTypeInfo.GetSanitizedName(true),

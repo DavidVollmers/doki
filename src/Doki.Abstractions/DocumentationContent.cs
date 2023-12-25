@@ -1,6 +1,6 @@
 ﻿namespace Doki;
 
-public enum DokiContent
+public enum DocumentationContent
 {
     Assemblies,
     Assembly,

@@ -28,10 +28,10 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (contentList.Content)
         {
-            case DokiContent.Assemblies:
+            case DocumentationContent.Assemblies:
                 await BuildAssembliesListAsync(markdown, contentList, cancellationToken);
                 break;
-            case DokiContent.Assembly:
+            case DocumentationContent.Assembly:
                 foreach (var item in contentList.Items)
                 {
                     if (item is not ContentList namespaceDocumentation) continue;
@@ -45,7 +45,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                     Items = contentList.Items.Select(x => markdown.BuildLinkTo(x)).ToList()
                 });
                 break;
-            case DokiContent.Namespace:
+            case DocumentationContent.Namespace:
                 markdown.Add(new Heading("Types", 2));
                 goto default;
             default:
@@ -74,7 +74,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 
-        var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DokiContent.Namespace);
+        var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DocumentationContent.Namespace);
         if (namespaceDocumentation != null)
         {
             markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceDocumentation)));
@@ -177,7 +177,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         await File.WriteAllTextAsync(fileInfo.FullName, markdown.ToString(), cancellationToken);
     }
 
-    private static Element BuildMarkdownList(MarkdownBuilder markdown, DokiElement element, int indent)
+    private static Element BuildMarkdownList(MarkdownBuilder markdown, DocumentationObject element, int indent)
     {
         var link = markdown.BuildLinkTo(element);
         if (element is not ContentList contentList || contentList.Items.Length == 0) return link;

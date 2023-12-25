@@ -1,6 +1,6 @@
 ﻿namespace Doki;
 
-public record ContentList : DokiElement
+public record ContentList : DocumentationObject
 {
     public const string Assemblies = "Packages";
     
@@ -8,5 +8,5 @@ public record ContentList : DokiElement
     
     public string? Description { get; internal init; }
 
-    public DokiElement[] Items { get; internal set; } = Array.Empty<DokiElement>();
+    public DocumentationObject[] Items { get; internal set; } = Array.Empty<DocumentationObject>();
 }

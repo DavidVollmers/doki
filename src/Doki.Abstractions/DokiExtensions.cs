@@ -2,12 +2,12 @@
 
 public static class DokiExtensions
 {
-    public static T? TryGetParent<T>(this DokiElement element, DokiContent? expectedContent = null)
-        where T : DokiElement
+    public static T? TryGetParent<T>(this DocumentationObject obj, DocumentationContent? expectedContent = null)
+        where T : DocumentationObject
     {
-        ArgumentNullException.ThrowIfNull(element);
+        ArgumentNullException.ThrowIfNull(obj);
 
-        var parent = element.Parent;
+        var parent = obj.Parent;
         while (parent != null)
         {
             if (parent is T t && (expectedContent == null || t.Content == expectedContent)) return t;

@@ -4,15 +4,15 @@ namespace Doki.Output.Markdown;
 
 internal static class InternalExtensions
 {
-    public static string BuildRelativePath(this MarkdownBuilder builder, DokiElement to,
+    public static string BuildRelativePath(this MarkdownBuilder builder, DocumentationObject to,
         params string[] additionalParts)
     {
         return builder.BuildRelativePath(to.GetPath(), additionalParts);
     }
 
-    public static Element BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? text = null)
+    public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
     {
-        var indexFile = to.Content is DokiContent.Assemblies or DokiContent.Assembly or DokiContent.Namespace;
+        var indexFile = to.Content is DocumentationContent.Assemblies or DocumentationContent.Assembly or DocumentationContent.Namespace;
 
         var asText = false;
         string? relativePath = null;
@@ -38,7 +38,7 @@ internal static class InternalExtensions
         return new Link(text, relativePath);
     }
 
-    public static string GetPath(this DokiElement element)
+    public static string GetPath(this DocumentationObject element)
     {
         var pathParts = new List<string>();
 
