@@ -108,6 +108,18 @@ public sealed class DocumentationGenerator
 
         var types = GetTypesToDocument(assembly).ToArray();
 
+        var assemblyDocumentation = new AssemblyDocumentation
+        {
+            Id = assemblyId,
+            Name = assemblyId,
+            Parent = parent,
+            Content = DokiContent.Assembly,
+            Description = description,
+            FileName = assembly.Location.Split(Path.DirectorySeparatorChar).Last(),
+            Version = assemblyName.Version?.ToString(),
+            PackageId = packageId
+        };
+        
         logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
 
         var namespaces = types.Select(t => t.Namespace!).Distinct().ToList();
@@ -119,7 +131,7 @@ public sealed class DocumentationGenerator
             {
                 Id = @namespace,
                 Name = @namespace,
-                Parent = parent,
+                Parent = assemblyDocumentation,
                 Content = DokiContent.Namespace
             };
 
@@ -140,18 +152,9 @@ public sealed class DocumentationGenerator
             namespaceItems.Add(namespaceDocumentation);
         }
 
-        return new AssemblyDocumentation
-        {
-            Id = assemblyId,
-            Name = assemblyId,
-            Parent = parent,
-            Content = DokiContent.Assembly,
-            Items = namespaceItems.ToArray(),
-            Description = description,
-            FileName = assembly.Location.Split(Path.DirectorySeparatorChar).Last(),
-            Version = assemblyName.Version?.ToString(),
-            PackageId = packageId
-        };
+        assemblyDocumentation.Items = namespaceItems.ToArray();
+        
+        return assemblyDocumentation;
     }
 
     private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DokiElement parent, ILogger logger,
