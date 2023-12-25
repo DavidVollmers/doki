@@ -14,5 +14,5 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 public sealed class AssemblyDocumentation : Doki.ContentList, System.IEquatable<Doki.AssemblyDocumentation>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DokiElement](Doki.DokiElement.md) → [ContentList](Doki.ContentList.md) → AssemblyDocumentation
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [ContentList](Doki.ContentList.md) → AssemblyDocumentation
 
