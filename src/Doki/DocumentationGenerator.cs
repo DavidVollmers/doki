@@ -53,7 +53,7 @@ public sealed class DocumentationGenerator
 
         var assemblies = new ContentList
         {
-            Id = $"{nameof(ContentList)}:{ContentList.Assemblies}",
+            Id = ContentList.Assemblies,
             Name = ContentList.Assemblies,
             Content = DokiContent.Assemblies
         };
@@ -117,7 +117,7 @@ public sealed class DocumentationGenerator
         {
             var namespaceDocumentation = new ContentList
             {
-                Id = $"{nameof(ContentList)}:{@namespace}",
+                Id = @namespace,
                 Name = @namespace,
                 Parent = parent,
                 Content = DokiContent.Namespace
@@ -142,8 +142,8 @@ public sealed class DocumentationGenerator
 
         return new AssemblyDocumentation
         {
-            Id = $"{nameof(ContentList)}:{assemblyId}",
-            Name = assemblyName.Name!,
+            Id = assemblyId,
+            Name = assemblyId,
             Parent = parent,
             Content = DokiContent.Assembly,
             Items = namespaceItems.ToArray(),
