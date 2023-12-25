@@ -2,7 +2,7 @@
 
 public interface IOutput
 {
-    Task WriteAsync(TableOfContents tableOfContents, CancellationToken cancellationToken = default);
+    Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default);
 
     Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default);
 }

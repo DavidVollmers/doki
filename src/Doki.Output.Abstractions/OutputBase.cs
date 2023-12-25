@@ -31,7 +31,7 @@ public abstract class OutputBase<T> : IOutput where T : OutputOptions
             Options?.OutputPath ?? OutputOptions.Default.OutputPath!));
     }
 
-    public abstract Task WriteAsync(TableOfContents tableOfContents, CancellationToken cancellationToken = default);
+    public abstract Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default);
 
     public abstract Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default);
 }

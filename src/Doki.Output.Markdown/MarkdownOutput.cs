@@ -6,43 +6,43 @@ namespace Doki.Output.Markdown;
 [DokiOutput("Doki.Output.Markdown")]
 public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
 {
-    public override async Task WriteAsync(TableOfContents tableOfContents,
+    public override async Task WriteAsync(ContentList contentList,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(tableOfContents);
+        ArgumentNullException.ThrowIfNull(contentList);
 
-        var currentPath = tableOfContents.GetPath();
+        var currentPath = contentList.GetPath();
 
-        var tableOfContentsFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
+        var targetFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
 
-        if (!tableOfContentsFile.Directory!.Exists) tableOfContentsFile.Directory.Create();
+        if (!targetFile.Directory!.Exists) targetFile.Directory.Create();
 
         var markdown = new MarkdownBuilder(currentPath)
-            .Add(new Heading(tableOfContents.Id, 1));
+            .Add(new Heading(contentList.Id, 1));
 
-        if (tableOfContents.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
+        if (contentList.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
         {
             markdown.Add(new Text(description?.ToString()!));
         }
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        switch (tableOfContents.Content)
+        switch (contentList.Content)
         {
             case DokiContent.Assemblies:
-                await BuildAssembliesTableOfContentsAsync(markdown, tableOfContents, cancellationToken);
+                await BuildAssembliesListAsync(markdown, contentList, cancellationToken);
                 break;
             case DokiContent.Assembly:
-                foreach (var child in tableOfContents.Children)
+                foreach (var item in contentList.Items)
                 {
-                    if (child is not TableOfContents namespaceToC) continue;
+                    if (item is not ContentList namespaceDocumentation) continue;
 
-                    await WriteAsync(namespaceToC, cancellationToken);
+                    await WriteAsync(namespaceDocumentation, cancellationToken);
                 }
 
                 markdown.Add(new Heading("Namespaces", 2));
                 markdown.Add(new List
                 {
-                    Items = tableOfContents.Children.Select(x => (Element) markdown.BuildLinkTo(x)).ToList()
+                    Items = contentList.Items.Select(x => (Element)markdown.BuildLinkTo(x)).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -51,12 +51,12 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             default:
                 markdown.Add(new List
                 {
-                    Items = tableOfContents.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, 0)).ToList()
+                    Items = contentList.Items.Select(x => BuildMarkdownList(markdown, x, 0)).ToList()
                 });
                 break;
         }
 
-        await WriteMarkdownAsync(tableOfContentsFile, markdown, cancellationToken);
+        await WriteMarkdownAsync(targetFile, markdown, cancellationToken);
     }
 
     public override async Task WriteAsync(TypeDocumentation typeDocumentation,
@@ -78,21 +78,23 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             .Add(new Heading(name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
             .Add(new Heading(DokiProperties.Definition, 2));
 
-        var namespaceToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Namespace);
-        if (namespaceToC != null)
+        var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DokiContent.Namespace);
+        if (namespaceDocumentation != null)
         {
-            markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceToC)));
+            markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceDocumentation)));
         }
 
-        var assemblyToC = typeDocumentation.TryGetParent<TableOfContents>(DokiContent.Assembly);
-        if (assemblyToC != null)
+        var assemblyAssemblyDocumentation = typeDocumentation.TryGetParent<AssemblyDocumentation>();
+        if (assemblyAssemblyDocumentation != null)
         {
-            markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyToC, DokiProperties.FileName)));
+            markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyAssemblyDocumentation,
+                DokiProperties.FileName)));
 
-            var packageId = assemblyToC.Properties?.TryGetValue(DokiProperties.PackageId, out var packageIdProperty) ==
-                            true
-                ? packageIdProperty?.ToString()!
-                : null;
+            var packageId =
+                assemblyAssemblyDocumentation.Properties?.TryGetValue(DokiProperties.PackageId,
+                    out var packageIdProperty) == true
+                    ? packageIdProperty?.ToString()!
+                    : null;
 
             if (packageId != null)
             {
@@ -137,20 +139,20 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
 
-    private async Task BuildAssembliesTableOfContentsAsync(MarkdownBuilder markdown, TableOfContents tableOfContents,
+    private async Task BuildAssembliesListAsync(MarkdownBuilder markdown, ContentList contentList,
         CancellationToken cancellationToken)
     {
         var items = new List<Element>();
-        foreach (var child in tableOfContents.Children)
+        foreach (var item in contentList.Items)
         {
-            if (child is not TableOfContents assemblyToC) continue;
+            if (item is not AssemblyDocumentation assemblyDocumentation) continue;
 
-            await WriteAsync(assemblyToC, cancellationToken);
+            await WriteAsync(assemblyDocumentation, cancellationToken);
 
             var container = new IndentContainer(1, false);
-            container.Add(markdown.BuildLinkTo(assemblyToC));
+            container.Add(markdown.BuildLinkTo(assemblyDocumentation));
 
-            if (assemblyToC.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
+            if (assemblyDocumentation.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
             {
                 container.Add(Text.Empty);
                 container.Add(new Text(description?.ToString()!));
@@ -174,7 +176,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             var replacementRegex = new Regex(@"(\[//\]:\s*<!DOKI>).*?(\[//\]:\s*</!DOKI>)", RegexOptions.Singleline);
             var result = replacementRegex.Matches(content);
-            if (result is [{Groups.Count: 3}])
+            if (result is [{ Groups.Count: 3 }])
             {
                 content = replacementRegex.Replace(content,
                     $"{result[0].Groups[1].Value}{Environment.NewLine}{markdown}{Environment.NewLine}{result[0].Groups[2].Value}");
@@ -187,13 +189,13 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         await File.WriteAllTextAsync(fileInfo.FullName, markdown.ToString(), cancellationToken);
     }
 
-    private static Element BuildMarkdownTableOfContents(MarkdownBuilder markdown, DokiElement element, int indent)
+    private static Element BuildMarkdownList(MarkdownBuilder markdown, DokiElement element, int indent)
     {
         var link = markdown.BuildLinkTo(element);
-        if (element is not TableOfContents toc || toc.Children.Length == 0) return link;
+        if (element is not ContentList contentList || contentList.Items.Length == 0) return link;
         return new SubList(link, indent)
         {
-            Items = toc.Children.Select(x => BuildMarkdownTableOfContents(markdown, x, indent + 1)).ToList()
+            Items = contentList.Items.Select(x => BuildMarkdownList(markdown, x, indent + 1)).ToList()
         };
     }
 

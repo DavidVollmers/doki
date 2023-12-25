@@ -52,106 +52,109 @@ public sealed class DocumentationGenerator
 
         logger.LogInformation("Generating documentation for {AssemblyCount} assemblies.", _assemblies.Count);
 
-        var assembliesToC = new TableOfContents
+        var assemblies = new ContentList
         {
-            Id = TableOfContents.Assemblies,
+            Id = ContentList.Assemblies,
             Content = DokiContent.Assemblies
         };
 
-        var children = new List<DokiElement>();
+        var items = new List<DokiElement>();
         foreach (var (assembly, _) in _assemblies)
         {
-            var assemblyName = assembly.GetName();
+            var assemblyDocumentation =
+                await GenerateAssemblyDocumentationAsync(assembly, assemblies, logger, cancellationToken);
 
-            var assemblyId = assemblyName.Name;
-            if (assemblyId == null)
-            {
-                logger.LogWarning("No name found for assembly {Assembly}.", assembly);
-                continue;
-            }
+            if (assemblyDocumentation == null) continue;
 
-            string? packageId = null;
-            var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
-            if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
-            {
-                packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
-
-                var packageDescription = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
-                if (packageDescription != null) description = packageDescription;
-            }
-
-            if (description == null)
-            {
-                logger.LogWarning("No description found for assembly {Assembly}.", assemblyId);
-            }
-
-            var assemblyToC = new TableOfContents
-            {
-                Id = assemblyId,
-                Parent = assembliesToC,
-                Content = DokiContent.Assembly,
-                Properties = new Dictionary<string, object?>
-                {
-                    { DokiProperties.Description, description },
-                    { DokiProperties.FileName, assembly.Location.Split(Path.DirectorySeparatorChar).Last() },
-                    { DokiProperties.Name, assemblyName.Name },
-                    { DokiProperties.Version, assemblyName.Version?.ToString() },
-                    { DokiProperties.PackageId, packageId }
-                }
-            };
-
-            var namespaceToCs = GenerateAssemblyDocumentationAsync(assemblyToC, assembly, logger, cancellationToken);
-
-            assemblyToC.Children = await namespaceToCs.ToArrayAsync(cancellationToken);
-
-            children.Add(assemblyToC);
+            items.Add(assemblyDocumentation);
         }
 
-        assembliesToC.Children = children.ToArray();
+        assemblies.Items = items.ToArray();
 
         foreach (var output in _outputs)
         {
-            await output.WriteAsync(assembliesToC, cancellationToken);
+            await output.WriteAsync(assemblies, cancellationToken);
         }
     }
 
-    private async IAsyncEnumerable<TableOfContents> GenerateAssemblyDocumentationAsync(TableOfContents parent,
-        Assembly assembly, ILogger logger, [EnumeratorCancellation] CancellationToken cancellationToken)
+    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly, DokiElement parent,
+        ILogger logger, CancellationToken cancellationToken)
     {
+        var assemblyName = assembly.GetName();
+
+        var assemblyId = assemblyName.Name;
+        if (assemblyId == null)
+        {
+            logger.LogWarning("No name found for assembly {Assembly}.", assembly);
+            return null;
+        }
+
+        string? packageId = null;
+        var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+        if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
+        {
+            packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
+
+            var packageDescription = projectMetadata.SelectSingleNode("/Project/PropertyGroup/Description")?.Value;
+            if (packageDescription != null) description = packageDescription;
+        }
+
+        if (description == null)
+        {
+            logger.LogWarning("No description found for assembly {Assembly}.", assemblyId);
+        }
+
         var types = GetTypesToDocument(assembly).ToArray();
 
         logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
 
         var namespaces = types.Select(t => t.Namespace).Distinct().ToList();
 
+        var namespaceItems = new List<DokiElement>();
         foreach (var @namespace in namespaces)
         {
-            var namespaceToC = new TableOfContents
+            var namespaceDocumentation = new ContentList
             {
                 Id = @namespace!,
                 Parent = parent,
                 Content = DokiContent.Namespace
             };
 
-            var children = new List<DokiElement>();
+            var items = new List<DokiElement>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
                 var typeDocumentation =
-                    await GenerateTypeDocumentationAsync(type, namespaceToC, logger, cancellationToken);
+                    await GenerateTypeDocumentationAsync(type, namespaceDocumentation, logger, cancellationToken);
 
-                children.Add(new TypeDocumentationReference
+                items.Add(new TypeDocumentationReference
                 {
                     Id = typeDocumentation.Id,
-                    Parent = namespaceToC,
+                    Parent = namespaceDocumentation,
                     Content = DokiContent.TypeReference,
                     Properties = typeDocumentation.Properties
                 });
             }
 
-            namespaceToC.Children = children.ToArray();
+            namespaceDocumentation.Items = items.ToArray();
 
-            yield return namespaceToC;
+            namespaceItems.Add(namespaceDocumentation);
         }
+
+        return new AssemblyDocumentation
+        {
+            Id = assemblyId,
+            Parent = parent,
+            Content = DokiContent.Assembly,
+            Items = namespaceItems.ToArray(),
+            Properties = new Dictionary<string, object?>
+            {
+                { DokiProperties.Description, description },
+                { DokiProperties.FileName, assembly.Location.Split(Path.DirectorySeparatorChar).Last() },
+                { DokiProperties.Name, assemblyName.Name },
+                { DokiProperties.Version, assemblyName.Version?.ToString() },
+                { DokiProperties.PackageId, packageId }
+            }
+        };
     }
 
     private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DokiElement parent, ILogger logger,
