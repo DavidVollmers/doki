@@ -43,6 +43,16 @@ internal static class InternalExtensions
         var pathParts = new List<string>();
 
         var current = element;
+        if (element is TypeDocumentationReference typeDocumentationReference and not TypeDocumentation)
+        {
+            current = typeDocumentationReference.TryGetParent<TypeDocumentation>();
+
+            if (current == null)
+            {
+                throw new InvalidOperationException(
+                    $"Could not find parent {nameof(TypeDocumentation)} for {nameof(TypeDocumentationReference)}: {typeDocumentationReference.FullName}");
+            }
+        }
 
         while (current.Parent != null)
         {
