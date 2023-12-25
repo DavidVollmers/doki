@@ -58,7 +58,7 @@ public sealed class DocumentationGenerator
             Content = DokiContent.Assemblies
         };
 
-        var children = new List<TableOfContents>();
+        var children = new List<DokiElement>();
         foreach (var (assembly, _) in _assemblies)
         {
             var assemblyName = assembly.GetName();
@@ -171,7 +171,7 @@ public sealed class DocumentationGenerator
 
         var typeDocumentation = new TypeDocumentation
         {
-            Id = type.FullName!,
+            Id = typeInfo.GetSanitizedName(true, false),
             Content = type.IsClass
                 ? DokiContent.Class
                 : type.IsEnum
@@ -199,13 +199,15 @@ public sealed class DocumentationGenerator
         {
             var baseTypeInfo = baseType.GetTypeInfo();
 
+            var isDocumented = _assemblies.Any(a => a.Key.FullName == baseTypeInfo.Assembly.FullName);
+
             var baseTypeAssembly = baseTypeInfo.Assembly.GetName();
             var isMicrosoft = baseTypeAssembly.Name!.StartsWith("System") ||
                               baseTypeAssembly.Name.StartsWith("Microsoft");
 
             var typeReference = new TypeDocumentationReference
             {
-                Id = baseTypeInfo.FullName!,
+                Id = baseTypeInfo.GetSanitizedName(true, false),
                 Content = DokiContent.TypeReference,
                 Parent = baseParent,
                 Properties = new Dictionary<string, object?>
@@ -213,7 +215,7 @@ public sealed class DocumentationGenerator
                     {DokiProperties.Name, baseTypeInfo.GetSanitizedName()},
                     {DokiProperties.FullName, baseTypeInfo.GetSanitizedName(true)},
                     {DokiProperties.Definition, baseTypeInfo.GetDefinition()},
-                    {DokiProperties.IsDocumented, _assemblies.ContainsKey(baseTypeInfo.Assembly)},
+                    {DokiProperties.IsDocumented, isDocumented},
                     {DokiProperties.IsMicrosoft, isMicrosoft}
                 }
             };

@@ -7,27 +7,46 @@ internal static class TypeExtensions
 {
     private static readonly Dictionary<string, string> NameCache = new();
     private static readonly Dictionary<string, string> FullNameCache = new();
+    private static readonly Dictionary<string, string> NameWithGenericCache = new();
+    private static readonly Dictionary<string, string> FullNameWithGenericCache = new();
     private static readonly Dictionary<string, string> DefinitionCache = new();
 
-    public static string GetSanitizedName(this TypeInfo type, bool withNamespace = false)
+    public static string GetSanitizedName(this TypeInfo type, bool withNamespace = false, bool parseGenericTypes = true)
     {
-        if (!withNamespace && NameCache.TryGetValue(type.FullName!, out var cached)) return cached;
-        if (withNamespace && FullNameCache.TryGetValue(type.FullName!, out cached)) return cached;
+        if (parseGenericTypes)
+        {
+            if (!withNamespace && NameCache.TryGetValue(type.FullName!, out var cached)) return cached;
+            if (withNamespace && FullNameCache.TryGetValue(type.FullName!, out cached)) return cached;
+        }
+        else
+        {
+            if (!withNamespace && NameWithGenericCache.TryGetValue(type.FullName!, out var cached)) return cached;
+            if (withNamespace && FullNameWithGenericCache.TryGetValue(type.FullName!, out cached)) return cached;
+        }
 
         var name = withNamespace ? type.FullName! : type.Name;
-        // ReSharper disable once InvertIf
-        if (type.IsGenericType)
+
+        if (type.IsGenericType && parseGenericTypes)
         {
             var index = name.LastIndexOf('`');
             name = name[..index];
 
-            var args = type.GenericTypeParameters.Select(p => p.Name).ToList();
-            args.AddRange(type.GenericTypeArguments.Select(a => a.GetTypeInfo().GetSanitizedName(withNamespace)));
+            var args = type.GetGenericArguments().Select(a =>
+                a.IsGenericParameter ? a.Name : a.GetTypeInfo().GetSanitizedName(withNamespace));
             name += $"<{string.Join(", ", args)}>";
         }
 
-        if (withNamespace) FullNameCache.Add(type.FullName!, name);
-        else NameCache.Add(type.FullName!, name);
+        if (parseGenericTypes)
+        {
+            if (withNamespace) FullNameCache.Add(type.FullName!, name);
+            else NameCache.Add(type.FullName!, name);
+        }
+        else
+        {
+            if (withNamespace) FullNameWithGenericCache.Add(type.FullName!, name);
+            else NameWithGenericCache.Add(type.FullName!, name);
+        }
+
         return name;
     }
 
