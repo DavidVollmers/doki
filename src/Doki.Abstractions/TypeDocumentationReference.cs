@@ -12,6 +12,10 @@ public record TypeDocumentationReference : DokiElement
 
     public bool IsMicrosoft { get; internal init; }
 
+    public string? Namespace { get; internal init; }
+
+    public string? Assembly { get; internal init; }
+
     public TypeDocumentationReference? BaseType { get; internal set; }
     
     public TypeDocumentationReference()
@@ -28,5 +32,7 @@ public record TypeDocumentationReference : DokiElement
         IsDocumented = reference.IsDocumented;
         IsMicrosoft = reference.IsMicrosoft;
         BaseType = reference.BaseType;
+        Namespace = reference.Namespace;
+        Assembly = reference.Assembly;
     }
 }

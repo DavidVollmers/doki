@@ -13,7 +13,7 @@ internal static class InternalExtensions
     public static Element BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? text = null)
     {
         var indexFile = to.Content is DokiContent.Assemblies or DokiContent.Assembly or DokiContent.Namespace;
-        
+
         var asText = false;
         string? relativePath = null;
         if (to is TypeDocumentationReference typeDocumentationReference)
@@ -45,15 +45,14 @@ internal static class InternalExtensions
         var current = element;
         if (element is TypeDocumentationReference typeDocumentationReference)
         {
-            current = typeDocumentationReference.TryGetParent<ContentList>(DokiContent.Namespace);
+            // We cannot use TryGetParent because it will return the wrong namespace/assembly for base type references coming from a different namespace/assembly.
+            if (typeDocumentationReference.Assembly != null) pathParts.Add(typeDocumentationReference.Assembly);
 
-            if (current == null)
-            {
-                throw new InvalidOperationException(
-                    $"Could not find parent namespace for {typeDocumentationReference.FullName}");
-            }
+            if (typeDocumentationReference.Namespace != null) pathParts.Add(typeDocumentationReference.Namespace);
 
             pathParts.Add(typeDocumentationReference.Id);
+
+            return pathParts.CombineToPath();
         }
 
         while (current.Parent != null)

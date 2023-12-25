@@ -193,6 +193,8 @@ public sealed class DocumentationGenerator
             FullName = typeInfo.GetSanitizedName(true),
             Summary = summary?.Trim(),
             Definition = typeInfo.GetDefinition(),
+            Namespace = type.Namespace,
+            Assembly = type.Assembly.GetName().Name,
             IsDocumented = true
         };
 
@@ -216,6 +218,8 @@ public sealed class DocumentationGenerator
                 Name = baseTypeInfo.GetSanitizedName(),
                 FullName = baseTypeInfo.GetSanitizedName(true),
                 Definition = baseTypeInfo.GetDefinition(),
+                Namespace = baseType.Namespace,
+                Assembly = baseTypeAssembly.Name,
                 IsDocumented = isDocumented,
                 IsMicrosoft = isMicrosoft,
             };
