@@ -10,7 +10,7 @@ internal static class InternalExtensions
         return builder.BuildRelativePath(to.GetPath(), additionalParts);
     }
 
-    public static Element BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? textProperty = null)
+    public static Element BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? text = null)
     {
         var indexFile = to.Content is DokiContent.Assemblies or DokiContent.Assembly or DokiContent.Namespace;
 
@@ -18,29 +18,16 @@ internal static class InternalExtensions
             indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
 
         var asText = false;
-        if (textProperty == null && to is TypeDocumentationReference typeDocumentationReference)
+        if (to is TypeDocumentationReference typeDocumentationReference)
         {
-            asText = true;
+            text ??= typeDocumentationReference.IsDocumented
+                ? typeDocumentationReference.Name
+                : typeDocumentationReference.FullName;
 
-            textProperty = DokiProperties.FullName;
-            if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsDocumented, out var isDocumented) ==
-                true && isDocumented is true)
-            {
-                textProperty = DokiProperties.Name;
-                asText = false;
-            }
-
-            if (typeDocumentationReference.Properties?.TryGetValue(DokiProperties.IsMicrosoft, out var isMicrosoft) ==
-                true && isMicrosoft is true)
-            {
-                relativePath = $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.Id}";
-                asText = false;
-            }
+            asText = typeDocumentationReference is { IsDocumented: false, IsMicrosoft: false };
         }
 
-        var text = to.Id;
-        if (textProperty != null && to.Properties?.TryGetValue(textProperty, out var name) == true && name != null)
-            text = name.ToString()!;
+        text ??= to.Id;
 
         if (asText) return new Text(text);
         return new Link(text, relativePath);

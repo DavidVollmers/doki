@@ -42,7 +42,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 markdown.Add(new Heading("Namespaces", 2));
                 markdown.Add(new List
                 {
-                    Items = contentList.Items.Select(x => (Element)markdown.BuildLinkTo(x)).ToList()
+                    Items = contentList.Items.Select(x => markdown.BuildLinkTo(x)).ToList()
                 });
                 break;
             case DokiContent.Namespace:
@@ -70,13 +70,9 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
-        var name = typeDocumentation.Properties?.TryGetValue(DokiProperties.Name, out var nameProperty) == true
-            ? nameProperty?.ToString()!
-            : typeDocumentation.Id;
-
         var markdown = new MarkdownBuilder(currentPath)
-            .Add(new Heading(name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
-            .Add(new Heading(DokiProperties.Definition, 2));
+            .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
+            .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 
         var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DokiContent.Namespace);
         if (namespaceDocumentation != null)
@@ -88,37 +84,29 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         if (assemblyAssemblyDocumentation != null)
         {
             markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyAssemblyDocumentation,
-                DokiProperties.FileName)));
+                assemblyAssemblyDocumentation.FileName)));
 
-            var packageId =
-                assemblyAssemblyDocumentation.Properties?.TryGetValue(DokiProperties.PackageId,
-                    out var packageIdProperty) == true
-                    ? packageIdProperty?.ToString()!
-                    : null;
-
-            if (packageId != null)
+            if (assemblyAssemblyDocumentation.PackageId != null)
             {
                 markdown.Add(new Text("Package: ")
                     //TODO support other package sources
-                    // ReSharper disable once UseStringInterpolation
-                    .Append(new Link(packageId, string.Format("https://www.nuget.org/packages/{0}", packageId))));
+                    .Append(new Link(assemblyAssemblyDocumentation.PackageId,
+                        // ReSharper disable once UseStringInterpolation
+                        string.Format("https://www.nuget.org/packages/{0}", assemblyAssemblyDocumentation.PackageId))));
             }
         }
 
         markdown.Add(Element.Separator);
 
-        if (typeDocumentation.Properties?.TryGetValue(DokiProperties.Summary, out var summary) == true)
+        if (typeDocumentation.Summary != null)
         {
-            markdown.Add(new Text(summary?.ToString()!)
+            markdown.Add(new Text(typeDocumentation.Summary)
             {
                 IsBold = true
             });
         }
 
-        if (typeDocumentation.Properties?.TryGetValue(DokiProperties.Definition, out var definition) == true)
-        {
-            markdown.Add(new Code(definition?.ToString()!));
-        }
+        markdown.Add(new Code(typeDocumentation.Definition));
 
         var inheritanceChain = BuildInheritanceChain(markdown, typeDocumentation).Reverse().ToArray();
         if (inheritanceChain.Length != 0)
@@ -131,7 +119,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             }
 
             inheritanceText.Append(" \u2192 ");
-            inheritanceText.Append(name);
+            inheritanceText.Append(typeDocumentation.Name);
 
             markdown.Add(inheritanceText);
         }
@@ -152,10 +140,10 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             var container = new IndentContainer(1, false);
             container.Add(markdown.BuildLinkTo(assemblyDocumentation));
 
-            if (assemblyDocumentation.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
+            if (assemblyDocumentation.Description != null)
             {
                 container.Add(Text.Empty);
-                container.Add(new Text(description?.ToString()!));
+                container.Add(new Text(assemblyDocumentation.Description));
             }
 
             items.Add(container);
@@ -199,21 +187,14 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         };
     }
 
-    private static IEnumerable<Element> BuildInheritanceChain(MarkdownBuilder markdown, DokiElement element)
+    private static IEnumerable<Element> BuildInheritanceChain(MarkdownBuilder markdown,
+        TypeDocumentationReference typeDocumentationReference)
     {
-        while (true)
+        while (typeDocumentationReference.BaseType != null)
         {
-            if (element.Properties?.TryGetValue("BaseType", out var baseType) == true)
-            {
-                if (baseType is not TypeDocumentationReference typeDocumentationReference) yield break;
+            yield return markdown.BuildLinkTo(typeDocumentationReference.BaseType);
 
-                yield return markdown.BuildLinkTo(typeDocumentationReference);
-
-                element = typeDocumentationReference;
-                continue;
-            }
-
-            break;
+            typeDocumentationReference = typeDocumentationReference.BaseType;
         }
     }
 }
