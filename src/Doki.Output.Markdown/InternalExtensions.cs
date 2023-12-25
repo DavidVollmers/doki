@@ -25,6 +25,11 @@ internal static class InternalExtensions
                 : typeDocumentationReference.FullName;
 
             asText = typeDocumentationReference is { IsDocumented: false, IsMicrosoft: false };
+
+            if (typeDocumentationReference.IsMicrosoft)
+            {
+                relativePath = $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.FullName}";
+            }
         }
 
         text ??= to.Id;
