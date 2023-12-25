@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Xml.XPath;
 using Doki.Output;
 using Microsoft.Extensions.Logging;
@@ -89,6 +88,8 @@ public sealed class DocumentationGenerator
             return null;
         }
 
+        logger.LogInformation("Generating documentation for assembly {Assembly}.", assemblyId);
+
         string? packageId = null;
         var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
         if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
@@ -162,6 +163,10 @@ public sealed class DocumentationGenerator
     {
         var typeInfo = type.GetTypeInfo();
 
+        var typeId = typeInfo.GetSanitizedName(true, false);
+
+        logger.LogDebug("Generating documentation for type {Type}.", typeId);
+
         var navigator = _assemblies[type.Assembly];
 
         var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
@@ -174,7 +179,7 @@ public sealed class DocumentationGenerator
 
         var typeDocumentation = new TypeDocumentation
         {
-            Id = typeInfo.GetSanitizedName(true, false),
+            Id = typeId,
             Content = type.IsClass
                 ? DokiContent.Class
                 : type.IsEnum
