@@ -5,54 +5,40 @@ namespace Doki;
 
 internal static class TypeExtensions
 {
-    private static readonly Dictionary<string, string> NameCache = new();
-    private static readonly Dictionary<string, string> FullNameCache = new();
-    private static readonly Dictionary<string, string> NameWithGenericCache = new();
-    private static readonly Dictionary<string, string> FullNameWithGenericCache = new();
-    private static readonly Dictionary<string, string> DefinitionCache = new();
+    private static readonly Dictionary<string, string> Cache = new();
 
     public static string GetSanitizedName(this TypeInfo type, bool withNamespace = false, bool parseGenericTypes = true)
     {
-        if (parseGenericTypes)
-        {
-            if (!withNamespace && NameCache.TryGetValue(type.FullName!, out var cached)) return cached;
-            if (withNamespace && FullNameCache.TryGetValue(type.FullName!, out cached)) return cached;
-        }
-        else
-        {
-            if (!withNamespace && NameWithGenericCache.TryGetValue(type.FullName!, out var cached)) return cached;
-            if (withNamespace && FullNameWithGenericCache.TryGetValue(type.FullName!, out cached)) return cached;
-        }
+        var key = $"{nameof(GetSanitizedName)}:{type.FullName}:{withNamespace}:{parseGenericTypes}";
+        if (Cache.TryGetValue(key, out var cached)) return cached;
 
         var name = withNamespace ? type.FullName! : type.Name;
 
-        if (type.IsGenericType && parseGenericTypes)
+        if (type.IsGenericType)
         {
-            var index = name.LastIndexOf('`');
-            name = name[..index];
+            if (parseGenericTypes)
+            {
+                name = name[..name.IndexOf('`')];
 
-            var args = type.GetGenericArguments().Select(a =>
-                a.IsGenericParameter ? a.Name : a.GetTypeInfo().GetSanitizedName(withNamespace));
-            name += $"<{string.Join(", ", args)}>";
+                var args = type.GetGenericArguments().Select(a =>
+                    a.IsGenericParameter ? a.Name : a.GetTypeInfo().GetSanitizedName(withNamespace));
+                name += $"<{string.Join(", ", args)}>";
+            }
+            else
+            {
+                var index = name.IndexOf('[');
+                if (index != -1) name = name[..index];
+            }
         }
 
-        if (parseGenericTypes)
-        {
-            if (withNamespace) FullNameCache.Add(type.FullName!, name);
-            else NameCache.Add(type.FullName!, name);
-        }
-        else
-        {
-            if (withNamespace) FullNameWithGenericCache.Add(type.FullName!, name);
-            else NameWithGenericCache.Add(type.FullName!, name);
-        }
-
+        Cache.Add(key, name);
         return name;
     }
 
     public static string GetDefinition(this TypeInfo type)
     {
-        if (DefinitionCache.TryGetValue(type.FullName!, out var cached)) return cached;
+        var key = $"{nameof(GetDefinition)}:{type.FullName}";
+        if (Cache.TryGetValue(key, out var cached)) return cached;
 
         var builder = new StringBuilder();
 
@@ -65,9 +51,9 @@ internal static class TypeExtensions
         else if (type.IsNestedFamANDAssem) builder.Append("private protected");
         else if (type.IsNestedFamORAssem) builder.Append("protected internal");
 
-        if (type is {IsAbstract: true, IsSealed: true}) builder.Append(" static");
+        if (type is { IsAbstract: true, IsSealed: true }) builder.Append(" static");
         else if (type.IsAbstract) builder.Append(" abstract");
-        else if (type is {IsSealed: true, IsEnum: false}) builder.Append(" sealed");
+        else if (type is { IsSealed: true, IsEnum: false }) builder.Append(" sealed");
 
         if (type.IsClass) builder.Append(" class");
         else if (type.IsEnum) builder.Append(" enum");
@@ -99,7 +85,7 @@ internal static class TypeExtensions
             builder.Append(string.Join(", ", types));
         }
 
-        DefinitionCache.Add(type.FullName!, builder.ToString());
+        Cache.Add(key, builder.ToString());
         return builder.ToString();
     }
 }

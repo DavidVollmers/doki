@@ -92,11 +92,11 @@ public sealed class DocumentationGenerator
                 Content = DokiContent.Assembly,
                 Properties = new Dictionary<string, object?>
                 {
-                    {DokiProperties.Description, description},
-                    {DokiProperties.FileName, assembly.Location.Split(Path.DirectorySeparatorChar).Last()},
-                    {DokiProperties.Name, assemblyName.Name},
-                    {DokiProperties.Version, assemblyName.Version?.ToString()},
-                    {DokiProperties.PackageId, packageId}
+                    { DokiProperties.Description, description },
+                    { DokiProperties.FileName, assembly.Location.Split(Path.DirectorySeparatorChar).Last() },
+                    { DokiProperties.Name, assemblyName.Name },
+                    { DokiProperties.Version, assemblyName.Version?.ToString() },
+                    { DokiProperties.PackageId, packageId }
                 }
             };
 
@@ -184,12 +184,12 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Properties = new Dictionary<string, object?>
             {
-                {DokiProperties.Name, typeInfo.GetSanitizedName()},
-                {DokiProperties.FullName, typeInfo.GetSanitizedName(true)},
-                {DokiProperties.Summary, summary?.Trim()},
-                {DokiProperties.Definition, typeInfo.GetDefinition()},
-                {DokiProperties.IsDocumented, true},
-                {DokiProperties.IsMicrosoft, false}
+                { DokiProperties.Name, typeInfo.GetSanitizedName() },
+                { DokiProperties.FullName, typeInfo.GetSanitizedName(true) },
+                { DokiProperties.Summary, summary?.Trim() },
+                { DokiProperties.Definition, typeInfo.GetDefinition() },
+                { DokiProperties.IsDocumented, true },
+                { DokiProperties.IsMicrosoft, false }
             }
         };
 
@@ -212,15 +212,15 @@ public sealed class DocumentationGenerator
                 Parent = baseParent,
                 Properties = new Dictionary<string, object?>
                 {
-                    {DokiProperties.Name, baseTypeInfo.GetSanitizedName()},
-                    {DokiProperties.FullName, baseTypeInfo.GetSanitizedName(true)},
-                    {DokiProperties.Definition, baseTypeInfo.GetDefinition()},
-                    {DokiProperties.IsDocumented, isDocumented},
-                    {DokiProperties.IsMicrosoft, isMicrosoft}
+                    { DokiProperties.Name, baseTypeInfo.GetSanitizedName() },
+                    { DokiProperties.FullName, baseTypeInfo.GetSanitizedName(true) },
+                    { DokiProperties.Definition, baseTypeInfo.GetDefinition() },
+                    { DokiProperties.IsDocumented, isDocumented },
+                    { DokiProperties.IsMicrosoft, isMicrosoft }
                 }
             };
 
-            ((Dictionary<string, object?>) baseParent.Properties).Add("BaseType", typeReference);
+            ((Dictionary<string, object?>)baseParent.Properties).Add("BaseType", typeReference);
 
             baseType = baseTypeInfo.BaseType;
             baseParent = typeReference;
