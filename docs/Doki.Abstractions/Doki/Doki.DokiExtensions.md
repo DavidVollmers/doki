@@ -10,8 +10,6 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
-
-
 ```csharp
 public static class DokiExtensions
 ```

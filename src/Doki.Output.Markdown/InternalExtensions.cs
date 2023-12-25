@@ -43,15 +43,17 @@ internal static class InternalExtensions
         var pathParts = new List<string>();
 
         var current = element;
-        if (element is TypeDocumentationReference typeDocumentationReference and not TypeDocumentation)
+        if (element is TypeDocumentationReference typeDocumentationReference)
         {
-            current = typeDocumentationReference.TryGetParent<TypeDocumentation>();
+            current = typeDocumentationReference.TryGetParent<ContentList>(DokiContent.Namespace);
 
             if (current == null)
             {
                 throw new InvalidOperationException(
-                    $"Could not find parent {nameof(TypeDocumentation)} for {nameof(TypeDocumentationReference)}: {typeDocumentationReference.FullName}");
+                    $"Could not find parent namespace for {typeDocumentationReference.FullName}");
             }
+
+            pathParts.Add(typeDocumentationReference.Id);
         }
 
         while (current.Parent != null)

@@ -10,8 +10,6 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
-
-
 ```csharp
 public sealed class DokiOutputAttribute : System.Attribute
 ```
