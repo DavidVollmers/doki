@@ -13,11 +13,9 @@ internal static class InternalExtensions
     public static Element BuildLinkTo(this MarkdownBuilder builder, DokiElement to, string? text = null)
     {
         var indexFile = to.Content is DokiContent.Assemblies or DokiContent.Assembly or DokiContent.Namespace;
-
-        var relativePath =
-            indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
-
+        
         var asText = false;
+        string? relativePath = null;
         if (to is TypeDocumentationReference typeDocumentationReference)
         {
             text ??= typeDocumentationReference.IsDocumented
@@ -31,6 +29,8 @@ internal static class InternalExtensions
                 relativePath = $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.FullName}";
             }
         }
+
+        relativePath ??= indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
 
         text ??= to.Id;
 
