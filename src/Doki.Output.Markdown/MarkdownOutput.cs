@@ -18,11 +18,11 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         if (!targetFile.Directory!.Exists) targetFile.Directory.Create();
 
         var markdown = new MarkdownBuilder(currentPath)
-            .Add(new Heading(contentList.Id, 1));
+            .Add(new Heading(contentList.Name, 1));
 
-        if (contentList.Properties?.TryGetValue(DokiProperties.Description, out var description) == true)
+        if (contentList.Description != null)
         {
-            markdown.Add(new Text(description?.ToString()!));
+            markdown.Add(new Text(contentList.Description));
         }
 
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
