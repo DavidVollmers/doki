@@ -77,7 +77,8 @@ public sealed class DocumentationGenerator
         }
     }
 
-    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly, DocumentationObject parent,
+    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly,
+        DocumentationObject parent,
         ILogger logger, CancellationToken cancellationToken)
     {
         var assemblyName = assembly.GetName();
@@ -119,7 +120,7 @@ public sealed class DocumentationGenerator
             Version = assemblyName.Version?.ToString(),
             PackageId = packageId
         };
-        
+
         logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
 
         var namespaces = types.Select(t => t.Namespace!).Distinct().ToList();
@@ -153,11 +154,12 @@ public sealed class DocumentationGenerator
         }
 
         assemblyDocumentation.Items = namespaceItems.ToArray();
-        
+
         return assemblyDocumentation;
     }
 
-    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent, ILogger logger,
+    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         var typeInfo = type.GetTypeInfo();
@@ -195,8 +197,12 @@ public sealed class DocumentationGenerator
             Definition = typeInfo.GetDefinition(),
             Namespace = type.Namespace,
             Assembly = type.Assembly.GetName().Name,
-            IsDocumented = true
+            IsDocumented = true,
+            IsGeneric = type.IsGenericType
         };
+
+        typeDocumentation.GenericArguments =
+            BuildGenericTypeArgumentDocumentation(type, typeDocumentation, typeXml, logger);
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
@@ -222,7 +228,11 @@ public sealed class DocumentationGenerator
                 Assembly = baseTypeAssembly.Name,
                 IsDocumented = isDocumented,
                 IsMicrosoft = isMicrosoft,
+                IsGeneric = baseType.IsGenericType
             };
+
+            typeReference.GenericArguments =
+                BuildGenericTypeArgumentDocumentation(type, typeReference, typeXml, logger);
 
             baseParent.BaseType = typeReference;
 
@@ -236,6 +246,40 @@ public sealed class DocumentationGenerator
         }
 
         return typeDocumentation;
+    }
+
+    private static IEnumerable<GenericTypeArgumentDocumentation> BuildGenericTypeArgumentDocumentation(Type type,
+        DocumentationObject parent, XPathNavigator? typeXml, ILogger logger)
+    {
+        if (!type.IsGenericType) yield break;
+
+        var genericArguments = type.GetGenericArguments();
+
+        foreach (var genericArgument in genericArguments)
+        {
+            var genericArgumentInfo = genericArgument.GetTypeInfo();
+
+            var genericArgumentId = genericArgumentInfo.GetSanitizedName(true, false);
+
+            logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
+
+            var description = typeXml?.SelectSingleNode($"typeparam[@name='{genericArgumentInfo.Name}']")?.Value;
+            if (description == null)
+            {
+                logger.LogWarning("No description found for generic argument {GenericArgument}.", genericArgument);
+            }
+
+            yield return new GenericTypeArgumentDocumentation
+            {
+                Id = genericArgumentId,
+                Content = DocumentationContent.GenericTypeArgument,
+                Description = description?.Trim(),
+                Namespace = genericArgument.Namespace,
+                Assembly = genericArgument.Assembly.GetName().Name,
+                IsGeneric = genericArgument.IsGenericType,
+                Parent = parent
+            };
+        }
     }
 
     //TODO support exclude filtering
