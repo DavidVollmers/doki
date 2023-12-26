@@ -13,11 +13,14 @@ using var host = Host.CreateDefaultBuilder(args)
     {
         builder.ClearProviders();
         builder.AddProvider(new AnsiConsoleLoggerProvider());
+
+        builder.SetMinimumLevel(args.Any(a => a == "--debug") ? LogLevel.Trace : LogLevel.Information);
     })
     .ConfigureServices(services => { services.AddDokiCommandLine(); })
     .Build();
 
-var rootCommand = new RootCommand("Doki Command-Line Interface") {Name = "doki"};
+var rootCommand = new RootCommand("Doki Command-Line Interface") { Name = "doki" };
+rootCommand.AddOption(new Option<bool>("--debug", "Enable debug logging."));
 
 var commands = host.Services.GetServices<Command>();
 foreach (var command in commands)
