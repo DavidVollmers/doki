@@ -124,6 +124,26 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             markdown.Add(inheritanceText);
         }
 
+        //TODO interfaces
+
+        if (typeDocumentation.IsGeneric)
+        {
+            markdown.Add(new Heading("Type Parameters", 2));
+            markdown.Add(new List
+            {
+                Items = typeDocumentation.GenericArguments.Select(x =>
+                {
+                    if (x.Description == null) return (Element)new Code(x.Name, true);
+
+                    var container = new IndentContainer(1, false);
+                    container.Add(new Code(x.Name, true));
+                    container.Add(Text.Empty);
+                    container.Add(new Text(x.Description));
+                    return container;
+                }).ToList()
+            });
+        }
+
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
 

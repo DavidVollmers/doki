@@ -2,8 +2,6 @@
 
 public record TypeDocumentationReference : TypeDocumentationObject
 {
-    public string Name { get; internal init; } = null!;
-
     public string FullName { get; internal init; } = null!;
 
     public string Definition { get; internal init; } = null!;
@@ -22,7 +20,6 @@ public record TypeDocumentationReference : TypeDocumentationObject
     public TypeDocumentationReference(TypeDocumentationReference reference) : base(reference)
     {
         Content = DocumentationContent.TypeReference;
-        Name = reference.Name;
         FullName = reference.FullName;
         Definition = reference.Definition;
         IsDocumented = reference.IsDocumented;

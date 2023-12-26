@@ -2,6 +2,8 @@
 
 public abstract record TypeDocumentationObject : DocumentationObject
 {
+    public string Name { get; internal init; } = null!;
+    
     public bool IsGeneric { get; internal init; }
 
     public string? Namespace { get; internal init; }
@@ -17,6 +19,7 @@ public abstract record TypeDocumentationObject : DocumentationObject
 
     public TypeDocumentationObject(TypeDocumentationObject obj) : base(obj)
     {
+        Name = obj.Name;
         IsGeneric = obj.IsGeneric;
         Namespace = obj.Namespace;
         Assembly = obj.Assembly;

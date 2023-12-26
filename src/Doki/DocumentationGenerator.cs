@@ -169,8 +169,8 @@ public sealed class DocumentationGenerator
         logger.LogDebug("Generating documentation for type {Type}.", typeId);
 
         var navigator = _assemblies[type.Assembly];
-
-        var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{type}']");
+        
+        var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
 
         var summary = typeXml?.SelectSingleNode("summary")?.Value;
         if (summary == null)
@@ -259,7 +259,9 @@ public sealed class DocumentationGenerator
         {
             var genericArgumentInfo = genericArgument.GetTypeInfo();
 
-            var genericArgumentId = genericArgumentInfo.GetSanitizedName(true, false);
+            var genericArgumentId = genericArgument.IsGenericParameter
+                ? genericArgument.Name
+                : genericArgumentInfo.GetSanitizedName(true, false);
 
             logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
 
@@ -272,6 +274,7 @@ public sealed class DocumentationGenerator
             yield return new GenericTypeArgumentDocumentation
             {
                 Id = genericArgumentId,
+                Name = genericArgument.Name,
                 Content = DocumentationContent.GenericTypeArgument,
                 Description = description?.Trim(),
                 Namespace = genericArgument.Namespace,
