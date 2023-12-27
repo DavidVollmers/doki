@@ -16,3 +16,7 @@ public class TypeDocumentationReference : Doki.DocumentationObject, System.IEqua
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → TypeDocumentationReference
 
+Derived: [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md), [TypeDocumentation](Doki.TypeDocumentation.md)
+
+Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.TypeDocumentationReference&gt;)
+

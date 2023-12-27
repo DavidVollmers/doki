@@ -16,3 +16,5 @@ public sealed class GenericTypeArgumentDocumentation : Doki.TypeDocumentationRef
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → GenericTypeArgumentDocumentation
 
+Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;)
+

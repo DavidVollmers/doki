@@ -204,6 +204,10 @@ public sealed class DocumentationGenerator
         typeDocumentation.GenericArguments =
             BuildGenericTypeArgumentDocumentation(type, typeDocumentation, typeXml, logger).ToArray();
 
+        typeDocumentation.Interfaces = BuildInterfaceDocumentation(type, typeDocumentation).ToArray();
+
+        typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(type, typeDocumentation).ToArray();
+
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
         while (baseType != null)
@@ -282,6 +286,64 @@ public sealed class DocumentationGenerator
                 IsDocumented = IsTypeDocumented(genericArgument),
                 IsMicrosoft = IsAssemblyFromMicrosoft(genericArgumentAssembly),
                 Parent = parent,
+            };
+        }
+    }
+
+    private IEnumerable<TypeDocumentationReference> BuildInterfaceDocumentation(Type type, DocumentationObject parent)
+    {
+        var interfaces = type.GetInterfaces().Except(type.BaseType?.GetInterfaces() ?? Array.Empty<Type>())
+            .ToArray();
+
+        foreach (var @interface in interfaces)
+        {
+            var interfaceInfo = @interface.GetTypeInfo();
+
+            var interfaceId = interfaceInfo.GetSanitizedName(true, false);
+
+            var interfaceAssembly = @interface.Assembly.GetName();
+
+            yield return new TypeDocumentationReference
+            {
+                Id = interfaceId,
+                Name = interfaceInfo.GetSanitizedName(),
+                FullName = interfaceInfo.GetSanitizedName(true),
+                Content = DocumentationContent.TypeReference,
+                Namespace = @interface.Namespace,
+                Assembly = interfaceAssembly.Name,
+                IsGeneric = @interface.IsGenericType,
+                IsDocumented = IsTypeDocumented(@interface),
+                IsMicrosoft = IsAssemblyFromMicrosoft(interfaceAssembly),
+                Parent = parent
+            };
+        }
+    }
+
+    private IEnumerable<TypeDocumentationReference> BuildDerivedTypeDocumentation(Type type, DocumentationObject parent)
+    {
+        var derivedTypes = _assemblies.Keys.SelectMany(GetTypesToDocument)
+            .Where(t => t.BaseType?.FullName == type.FullName);
+
+        foreach (var derivedType in derivedTypes)
+        {
+            var derivedTypeInfo = derivedType.GetTypeInfo();
+
+            var derivedTypeId = derivedTypeInfo.GetSanitizedName(true, false);
+
+            var derivedTypeAssembly = derivedType.Assembly.GetName();
+
+            yield return new TypeDocumentationReference
+            {
+                Id = derivedTypeId,
+                Name = derivedTypeInfo.GetSanitizedName(),
+                FullName = derivedTypeInfo.GetSanitizedName(true),
+                Content = DocumentationContent.TypeReference,
+                Namespace = derivedType.Namespace,
+                Assembly = derivedTypeAssembly.Name,
+                IsGeneric = derivedType.IsGenericType,
+                IsDocumented = IsTypeDocumented(derivedType),
+                IsMicrosoft = IsAssemblyFromMicrosoft(derivedTypeAssembly),
+                Parent = parent
             };
         }
     }

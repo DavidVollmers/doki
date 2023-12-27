@@ -16,3 +16,5 @@ public abstract class OutputOptions : System.IEquatable<Doki.Output.OutputOption
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions
 
+Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputOptions&gt;)
+

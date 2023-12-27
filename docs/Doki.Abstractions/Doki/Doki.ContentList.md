@@ -16,3 +16,7 @@ public class ContentList : Doki.DocumentationObject, System.IEquatable<Doki.Cont
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → ContentList
 
+Derived: [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
+
+Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.ContentList&gt;)
+

@@ -124,7 +124,29 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             markdown.Add(inheritanceText);
         }
 
-        //TODO interfaces
+        if (typeDocumentation.DerivedTypes.Length != 0)
+        {
+            var derivedTypesText = new Text("Derived: ");
+            for (var i = 0; i < typeDocumentation.DerivedTypes.Length; i++)
+            {
+                if (i != 0) derivedTypesText.Append(", ");
+                derivedTypesText.Append(markdown.BuildLinkTo(typeDocumentation.DerivedTypes[i]));
+            }
+
+            markdown.Add(derivedTypesText);
+        }
+
+        if (typeDocumentation.Interfaces.Length != 0)
+        {
+            var interfacesText = new Text("Implements: ");
+            for (var i = 0; i < typeDocumentation.Interfaces.Length; i++)
+            {
+                if (i != 0) interfacesText.Append(", ");
+                interfacesText.Append(markdown.BuildLinkTo(typeDocumentation.Interfaces[i]));
+            }
+
+            markdown.Add(interfacesText);
+        }
 
         if (typeDocumentation.IsGeneric)
         {

@@ -16,3 +16,5 @@ public sealed class OutputContext : System.IEquatable<Doki.Output.OutputContext>
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputContext
 
+Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputContext&gt;)
+

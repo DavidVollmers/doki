@@ -16,3 +16,5 @@ public sealed class TypeDocumentation : Doki.TypeDocumentationReference, System.
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → TypeDocumentation
 
+Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.TypeDocumentation&gt;)
+

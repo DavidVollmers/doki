@@ -16,3 +16,5 @@ public sealed class AssemblyDocumentation : Doki.ContentList, System.IEquatable<
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [ContentList](Doki.ContentList.md) → AssemblyDocumentation
 
+Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.AssemblyDocumentation&gt;)
+
