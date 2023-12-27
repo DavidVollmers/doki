@@ -8,8 +8,6 @@ Assembly: [Doki.TestAssembly.InheritanceChain.Abstractions.dll](../README.md)
 
 ---
 
-
-
 ```csharp
 public abstract class AbstractClass
 ```

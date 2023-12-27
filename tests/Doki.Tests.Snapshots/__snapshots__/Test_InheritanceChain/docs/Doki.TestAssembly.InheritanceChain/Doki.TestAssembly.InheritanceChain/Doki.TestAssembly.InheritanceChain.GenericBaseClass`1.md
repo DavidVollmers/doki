@@ -8,11 +8,14 @@ Assembly: [Doki.TestAssembly.InheritanceChain.dll](../README.md)
 
 ---
 
-
-
 ```csharp
 public abstract class GenericBaseClass<T> : Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [AbstractClass](Doki.TestAssembly.InheritanceChain.GenericBaseClass`1/Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.md) → GenericBaseClass&lt;T&gt;
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [AbstractClass](../../Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.md) → GenericBaseClass&lt;T&gt;
+
+## Type Parameters
+
+- `T`
+
 

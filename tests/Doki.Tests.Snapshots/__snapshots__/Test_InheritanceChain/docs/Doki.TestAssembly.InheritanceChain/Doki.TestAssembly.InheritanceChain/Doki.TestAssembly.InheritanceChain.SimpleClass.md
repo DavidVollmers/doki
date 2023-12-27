@@ -8,8 +8,6 @@ Assembly: [Doki.TestAssembly.InheritanceChain.dll](../README.md)
 
 ---
 
-
-
 ```csharp
 public class SimpleClass
 ```

@@ -8,8 +8,6 @@ Assembly: [Doki.TestAssembly.ParentRootNamespace.dll](../README.md)
 
 ---
 
-
-
 ```csharp
 public class TestParentRootNamespaceClass
 ```
