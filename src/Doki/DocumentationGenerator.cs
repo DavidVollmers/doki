@@ -321,8 +321,16 @@ public sealed class DocumentationGenerator
 
     private IEnumerable<TypeDocumentationReference> BuildDerivedTypeDocumentation(Type type, DocumentationObject parent)
     {
-        var derivedTypes = _assemblies.Keys.SelectMany(GetTypesToDocument)
-            .Where(t => t.BaseType?.FullName == type.FullName);
+        var derivedTypes = new List<Type>();
+
+        foreach (var t in _assemblies.Keys.SelectMany(GetTypesToDocument))
+        {
+            if (t.BaseType?.FullName == null) continue;
+
+            var baseTypeName = t.BaseType.FullName.Split('[')[0];
+
+            if (baseTypeName == type.FullName) derivedTypes.Add(t);
+        }
 
         foreach (var derivedType in derivedTypes)
         {

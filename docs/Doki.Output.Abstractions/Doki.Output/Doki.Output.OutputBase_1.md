@@ -18,6 +18,8 @@ public abstract class OutputBase<T> : Doki.Output.IOutput
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputBase&lt;T&gt;
 
+Derived: [MarkdownOutput](../../Doki.Output.Markdown/Doki.Output.Markdown/Doki.Output.Markdown.MarkdownOutput.md)
+
 Implements: [IOutput](Doki.Output.IOutput.md)
 
 ## Type Parameters
