@@ -12,7 +12,8 @@ internal static class InternalExtensions
 
     public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
     {
-        var indexFile = to.Content is DocumentationContent.Assemblies or DocumentationContent.Assembly or DocumentationContent.Namespace;
+        var indexFile = to.Content is DocumentationContent.Assemblies or DocumentationContent.Assembly
+            or DocumentationContent.Namespace;
 
         var asText = false;
         string? relativePath = null;
@@ -34,8 +35,26 @@ internal static class InternalExtensions
 
         text ??= to.Id;
 
-        if (asText) return new Text(text);
-        return new Link(text, relativePath);
+        if (to is not TypeDocumentationReference { IsGeneric: true } type ||
+            type.GenericArguments.All(a => a.IsGenericParameter))
+            return asText ? new Text(text) : new Link(text, relativePath);
+
+        text = text.Split('<')[0];
+
+        var genericArguments = type.GenericArguments.Select(x => builder.BuildLinkTo(x)).ToList();
+
+        var container = Text.Empty.Append(asText ? new Text(text) : new Link(text, relativePath)).Append("<");
+
+        for (var i = 0; i < genericArguments.Count; i++)
+        {
+            container.Append(genericArguments[i]);
+
+            if (i < genericArguments.Count - 1) container.Append(", ");
+        }
+
+        container.Append(">");
+
+        return container;
     }
 
     public static string GetPath(this DocumentationObject element)
