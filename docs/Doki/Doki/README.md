@@ -1,4 +1,4 @@
-# Doki
+# Doki Namespace
 
 ## Types
 

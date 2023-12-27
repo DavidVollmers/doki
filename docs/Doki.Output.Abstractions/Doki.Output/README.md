@@ -1,4 +1,4 @@
-# Doki.Output
+# Doki.Output Namespace
 
 ## Types
 

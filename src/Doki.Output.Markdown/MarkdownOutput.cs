@@ -17,8 +17,10 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (!targetFile.Directory!.Exists) targetFile.Directory.Create();
 
-        var markdown = new MarkdownBuilder(currentPath)
-            .Add(new Heading(contentList.Name, 1));
+        var heading = new Heading(contentList.Name, 1);
+        if (contentList.Content == DocumentationContent.Namespace) heading.Append(" Namespace");
+
+        var markdown = new MarkdownBuilder(currentPath).Add(heading);
 
         if (contentList.Description != null)
         {

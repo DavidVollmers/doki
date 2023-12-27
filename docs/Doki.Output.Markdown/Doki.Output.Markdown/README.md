@@ -1,4 +1,4 @@
-# Doki.Output.Markdown
+# Doki.Output.Markdown Namespace
 
 ## Types
 
