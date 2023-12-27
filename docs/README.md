@@ -2,7 +2,7 @@
 
 This directory contains the API documentation for all packages in this repository.
 
-This documentation is generated using the [Doki.Output.Markdown](../src/Doki.Output.Markdown/README.md) package.
+This documentation is generated using the [Doki.Output.Markdown](Doki.Output.Markdown/README.md) package.
 
 [//]: <!DOKI>
 # Packages
