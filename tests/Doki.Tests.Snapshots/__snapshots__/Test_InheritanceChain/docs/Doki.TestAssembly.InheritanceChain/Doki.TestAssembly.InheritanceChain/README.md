@@ -3,7 +3,7 @@
 ## Types
 
 - [DerivedClass](Doki.TestAssembly.InheritanceChain.DerivedClass.md)
-- [GenericBaseClass<T>](Doki.TestAssembly.InheritanceChain.GenericBaseClass`1.md)
+- [GenericBaseClass&lt;T&gt;](Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md)
 - [SimpleClass](Doki.TestAssembly.InheritanceChain.SimpleClass.md)
 
 
