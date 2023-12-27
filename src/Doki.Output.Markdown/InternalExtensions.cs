@@ -69,7 +69,7 @@ internal static class InternalExtensions
 
             if (typeDocumentationReference.Namespace != null) pathParts.Add(typeDocumentationReference.Namespace);
 
-            pathParts.Add(typeDocumentationReference.Id);
+            pathParts.Add(typeDocumentationReference.Id.Replace('`', '_'));
 
             return pathParts.CombineToPath();
         }

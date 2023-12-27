@@ -1,9 +1,16 @@
 ﻿namespace Doki.Output.Markdown.Elements;
 
-internal record Link(string Text, string Url) : Element
+internal record Link : Text
 {
+    public string Url { get; }
+
+    public Link(string text, string url) : base(text)
+    {
+        Url = url;
+    }
+
     public override string ToString()
     {
-        return $"[{Text.Replace("`", "\\`")}]({Url})";
+        return $"[{GetText()}]({Url})";
     }
 }
