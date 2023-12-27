@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Xml;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
@@ -166,6 +167,19 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                     return container;
                 }).ToList()
             });
+        }
+
+        if (typeDocumentation.Examples.Length != 0)
+        {
+            markdown.Add(Element.Separator);
+
+            markdown.Add(new Heading("Examples", 2));
+
+            foreach (var example in typeDocumentation.Examples)
+            {
+                if (example.Text != null) markdown.Add(new Text(example.Text));
+                if (example.Code != null) markdown.Add(new Code(example.Code));
+            }
         }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);

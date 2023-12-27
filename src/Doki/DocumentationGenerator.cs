@@ -8,6 +8,20 @@ namespace Doki;
 /// <summary>
 /// Generates documentation for assemblies.
 /// </summary>
+/// <example>
+/// The following example shows how to generate documentation for an assembly and output it using the <see cref="T:MarkdownOutput"/> class.
+/// <code>
+/// var outputContext = new OutputContext(Directory.GetCurrentDirectory());
+/// 
+/// var generator = new DocumentationGenerator();
+///
+/// generator.AddAssembly(typeof(Program).Assembly, new XPathDocument("path/to/assembly.xml"));
+///
+/// generator.AddOutput(new MarkdownOutput(outputContext));
+///
+/// await generator.GenerateAsync(new ConsoleLogger());
+/// </code>
+/// </example>
 public sealed class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
@@ -78,8 +92,7 @@ public sealed class DocumentationGenerator
     }
 
     private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly,
-        DocumentationObject parent,
-        ILogger logger, CancellationToken cancellationToken)
+        DocumentationObject parent, ILogger logger, CancellationToken cancellationToken)
     {
         var assemblyName = assembly.GetName();
 
@@ -159,8 +172,7 @@ public sealed class DocumentationGenerator
     }
 
     private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent,
-        ILogger logger,
-        CancellationToken cancellationToken)
+        ILogger logger, CancellationToken cancellationToken)
     {
         var typeInfo = type.GetTypeInfo();
 
@@ -198,7 +210,7 @@ public sealed class DocumentationGenerator
             Namespace = type.Namespace,
             Assembly = type.Assembly.GetName().Name,
             IsDocumented = true,
-            IsGeneric = type.IsGenericType
+            IsGeneric = type.IsGenericType,
         };
 
         typeDocumentation.GenericArguments =
@@ -207,6 +219,8 @@ public sealed class DocumentationGenerator
         typeDocumentation.Interfaces = BuildInterfaceDocumentation(type, typeDocumentation).ToArray();
 
         typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(type, typeDocumentation).ToArray();
+
+        typeDocumentation.Examples = BuildExampleDocumentation(typeXml, typeDocumentation).ToArray();
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
@@ -245,6 +259,30 @@ public sealed class DocumentationGenerator
         }
 
         return typeDocumentation;
+    }
+
+    private static IEnumerable<ExampleDocumentation> BuildExampleDocumentation(XPathNavigator? typeXml,
+        DocumentationObject parent)
+    {
+        var examplesXml = typeXml?.Select("example");
+        if (examplesXml == null) yield break;
+
+        var examples = examplesXml.OfType<XPathNavigator>().ToArray();
+
+        for (var index = 0; index < examples.Length; index++)
+        {
+            var example = examples[index];
+            var text = example.Select("text()").OfType<XPathNavigator>().Select(x => x.Value.Trim()).ToArray();
+
+            yield return new ExampleDocumentation
+            {
+                Id = index.ToString(),
+                Content = DocumentationContent.Example,
+                Parent = parent,
+                Text = text.Length == 0 ? null : string.Join("\n", text).Trim(),
+                Code = example.SelectSingleNode("code")?.Value.Trim(),
+            };
+        }
     }
 
     private IEnumerable<GenericTypeArgumentDocumentation> BuildGenericTypeArgumentDocumentation(Type type,

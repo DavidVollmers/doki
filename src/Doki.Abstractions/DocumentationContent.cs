@@ -11,5 +11,6 @@ public enum DocumentationContent
     Struct,
     Interface,
     Type,
-    GenericTypeArgument
+    GenericTypeArgument,
+    Example
 }
