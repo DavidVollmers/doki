@@ -12,5 +12,6 @@ public enum DocumentationContent
     Interface,
     Type,
     GenericTypeArgument,
-    Example
+    Example,
+    XmlDocumentation
 }

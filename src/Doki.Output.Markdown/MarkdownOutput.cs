@@ -177,7 +177,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             foreach (var example in typeDocumentation.Examples)
             {
-                if (example.Text != null) markdown.Add(new Text(example.Text));
+                if (example.Documentation != null) markdown.Add(new Text(example.Documentation));
                 if (example.Code != null) markdown.Add(new Code(example.Code));
             }
         }

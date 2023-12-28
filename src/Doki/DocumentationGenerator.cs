@@ -22,7 +22,7 @@ namespace Doki;
 /// await generator.GenerateAsync(new ConsoleLogger());
 /// </code>
 /// </example>
-public sealed class DocumentationGenerator
+public sealed partial class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
     private readonly Dictionary<string, XPathNavigator> _projectMetadata = new();
@@ -184,7 +184,7 @@ public sealed class DocumentationGenerator
 
         var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
 
-        var summary = typeXml?.SelectSingleNode("summary")?.Value;
+        var summary = typeXml?.SelectSingleNode("summary");
         if (summary == null)
         {
             logger.LogWarning("No summary found for type {Type}.", type);
@@ -205,13 +205,14 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Name = typeInfo.GetSanitizedName(),
             FullName = typeInfo.GetSanitizedName(true),
-            Summary = summary?.TrimIndentation(),
             Definition = typeInfo.GetDefinition(),
             Namespace = type.Namespace,
             Assembly = type.Assembly.GetName().Name,
             IsDocumented = true,
             IsGeneric = type.IsGenericType,
         };
+
+        if (summary != null) typeDocumentation.Summary = BuildXmlDocumentation(summary, typeDocumentation);
 
         typeDocumentation.GenericArguments =
             BuildGenericTypeArgumentDocumentation(type, typeDocumentation, typeXml, logger).ToArray();
@@ -259,140 +260,6 @@ public sealed class DocumentationGenerator
         }
 
         return typeDocumentation;
-    }
-
-    private static IEnumerable<ExampleDocumentation> BuildExampleDocumentation(XPathNavigator? typeXml,
-        DocumentationObject parent)
-    {
-        var examplesXml = typeXml?.Select("example");
-        if (examplesXml == null) yield break;
-
-        var examples = examplesXml.OfType<XPathNavigator>().ToArray();
-
-        for (var index = 0; index < examples.Length; index++)
-        {
-            var example = examples[index];
-            var text = string.Join("\n",
-                example.Select("text()").OfType<XPathNavigator>().Select(x => x.Value).ToArray());
-
-            yield return new ExampleDocumentation
-            {
-                Id = index.ToString(),
-                Content = DocumentationContent.Example,
-                Parent = parent,
-                Text = text.TrimIndentation(),
-                Code = example.SelectSingleNode("code")?.Value.TrimIndentation(),
-            };
-        }
-    }
-
-    private IEnumerable<GenericTypeArgumentDocumentation> BuildGenericTypeArgumentDocumentation(Type type,
-        DocumentationObject parent, XPathNavigator? typeXml, ILogger logger)
-    {
-        if (!type.IsGenericType) yield break;
-
-        var genericArguments = type.GetGenericArguments();
-
-        foreach (var genericArgument in genericArguments)
-        {
-            var genericArgumentInfo = genericArgument.GetTypeInfo();
-
-            var genericArgumentId = genericArgument.IsGenericParameter
-                ? genericArgument.Name
-                : genericArgumentInfo.GetSanitizedName(true, false);
-
-            logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
-
-            var description = typeXml?.SelectSingleNode($"typeparam[@name='{genericArgumentInfo.Name}']")?.Value;
-            if (description == null && typeXml != null)
-            {
-                logger.LogWarning("No description found for generic argument {GenericArgument}.", genericArgument);
-            }
-
-            var genericArgumentAssembly = genericArgument.Assembly.GetName();
-
-            yield return new GenericTypeArgumentDocumentation
-            {
-                Id = genericArgumentId,
-                Name = genericArgumentInfo.GetSanitizedName(),
-                FullName = genericArgumentInfo.GetSanitizedName(true),
-                Content = DocumentationContent.GenericTypeArgument,
-                Description = description?.TrimIndentation(),
-                Namespace = genericArgument.Namespace,
-                Assembly = genericArgumentAssembly.Name,
-                IsGeneric = genericArgument.IsGenericType,
-                IsGenericParameter = genericArgument.IsGenericParameter,
-                IsDocumented = IsTypeDocumented(genericArgument),
-                IsMicrosoft = IsAssemblyFromMicrosoft(genericArgumentAssembly),
-                Parent = parent,
-            };
-        }
-    }
-
-    private IEnumerable<TypeDocumentationReference> BuildInterfaceDocumentation(Type type, DocumentationObject parent)
-    {
-        var interfaces = type.GetInterfaces().Except(type.BaseType?.GetInterfaces() ?? Array.Empty<Type>())
-            .ToArray();
-
-        foreach (var @interface in interfaces)
-        {
-            var interfaceInfo = @interface.GetTypeInfo();
-
-            var interfaceId = interfaceInfo.GetSanitizedName(true, false);
-
-            var interfaceAssembly = @interface.Assembly.GetName();
-
-            yield return new TypeDocumentationReference
-            {
-                Id = interfaceId,
-                Name = interfaceInfo.GetSanitizedName(),
-                FullName = interfaceInfo.GetSanitizedName(true),
-                Content = DocumentationContent.TypeReference,
-                Namespace = @interface.Namespace,
-                Assembly = interfaceAssembly.Name,
-                IsGeneric = @interface.IsGenericType,
-                IsDocumented = IsTypeDocumented(@interface),
-                IsMicrosoft = IsAssemblyFromMicrosoft(interfaceAssembly),
-                Parent = parent
-            };
-        }
-    }
-
-    private IEnumerable<TypeDocumentationReference> BuildDerivedTypeDocumentation(Type type, DocumentationObject parent)
-    {
-        var derivedTypes = new List<Type>();
-
-        foreach (var t in _assemblies.Keys.SelectMany(GetTypesToDocument))
-        {
-            if (t.BaseType?.FullName == null) continue;
-
-            var baseTypeName = t.BaseType.FullName.Split('[')[0];
-
-            if (baseTypeName == type.FullName) derivedTypes.Add(t);
-        }
-
-        foreach (var derivedType in derivedTypes)
-        {
-            var derivedTypeInfo = derivedType.GetTypeInfo();
-
-            var derivedTypeId = derivedTypeInfo.GetSanitizedName(true, false);
-
-            var derivedTypeAssembly = derivedType.Assembly.GetName();
-
-            yield return new TypeDocumentationReference
-            {
-                Id = derivedTypeId,
-                Name = derivedTypeInfo.GetSanitizedName(),
-                FullName = derivedTypeInfo.GetSanitizedName(true),
-                Content = DocumentationContent.TypeReference,
-                Namespace = derivedType.Namespace,
-                Assembly = derivedTypeAssembly.Name,
-                IsGeneric = derivedType.IsGenericType,
-                IsDocumented = IsTypeDocumented(derivedType),
-                IsMicrosoft = IsAssemblyFromMicrosoft(derivedTypeAssembly),
-                Parent = parent
-            };
-        }
     }
 
     private bool IsTypeDocumented(Type type)

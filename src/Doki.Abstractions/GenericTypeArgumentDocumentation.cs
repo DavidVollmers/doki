@@ -2,7 +2,7 @@
 
 public sealed record GenericTypeArgumentDocumentation : TypeDocumentationReference
 {
-    public string? Description { get; internal init; }
-    
+    public DocumentationObject? Description { get; internal set; }
+
     public bool IsGenericParameter { get; internal init; }
 }

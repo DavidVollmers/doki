@@ -2,7 +2,7 @@
 
 public sealed record TypeDocumentation : TypeDocumentationReference
 {
-    public string? Summary { get; internal init; }
+    public DocumentationObject? Summary { get; internal set; }
 
     public string Definition { get; internal init; } = null!;
 
