@@ -10,7 +10,7 @@ internal record Text : Element
 
     public bool IsEmpty => _builder.Length == 0;
 
-    public bool IsBold { get; init; }
+    public bool IsBold { get; set; }
 
     public Text(string value)
     {

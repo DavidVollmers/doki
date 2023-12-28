@@ -102,10 +102,9 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (typeDocumentation.Summary != null)
         {
-            markdown.Add(new Text(typeDocumentation.Summary)
-            {
-                IsBold = true
-            });
+            var summary = markdown.BuildText(typeDocumentation.Summary);
+            summary.IsBold = true;
+            markdown.Add(summary);
         }
 
         markdown.Add(new Code(typeDocumentation.Definition));
@@ -162,7 +161,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                     var container = new IndentContainer(1, false);
                     container.Add(new Code(x.Name, true));
                     container.Add(Text.Empty);
-                    container.Add(new Text(x.Description));
+                    container.Add(markdown.BuildText(x.Description));
                     return container;
                 }).ToList()
             });
@@ -176,8 +175,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             foreach (var example in typeDocumentation.Examples)
             {
-                if (example.Documentation != null) markdown.Add(new Text(example.Documentation));
-                if (example.Code != null) markdown.Add(new Code(example.Code));
+                markdown.Add(markdown.BuildText(example.Documentation));
             }
         }
 

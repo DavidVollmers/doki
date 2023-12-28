@@ -2,5 +2,5 @@
 
 public record ExampleDocumentation : DocumentationObject
 {
-    public DocumentationObject? Documentation { get; internal set; }
+    public DocumentationObject Documentation { get; internal set; } = null!;
 }

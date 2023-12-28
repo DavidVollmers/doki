@@ -4,6 +4,22 @@ namespace Doki.Output.Markdown;
 
 internal static class InternalExtensions
 {
+    public static Text BuildText(this MarkdownBuilder builder, DocumentationObject obj)
+    {
+        if (obj is not ContentList { Content: DocumentationContent.XmlDocumentation } contentList)
+            throw new ArgumentException("DocumentationObject must be a ContentList with XmlDocumentation content.",
+                nameof(obj));
+
+        var text = Text.Empty;
+
+        foreach (var item in contentList.Items)
+        {
+            if (item is TextContent textContent) text.Append(textContent.Text);
+        }
+
+        return text;
+    }
+
     public static string BuildRelativePath(this MarkdownBuilder builder, DocumentationObject to,
         params string[] additionalParts)
     {

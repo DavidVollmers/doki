@@ -1,6 +1,6 @@
 ﻿namespace Doki;
 
-public static class DokiExtensions
+public static class DocumentationObjectExtensions
 {
     public static T? TryGetParent<T>(this DocumentationObject obj, DocumentationContent? expectedContent = null)
         where T : DocumentationObject
