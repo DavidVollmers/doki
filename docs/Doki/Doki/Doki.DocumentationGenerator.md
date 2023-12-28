@@ -22,18 +22,18 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 ## Examples
 
-The following example shows how to generate documentation for an assembly and output it using the
-class.
+The following example shows how to generate documentation for an assembly and output it using the  class.
 
 ```csharp
 var outputContext = new OutputContext(Directory.GetCurrentDirectory());
-             
-             var generator = new DocumentationGenerator();
-            
-             generator.AddAssembly(typeof(Program).Assembly, new XPathDocument("path/to/assembly.xml"));
-            
-             generator.AddOutput(new MarkdownOutput(outputContext));
-            
-             await generator.GenerateAsync(new ConsoleLogger());
+
+var generator = new DocumentationGenerator();
+
+generator.AddAssembly(typeof(Program).Assembly, new XPathDocument("path/to/assembly.xml"));
+
+generator.AddOutput(new MarkdownOutput(outputContext));
+
+await generator.GenerateAsync(new ConsoleLogger());
+
 ```
 

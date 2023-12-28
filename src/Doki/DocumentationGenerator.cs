@@ -205,7 +205,7 @@ public sealed class DocumentationGenerator
             Parent = parent,
             Name = typeInfo.GetSanitizedName(),
             FullName = typeInfo.GetSanitizedName(true),
-            Summary = summary?.Trim(),
+            Summary = summary?.TrimIndentation(),
             Definition = typeInfo.GetDefinition(),
             Namespace = type.Namespace,
             Assembly = type.Assembly.GetName().Name,
@@ -272,15 +272,16 @@ public sealed class DocumentationGenerator
         for (var index = 0; index < examples.Length; index++)
         {
             var example = examples[index];
-            var text = example.Select("text()").OfType<XPathNavigator>().Select(x => x.Value.Trim()).ToArray();
+            var text = string.Join("\n",
+                example.Select("text()").OfType<XPathNavigator>().Select(x => x.Value).ToArray());
 
             yield return new ExampleDocumentation
             {
                 Id = index.ToString(),
                 Content = DocumentationContent.Example,
                 Parent = parent,
-                Text = text.Length == 0 ? null : string.Join("\n", text).Trim(),
-                Code = example.SelectSingleNode("code")?.Value.Trim(),
+                Text = text.TrimIndentation(),
+                Code = example.SelectSingleNode("code")?.Value.TrimIndentation(),
             };
         }
     }
@@ -316,7 +317,7 @@ public sealed class DocumentationGenerator
                 Name = genericArgumentInfo.GetSanitizedName(),
                 FullName = genericArgumentInfo.GetSanitizedName(true),
                 Content = DocumentationContent.GenericTypeArgument,
-                Description = description?.Trim(),
+                Description = description?.TrimIndentation(),
                 Namespace = genericArgument.Namespace,
                 Assembly = genericArgumentAssembly.Name,
                 IsGeneric = genericArgument.IsGenericType,
