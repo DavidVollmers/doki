@@ -13,5 +13,6 @@ public enum DocumentationContent
     Type,
     GenericTypeArgument,
     Example,
-    XmlDocumentation
+    XmlDocumentation,
+    Text
 }

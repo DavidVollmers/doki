@@ -169,14 +169,7 @@ public partial class DocumentationGenerator
                     switch (node.Name)
                     {
                         case "see":
-                            items.Add(new TypeDocumentationReference
-                            {
-                                Id = node.BaseURI,
-                                Content = DocumentationContent.TypeReference,
-                                Parent = content,
-                                Name = node.Name,
-                                Value = node.GetAttribute("cref", string.Empty)
-                            });
+                            //TODO build TypeDocumentationReference
                             break;
                         default:
                             items.Add(BuildXmlDocumentation(node, content));
@@ -190,8 +183,7 @@ public partial class DocumentationGenerator
                         Id = node.BaseURI,
                         Content = DocumentationContent.Text,
                         Parent = content,
-                        Name = node.Name,
-                        Value = node.Value
+                        Text = node.Value.TrimIndentation()
                     });
                     break;
                 default:

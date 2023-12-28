@@ -5,7 +5,7 @@ namespace Doki;
 
 internal static class StringExtensions
 {
-    private static string TrimIndentation(this string str)
+    public static string TrimIndentation(this string str)
     {
         var lines = str.TrimEmptyLines();
 
