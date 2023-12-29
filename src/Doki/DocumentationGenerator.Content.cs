@@ -123,8 +123,17 @@ public partial class DocumentationGenerator
                     {
                         case "see":
                             var cref = node.GetAttribute("cref", string.Empty);
-                            if (cref == string.Empty) continue;
-                            items.Add(BuildCRefDocumentation(cref, content));
+                            var href = node.GetAttribute("href", string.Empty);
+                            if (cref != string.Empty) items.Add(BuildCRefDocumentation(cref, content));
+                            else if (href != string.Empty)
+                                items.Add(new Link
+                                {
+                                    Id = node.BaseURI,
+                                    Content = DocumentationContent.Link,
+                                    Parent = content,
+                                    Url = href,
+                                    Text = node.Value.TrimIndentation()
+                                });
                             break;
                         case "code":
                             var language = node.GetAttribute("lang", string.Empty);

@@ -38,5 +38,5 @@ await generator.GenerateAsync(new ConsoleLogger());
 
 ## Remarks
 
-You can also use the doki cli tool to generate documentation. See the official for more information.
+You can also use the doki cli tool to generate documentation. See the official [documentation](https://github.com/DavidVollmers/doki) for more information.
 

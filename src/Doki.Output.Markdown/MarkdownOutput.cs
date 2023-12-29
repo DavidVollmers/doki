@@ -93,7 +93,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             {
                 markdown.Add(new Text("Package: ")
                     //TODO support other package sources
-                    .Append(new Link(assemblyAssemblyDocumentation.PackageId,
+                    .Append(new Elements.Link(assemblyAssemblyDocumentation.PackageId,
                         // ReSharper disable once UseStringInterpolation
                         string.Format("https://www.nuget.org/packages/{0}", assemblyAssemblyDocumentation.PackageId))));
             }
@@ -177,7 +177,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
                 markdown.Add(markdown.BuildText(example));
             }
         }
-        
+
         if (typeDocumentation.Remarks.Length != 0)
         {
             markdown.Add(new Heading("Remarks", 2));

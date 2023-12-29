@@ -14,5 +14,6 @@ public enum DocumentationContent
     GenericTypeArgument,
     XmlDocumentation,
     Text,
-    CodeBlock
+    CodeBlock,
+    Link
 }

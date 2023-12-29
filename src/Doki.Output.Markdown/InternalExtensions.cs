@@ -9,7 +9,7 @@ internal static class InternalExtensions
         var text = Text.Empty;
 
         var parents = new List<Element>();
-        
+
         var current = obj;
         while (current.Parent != null)
         {
@@ -17,18 +17,18 @@ internal static class InternalExtensions
 
             current = current.Parent;
         }
-        
+
         parents.Reverse();
         foreach (var parent in parents)
         {
             text.Append(parent);
-            
+
             text.Append(" / ");
         }
 
         return text;
     }
-    
+
     public static Text BuildText(this MarkdownBuilder builder, DocumentationObject obj)
     {
         if (obj is not ContentList { Content: DocumentationContent.XmlDocumentation } contentList)
@@ -43,6 +43,10 @@ internal static class InternalExtensions
             {
                 case TextContent textContent:
                     text.Append(textContent.Text);
+                    break;
+                case Link link:
+                    text.Append(new Elements.Link(link.Text, link.Url));
+                    text.Space();
                     break;
                 case CodeBlock codeBlock:
                     text.NewLine();
@@ -95,13 +99,13 @@ internal static class InternalExtensions
 
         if (to is not TypeDocumentationReference { IsGeneric: true } type ||
             type.GenericArguments.All(a => a.IsGenericParameter))
-            return asText ? new Text(text) : new Link(text, relativePath);
+            return asText ? new Text(text) : new Elements.Link(text, relativePath);
 
         text = text.Split('<')[0];
 
         var genericArguments = type.GenericArguments.Select(x => builder.BuildLinkTo(x)).ToList();
 
-        var container = Text.Empty.Append(asText ? new Text(text) : new Link(text, relativePath)).Append("<");
+        var container = Text.Empty.Append(asText ? new Text(text) : new Elements.Link(text, relativePath)).Append("<");
 
         for (var i = 0; i < genericArguments.Count; i++)
         {
