@@ -23,7 +23,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 ## Examples
 
 The following example shows how to generate documentation for an assembly and output it using the [MarkdownOutput](../../Doki.Output.Markdown/Doki.Output.Markdown/Doki.Output.Markdown.MarkdownOutput.md) class.
-```
+```csharp
 var outputContext = new OutputContext(Directory.GetCurrentDirectory());
 
 var generator = new DocumentationGenerator();
