@@ -15,5 +15,6 @@ public enum DocumentationContent
     XmlDocumentation,
     Text,
     CodeBlock,
-    Link
+    Link,
+    Constructor,
 }

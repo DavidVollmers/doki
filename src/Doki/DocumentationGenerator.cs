@@ -31,6 +31,9 @@ public sealed partial class DocumentationGenerator
     private readonly Dictionary<string, XPathNavigator> _projectMetadata = new();
     private readonly List<IOutput> _outputs = [];
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.
+    /// </summary>
     public DocumentationGenerator()
     {
     }
@@ -232,8 +235,11 @@ public sealed partial class DocumentationGenerator
         typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(type, typeDocumentation).ToArray();
 
         typeDocumentation.Examples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
-        
+
         typeDocumentation.Remarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
+
+        typeDocumentation.Constructors =
+            BuildConstructorDocumentation(type, typeDocumentation, typeXml, logger).ToArray();
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;

@@ -97,6 +97,43 @@ public partial class DocumentationGenerator
             yield return BuildTypeDocumentationReference(derivedType, parent);
         }
     }
+    
+    private IEnumerable<ConstructorDocumentation> BuildConstructorDocumentation(Type type, DocumentationObject parent,
+        XPathNavigator? typeXml, ILogger logger)
+    {
+        var constructors = type.GetConstructors();
+
+        foreach (var constructor in constructors)
+        {
+            var constructorId = constructor.Name;
+
+            logger.LogDebug("Generating documentation for constructor {Constructor}.", constructorId);
+
+            var description = typeXml?.SelectSingleNode($"constructor[@name='{constructorId}']");
+            if (description == null && typeXml != null)
+            {
+                logger.LogWarning("No description found for constructor {Constructor}.", constructor);
+            }
+
+            var constructorAssembly = constructor.DeclaringType!.Assembly.GetName();
+
+            var constructorDocumentation = new ConstructorDocumentation
+            {
+                Id = constructorId,
+                Name = constructor.Name,
+                Content = DocumentationContent.Constructor,
+                Namespace = constructor.DeclaringType.Namespace,
+                Assembly = constructorAssembly.Name,
+                Parent = parent,
+            };
+
+            if (description != null)
+                constructorDocumentation.Description =
+                    BuildXmlDocumentation(description, constructorDocumentation);
+
+            yield return constructorDocumentation;
+        }
+    }
 
     private DocumentationObject BuildXmlDocumentation(XPathNavigator navigator, DocumentationObject parent)
     {
