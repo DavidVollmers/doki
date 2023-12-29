@@ -9,7 +9,7 @@ namespace Doki;
 /// Generates documentation for assemblies.
 /// </summary>
 /// <example>
-/// The following example shows how to generate documentation for an assembly and output it using the <see cref="T:MarkdownOutput"/> class.
+/// The following example shows how to generate documentation for an assembly and output it using the <see cref="T:Doki.Output.Markdown.MarkdownOutput"/> class.
 /// <code>
 /// var outputContext = new OutputContext(Directory.GetCurrentDirectory());
 /// 
@@ -152,13 +152,20 @@ public sealed partial class DocumentationGenerator
             var items = new List<DocumentationObject>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
-                var typeDocumentation =
-                    await GenerateTypeDocumentationAsync(type, namespaceDocumentation, logger, cancellationToken);
-
-                items.Add(new TypeDocumentationReference(typeDocumentation)
+                try
                 {
-                    Parent = namespaceDocumentation
-                });
+                    var typeDocumentation =
+                        await GenerateTypeDocumentationAsync(type, namespaceDocumentation, logger, cancellationToken);
+
+                    items.Add(new TypeDocumentationReference(typeDocumentation)
+                    {
+                        Parent = namespaceDocumentation
+                    });
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Failed to generate documentation for type {Type}.", type);
+                }
             }
 
             namespaceDocumentation.Items = items.ToArray();
@@ -265,6 +272,11 @@ public sealed partial class DocumentationGenerator
     private bool IsTypeDocumented(Type type)
     {
         return _assemblies.Any(a => a.Key.FullName == type.Assembly.FullName);
+    }
+
+    private Type? LookupType(string name)
+    {
+        return _assemblies.Keys.Select(assembly => assembly.GetType(name)).OfType<Type>().FirstOrDefault();
     }
 
     private static bool IsAssemblyFromMicrosoft(AssemblyName assemblyName)

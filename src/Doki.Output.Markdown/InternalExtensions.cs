@@ -14,7 +14,18 @@ internal static class InternalExtensions
 
         foreach (var item in contentList.Items)
         {
-            if (item is TextContent textContent) text.Append(textContent.Text);
+            switch (item)
+            {
+                case TextContent textContent:
+                    text.Append(textContent.Text);
+                    break;
+                case TypeDocumentationReference typeDocumentationReference:
+                    text.Append(builder.BuildLinkTo(typeDocumentationReference));
+                    break;
+                default:
+                    throw new NotSupportedException(
+                        $"Unsupported {nameof(DocumentationObject)} type: {item.GetType().Name}");
+            }
         }
 
         return text;

@@ -86,25 +86,7 @@ public partial class DocumentationGenerator
 
         foreach (var @interface in interfaces)
         {
-            var interfaceInfo = @interface.GetTypeInfo();
-
-            var interfaceId = interfaceInfo.GetSanitizedName(true, false);
-
-            var interfaceAssembly = @interface.Assembly.GetName();
-
-            yield return new TypeDocumentationReference
-            {
-                Id = interfaceId,
-                Name = interfaceInfo.GetSanitizedName(),
-                FullName = interfaceInfo.GetSanitizedName(true),
-                Content = DocumentationContent.TypeReference,
-                Namespace = @interface.Namespace,
-                Assembly = interfaceAssembly.Name,
-                IsGeneric = @interface.IsGenericType,
-                IsDocumented = IsTypeDocumented(@interface),
-                IsMicrosoft = IsAssemblyFromMicrosoft(interfaceAssembly),
-                Parent = parent
-            };
+            yield return BuildTypeDocumentationReference(@interface, parent);
         }
     }
 
@@ -123,25 +105,7 @@ public partial class DocumentationGenerator
 
         foreach (var derivedType in derivedTypes)
         {
-            var derivedTypeInfo = derivedType.GetTypeInfo();
-
-            var derivedTypeId = derivedTypeInfo.GetSanitizedName(true, false);
-
-            var derivedTypeAssembly = derivedType.Assembly.GetName();
-
-            yield return new TypeDocumentationReference
-            {
-                Id = derivedTypeId,
-                Name = derivedTypeInfo.GetSanitizedName(),
-                FullName = derivedTypeInfo.GetSanitizedName(true),
-                Content = DocumentationContent.TypeReference,
-                Namespace = derivedType.Namespace,
-                Assembly = derivedTypeAssembly.Name,
-                IsGeneric = derivedType.IsGenericType,
-                IsDocumented = IsTypeDocumented(derivedType),
-                IsMicrosoft = IsAssemblyFromMicrosoft(derivedTypeAssembly),
-                Parent = parent
-            };
+            yield return BuildTypeDocumentationReference(derivedType, parent);
         }
     }
 
@@ -169,7 +133,19 @@ public partial class DocumentationGenerator
                     switch (node.Name)
                     {
                         case "see":
-                            //TODO build TypeDocumentationReference
+                            var cref = node.GetAttribute("cref", string.Empty);
+                            if (cref == string.Empty) continue;
+                            items.Add(BuildCRefDocumentation(cref, content));
+                            break;
+                        case "code":
+                            items.Add(new CodeBlock
+                            {
+                                Id = node.BaseURI,
+                                Content = DocumentationContent.CodeBlock,
+                                Parent = content,
+                                Language = node.GetAttribute("lang", string.Empty),
+                                Text = node.Value.TrimIndentation()
+                            });
                             break;
                         default:
                             items.Add(BuildXmlDocumentation(node, content));
@@ -193,5 +169,52 @@ public partial class DocumentationGenerator
 
         content.Items = items.ToArray();
         return content;
+    }
+
+    private DocumentationObject BuildCRefDocumentation(string cref, DocumentationObject parent)
+    {
+        if (!cref.StartsWith("T:")) throw new ArgumentOutOfRangeException(nameof(cref), cref, "Unsupported cref.");
+
+        var typeName = cref[2..];
+        if (!typeName.Contains('.'))
+        {
+            var @namespace = parent.TryGetParent<ContentList>(DocumentationContent.Namespace);
+            if (@namespace != null) typeName = $"{@namespace.Id}.{typeName}";
+        }
+
+        var type = LookupType(typeName);
+        if (type == null)
+            return new TextContent
+            {
+                Id = typeName,
+                Content = DocumentationContent.Text,
+                Parent = parent,
+                Text = typeName
+            };
+
+        return BuildTypeDocumentationReference(type, parent);
+    }
+
+    private TypeDocumentationReference BuildTypeDocumentationReference(Type type, DocumentationObject parent)
+    {
+        var typeInfo = type.GetTypeInfo();
+
+        var typeId = typeInfo.GetSanitizedName(true, false);
+
+        var assembly = type.Assembly.GetName();
+
+        return new TypeDocumentationReference
+        {
+            Id = typeId,
+            Name = typeInfo.GetSanitizedName(),
+            FullName = typeInfo.GetSanitizedName(true),
+            Content = DocumentationContent.TypeReference,
+            Namespace = type.Namespace,
+            Assembly = assembly.Name,
+            IsGeneric = type.IsGenericType,
+            IsDocumented = IsTypeDocumented(type),
+            IsMicrosoft = IsAssemblyFromMicrosoft(assembly),
+            Parent = parent
+        };
     }
 }

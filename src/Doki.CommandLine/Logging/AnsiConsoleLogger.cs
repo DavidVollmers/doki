@@ -27,6 +27,11 @@ internal partial class AnsiConsoleLogger : ILogger
         message = escapeRegex.Replace(message, "`1[[$1]]");
 
         AnsiConsole.MarkupLine($"{markup}{message}[/]");
+        
+        if (exception != null)
+        {
+            AnsiConsole.WriteException(exception, ExceptionFormats.ShortenEverything);
+        }
     }
 
     public bool IsEnabled(LogLevel logLevel)
