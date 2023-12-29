@@ -72,7 +72,8 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
-        var markdown = new MarkdownBuilder(currentPath)
+        var markdown = new MarkdownBuilder(currentPath);
+        markdown.Add(markdown.BuildBreadcrumbs(typeDocumentation))
             .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 

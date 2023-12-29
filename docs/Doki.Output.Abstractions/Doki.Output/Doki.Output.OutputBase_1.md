@@ -1,3 +1,5 @@
+[Packages](../../README.md) / [Doki.Output.Abstractions](../README.md) / [Doki.Output](README.md) / 
+
 # OutputBase&lt;T&gt; Class
 
 ## Definition

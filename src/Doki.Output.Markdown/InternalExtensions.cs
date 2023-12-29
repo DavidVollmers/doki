@@ -4,6 +4,31 @@ namespace Doki.Output.Markdown;
 
 internal static class InternalExtensions
 {
+    public static Text BuildBreadcrumbs(this MarkdownBuilder builder, DocumentationObject obj)
+    {
+        var text = Text.Empty;
+
+        var parents = new List<Element>();
+        
+        var current = obj;
+        while (current.Parent != null)
+        {
+            parents.Add(builder.BuildLinkTo(current.Parent));
+
+            current = current.Parent;
+        }
+        
+        parents.Reverse();
+        foreach (var parent in parents)
+        {
+            text.Append(parent);
+            
+            text.Append(" / ");
+        }
+
+        return text;
+    }
+    
     public static Text BuildText(this MarkdownBuilder builder, DocumentationObject obj)
     {
         if (obj is not ContentList { Content: DocumentationContent.XmlDocumentation } contentList)
