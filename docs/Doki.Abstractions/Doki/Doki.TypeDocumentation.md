@@ -16,7 +16,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 public sealed class TypeDocumentation : Doki.TypeDocumentationReference, System.IEquatable<Doki.TypeDocumentation>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → TypeDocumentation
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [MemberDocumentation](Doki.MemberDocumentation.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → TypeDocumentation
 
 Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.TypeDocumentation&gt;)
 

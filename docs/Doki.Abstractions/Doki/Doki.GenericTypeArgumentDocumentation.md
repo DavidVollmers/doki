@@ -16,7 +16,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 public sealed class GenericTypeArgumentDocumentation : Doki.TypeDocumentationReference, System.IEquatable<Doki.GenericTypeArgumentDocumentation>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → GenericTypeArgumentDocumentation
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [MemberDocumentation](Doki.MemberDocumentation.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → GenericTypeArgumentDocumentation
 
 Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;)
 
