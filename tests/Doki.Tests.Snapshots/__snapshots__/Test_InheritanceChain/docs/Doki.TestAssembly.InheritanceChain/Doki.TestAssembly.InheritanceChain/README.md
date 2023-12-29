@@ -1,4 +1,4 @@
-# Doki.TestAssembly.InheritanceChain
+# Doki.TestAssembly.InheritanceChain Namespace
 
 ## Types
 

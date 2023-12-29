@@ -1,4 +1,4 @@
-# Doki.TestAssembly
+# Doki.TestAssembly Namespace
 
 ## Types
 

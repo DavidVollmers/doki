@@ -14,3 +14,5 @@ public abstract class AbstractClass
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → AbstractClass
 
+Derived: [GenericBaseClass&lt;T&gt;](../../Doki.TestAssembly.InheritanceChain/Doki.TestAssembly.InheritanceChain/Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md)
+

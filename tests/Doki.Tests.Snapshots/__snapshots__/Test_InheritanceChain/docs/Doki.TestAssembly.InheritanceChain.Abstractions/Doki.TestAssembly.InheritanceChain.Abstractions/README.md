@@ -1,4 +1,4 @@
-# Doki.TestAssembly.InheritanceChain.Abstractions
+# Doki.TestAssembly.InheritanceChain.Abstractions Namespace
 
 ## Types
 
