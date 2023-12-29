@@ -1,14 +1,8 @@
 ﻿namespace Doki;
 
-public record TypeDocumentationReference : DocumentationObject
+public record TypeDocumentationReference : MemberDocumentation
 {
-    public string Name { get; internal init; } = null!;
-
     public bool IsGeneric { get; internal init; }
-
-    public string? Namespace { get; internal init; }
-
-    public string? Assembly { get; internal init; }
     
     public string FullName { get; internal init; } = null!;
     
@@ -29,10 +23,7 @@ public record TypeDocumentationReference : DocumentationObject
     public TypeDocumentationReference(TypeDocumentationReference reference) : base(reference)
     {
         Content = DocumentationContent.TypeReference;
-        Name = reference.Name;
         IsGeneric = reference.IsGeneric;
-        Namespace = reference.Namespace;
-        Assembly = reference.Assembly;
         GenericArguments = reference.GenericArguments;
         FullName = reference.FullName;
         IsDocumented = reference.IsDocumented;

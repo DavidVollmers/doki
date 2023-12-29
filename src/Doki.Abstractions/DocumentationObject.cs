@@ -1,6 +1,6 @@
 ﻿namespace Doki;
 
-public record DocumentationObject
+public abstract record DocumentationObject
 {
     public string Id { get; internal init; } = null!;
 
@@ -8,11 +8,11 @@ public record DocumentationObject
 
     public DocumentationContent Content { get; internal init; }
 
-    public DocumentationObject()
+    protected DocumentationObject()
     {
     }
 
-    public DocumentationObject(DocumentationObject obj)
+    protected DocumentationObject(DocumentationObject obj)
     {
         ArgumentNullException.ThrowIfNull(obj);
 
