@@ -3,6 +3,7 @@
 ## Types
 
 - [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
+- [CodeBlock](Doki.CodeBlock.md)
 - [ContentList](Doki.ContentList.md)
 - [DocumentationContent](Doki.DocumentationContent.md)
 - [DocumentationObject](Doki.DocumentationObject.md)

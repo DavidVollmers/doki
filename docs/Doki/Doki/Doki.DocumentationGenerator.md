@@ -22,5 +22,17 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 ## Examples
 
-The following example shows how to generate documentation for an assembly and output it using theclass.
+The following example shows how to generate documentation for an assembly and output it using the [MarkdownOutput](../../Doki.Output.Markdown/Doki.Output.Markdown/Doki.Output.Markdown.MarkdownOutput.md) class.
+
+```
+var outputContext = new OutputContext(Directory.GetCurrentDirectory());
+
+var generator = new DocumentationGenerator();
+
+generator.AddAssembly(typeof(Program).Assembly, new XPathDocument("path/to/assembly.xml"));
+
+generator.AddOutput(new MarkdownOutput(outputContext));
+
+await generator.GenerateAsync(new ConsoleLogger());
+```
 

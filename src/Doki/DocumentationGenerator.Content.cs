@@ -138,13 +138,15 @@ public partial class DocumentationGenerator
                             items.Add(BuildCRefDocumentation(cref, content));
                             break;
                         case "code":
+                            var language = node.GetAttribute("lang", string.Empty);
+                            if (language == string.Empty) language = null;
                             items.Add(new CodeBlock
                             {
                                 Id = node.BaseURI,
                                 Content = DocumentationContent.CodeBlock,
                                 Parent = content,
-                                Language = node.GetAttribute("lang", string.Empty),
-                                Text = node.Value.TrimIndentation()
+                                Language = language,
+                                Code = node.Value.TrimIndentation()
                             });
                             break;
                         default:

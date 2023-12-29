@@ -19,6 +19,9 @@ internal static class InternalExtensions
                 case TextContent textContent:
                     text.Append(textContent.Text);
                     break;
+                case CodeBlock codeBlock:
+                    text.Append(new Code(codeBlock.Code, Lang: codeBlock.Language));
+                    break;
                 case TypeDocumentationReference typeDocumentationReference:
                     text.Append(builder.BuildLinkTo(typeDocumentationReference));
                     break;
