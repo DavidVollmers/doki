@@ -6,7 +6,9 @@ public sealed record TypeDocumentation : TypeDocumentationReference
 
     public string Definition { get; internal init; } = null!;
 
-    public ExampleDocumentation[] Examples { get; internal set; } = Array.Empty<ExampleDocumentation>();
+    public DocumentationObject[] Examples { get; internal set; } = Array.Empty<DocumentationObject>();
+    
+    public DocumentationObject[] Remarks { get; internal set; } = Array.Empty<DocumentationObject>();
 
     public TypeDocumentationReference[] Interfaces { get; internal set; } = Array.Empty<TypeDocumentationReference>();
 

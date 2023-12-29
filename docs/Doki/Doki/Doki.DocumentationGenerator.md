@@ -20,8 +20,6 @@ public sealed class DocumentationGenerator
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → DocumentationGenerator
 
----
-
 ## Examples
 
 The following example shows how to generate documentation for an assembly and output it using the [MarkdownOutput](../../Doki.Output.Markdown/Doki.Output.Markdown/Doki.Output.Markdown.MarkdownOutput.md) class.
@@ -37,4 +35,8 @@ generator.AddOutput(new MarkdownOutput(outputContext));
 await generator.GenerateAsync(new ConsoleLogger());
 ```
 
+
+## Remarks
+
+You can also use the doki cli tool to generate documentation. See the official for more information.
 

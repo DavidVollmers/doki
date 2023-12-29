@@ -6,28 +6,17 @@ namespace Doki;
 
 public partial class DocumentationGenerator
 {
-    private IEnumerable<ExampleDocumentation> BuildExampleDocumentation(XPathNavigator? typeXml,
+    private IEnumerable<DocumentationObject> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
         DocumentationObject parent)
     {
-        var examplesXml = typeXml?.Select("example");
-        if (examplesXml == null) yield break;
+        var xml = typeXml?.Select(xpath);
+        if (xml == null) yield break;
 
-        var examples = examplesXml.OfType<XPathNavigator>().ToArray();
+        var navigators = xml.OfType<XPathNavigator>().ToArray();
 
-        for (var index = 0; index < examples.Length; index++)
+        foreach (var navigator in navigators)
         {
-            var example = examples[index];
-
-            var exampleDocumentation = new ExampleDocumentation
-            {
-                Id = index.ToString(),
-                Content = DocumentationContent.Example,
-                Parent = parent,
-            };
-
-            exampleDocumentation.Documentation = BuildXmlDocumentation(example, exampleDocumentation);
-
-            yield return exampleDocumentation;
+            yield return BuildXmlDocumentation(navigator, parent);
         }
     }
 

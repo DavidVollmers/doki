@@ -170,13 +170,21 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
         if (typeDocumentation.Examples.Length != 0)
         {
-            markdown.Add(Element.Separator);
-
             markdown.Add(new Heading("Examples", 2));
 
             foreach (var example in typeDocumentation.Examples)
             {
-                markdown.Add(markdown.BuildText(example.Documentation));
+                markdown.Add(markdown.BuildText(example));
+            }
+        }
+        
+        if (typeDocumentation.Remarks.Length != 0)
+        {
+            markdown.Add(new Heading("Remarks", 2));
+
+            foreach (var remark in typeDocumentation.Remarks)
+            {
+                markdown.Add(markdown.BuildText(remark));
             }
         }
 

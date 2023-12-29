@@ -8,7 +8,6 @@
 - [DocumentationContent](Doki.DocumentationContent.md)
 - [DocumentationObject](Doki.DocumentationObject.md)
 - [DocumentationObjectExtensions](Doki.DocumentationObjectExtensions.md)
-- [ExampleDocumentation](Doki.ExampleDocumentation.md)
 - [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md)
 - [TextContent](Doki.TextContent.md)
 - [TypeDocumentation](Doki.TypeDocumentation.md)

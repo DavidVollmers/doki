@@ -22,6 +22,9 @@ namespace Doki;
 /// await generator.GenerateAsync(new ConsoleLogger());
 /// </code>
 /// </example>
+/// <remarks>
+/// You can also use the doki cli tool to generate documentation. See the official <see href="https://github.com/DavidVollmers/doki">documentation</see> for more information.
+/// </remarks>
 public sealed partial class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
@@ -228,7 +231,9 @@ public sealed partial class DocumentationGenerator
 
         typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(type, typeDocumentation).ToArray();
 
-        typeDocumentation.Examples = BuildExampleDocumentation(typeXml, typeDocumentation).ToArray();
+        typeDocumentation.Examples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
+        
+        typeDocumentation.Remarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
