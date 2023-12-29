@@ -28,6 +28,18 @@ internal record Text : Element
         _builder.Append(element);
         return this;
     }
+    
+    public Text NewLine()
+    {
+        _builder.AppendLine();
+        return this;
+    }
+    
+    public Text Space()
+    {
+        _builder.Append(' ');
+        return this;
+    }
 
     public override string ToString()
     {

@@ -20,10 +20,13 @@ internal static class InternalExtensions
                     text.Append(textContent.Text);
                     break;
                 case CodeBlock codeBlock:
+                    text.NewLine();
                     text.Append(new Code(codeBlock.Code, Lang: codeBlock.Language));
+                    text.NewLine();
                     break;
                 case TypeDocumentationReference typeDocumentationReference:
                     text.Append(builder.BuildLinkTo(typeDocumentationReference));
+                    text.Space();
                     break;
                 default:
                     throw new NotSupportedException(

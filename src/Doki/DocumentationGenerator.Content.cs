@@ -146,7 +146,7 @@ public partial class DocumentationGenerator
                                 Content = DocumentationContent.CodeBlock,
                                 Parent = content,
                                 Language = language,
-                                Code = node.Value.TrimIndentation()
+                                Code = node.Value.TrimIndentation().TrimEnd()
                             });
                             break;
                         default:

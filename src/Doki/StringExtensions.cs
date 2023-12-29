@@ -9,7 +9,7 @@ internal static class StringExtensions
     {
         var lines = str.TrimEmptyLines();
 
-        if (lines.Length == 1) return lines[0].Trim();
+        if (lines.Length == 1) return lines[0].TrimStart();
 
         var indentRegex = new Regex(@"^\s+");
 
@@ -28,7 +28,7 @@ internal static class StringExtensions
         foreach (var line in lines)
         {
             if (commonIndent > line.Length) builder.AppendLine();
-            else builder.AppendLine(line[commonIndent..].TrimEnd());
+            else builder.AppendLine(line[commonIndent..]);
         }
 
         return builder.ToString();
