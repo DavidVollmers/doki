@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 
 |   |   |
 |---|---|
-|.ctor||
+|TextContent||
 
 

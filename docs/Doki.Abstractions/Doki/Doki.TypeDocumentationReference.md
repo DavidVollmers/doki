@@ -26,7 +26,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 
 |   |   |
 |---|---|
-|.ctor||
-|.ctor||
+|TypeDocumentationReference||
+|TypeDocumentationReference||
 
 

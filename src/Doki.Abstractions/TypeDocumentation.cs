@@ -2,8 +2,6 @@
 
 public sealed record TypeDocumentation : TypeDocumentationReference
 {
-    public DocumentationObject? Summary { get; internal set; }
-
     public string Definition { get; internal init; } = null!;
 
     public DocumentationObject[] Examples { get; internal set; } = Array.Empty<DocumentationObject>();

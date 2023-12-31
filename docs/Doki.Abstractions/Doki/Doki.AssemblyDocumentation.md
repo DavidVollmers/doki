@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 
 |   |   |
 |---|---|
-|.ctor||
+|AssemblyDocumentation||
 
 

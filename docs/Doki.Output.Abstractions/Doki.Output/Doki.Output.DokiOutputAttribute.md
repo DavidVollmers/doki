@@ -22,6 +22,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |   |
 |---|---|
-|.ctor||
+|DokiOutputAttribute||
 
 

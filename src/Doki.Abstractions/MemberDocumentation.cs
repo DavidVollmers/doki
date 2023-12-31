@@ -8,6 +8,8 @@ public abstract record MemberDocumentation : DocumentationObject
 
     public string? Assembly { get; internal init; }
     
+    public DocumentationObject? Summary { get; internal set; }
+    
     protected MemberDocumentation()
     {
     }
@@ -19,5 +21,6 @@ public abstract record MemberDocumentation : DocumentationObject
         Name = obj.Name ?? throw new ArgumentException("MemberDocumentation.Name cannot be null.", nameof(obj));
         Namespace = obj.Namespace;
         Assembly = obj.Assembly;
+        Summary = obj.Summary;
     }
 }

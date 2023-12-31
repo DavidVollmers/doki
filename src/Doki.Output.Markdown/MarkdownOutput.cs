@@ -196,9 +196,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             foreach (var constructor in typeDocumentation.Constructors)
             {
                 table.AddRow(new Text(constructor.Name),
-                    constructor.Description == null
-                        ? Text.Empty
-                        : markdown.BuildText(constructor.Description));
+                    constructor.Summary == null ? Text.Empty : markdown.BuildText(constructor.Summary));
             }
 
             markdown.Add(table);

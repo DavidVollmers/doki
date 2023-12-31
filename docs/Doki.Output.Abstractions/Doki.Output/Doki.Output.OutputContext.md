@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 
 |   |   |
 |---|---|
-|.ctor||
+|OutputContext||
 
 

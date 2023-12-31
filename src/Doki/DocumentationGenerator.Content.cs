@@ -97,22 +97,32 @@ public partial class DocumentationGenerator
             yield return BuildTypeDocumentationReference(derivedType, parent);
         }
     }
-    
+
     private IEnumerable<ConstructorDocumentation> BuildConstructorDocumentation(Type type, DocumentationObject parent,
-        XPathNavigator? typeXml, ILogger logger)
+        XPathNavigator? assemblyXml, ILogger logger)
     {
         var constructors = type.GetConstructors();
 
         foreach (var constructor in constructors)
         {
-            var constructorId = constructor.Name;
+            var constructorId = $"{parent.Id}.#ctor";
+            var parameters = constructor.GetParameters();
+            if (parameters.Length > 0)
+            {
+                constructorId += "(";
+                constructorId += string.Join(",",
+                    parameters.Select(p => p.ParameterType.GetTypeInfo().GetSanitizedName(true)));
+                constructorId += ")";
+            }
 
             logger.LogDebug("Generating documentation for constructor {Constructor}.", constructorId);
 
-            var description = typeXml?.SelectSingleNode($"constructor[@name='{constructorId}']");
-            if (description == null && typeXml != null)
+            var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='M:{constructorId}']");
+
+            var summary = memberXml?.SelectSingleNode("summary");
+            if (summary == null)
             {
-                logger.LogWarning("No description found for constructor {Constructor}.", constructor);
+                logger.LogWarning("No summary found for constructor {Constructor}.", constructorId);
             }
 
             var constructorAssembly = constructor.DeclaringType!.Assembly.GetName();
@@ -120,16 +130,15 @@ public partial class DocumentationGenerator
             var constructorDocumentation = new ConstructorDocumentation
             {
                 Id = constructorId,
-                Name = constructor.Name,
+                Name = constructor.GetSanitizedName(),
                 Content = DocumentationContent.Constructor,
                 Namespace = constructor.DeclaringType.Namespace,
                 Assembly = constructorAssembly.Name,
                 Parent = parent,
             };
 
-            if (description != null)
-                constructorDocumentation.Description =
-                    BuildXmlDocumentation(description, constructorDocumentation);
+            if (summary != null)
+                constructorDocumentation.Summary = BuildXmlDocumentation(summary, constructorDocumentation);
 
             yield return constructorDocumentation;
         }

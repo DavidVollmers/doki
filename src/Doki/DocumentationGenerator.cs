@@ -38,6 +38,11 @@ public sealed partial class DocumentationGenerator
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.
+    /// </summary>
+    /// <param name="assembly">The assembly to generate documentation for.</param>
+    /// <param name="documentation">The xml documentation for the assembly.</param>
     public DocumentationGenerator(Assembly assembly, XPathDocument documentation)
     {
         AddAssembly(assembly, documentation);
@@ -193,9 +198,9 @@ public sealed partial class DocumentationGenerator
 
         logger.LogDebug("Generating documentation for type {Type}.", typeId);
 
-        var navigator = _assemblies[type.Assembly];
+        var assemblyXml = _assemblies[type.Assembly];
 
-        var typeXml = navigator.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
+        var typeXml = assemblyXml.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
 
         var summary = typeXml?.SelectSingleNode("summary");
         if (summary == null)
@@ -239,7 +244,7 @@ public sealed partial class DocumentationGenerator
         typeDocumentation.Remarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
 
         typeDocumentation.Constructors =
-            BuildConstructorDocumentation(type, typeDocumentation, typeXml, logger).ToArray();
+            BuildConstructorDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
