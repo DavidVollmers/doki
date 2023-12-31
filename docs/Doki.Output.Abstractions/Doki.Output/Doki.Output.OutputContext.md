@@ -13,7 +13,7 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 ---
 
 ```csharp
-public sealed class OutputContext : System.IEquatable<Doki.Output.OutputContext>
+public sealed record OutputContext
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputContext

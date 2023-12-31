@@ -13,7 +13,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 ---
 
 ```csharp
-public sealed class AssemblyDocumentation : Doki.ContentList, System.IEquatable<Doki.AssemblyDocumentation>
+public sealed record AssemblyDocumentation : Doki.ContentList
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [ContentList](Doki.ContentList.md) → AssemblyDocumentation

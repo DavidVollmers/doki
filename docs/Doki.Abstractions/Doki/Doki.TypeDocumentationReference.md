@@ -13,7 +13,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 ---
 
 ```csharp
-public class TypeDocumentationReference : Doki.MemberDocumentation, System.IEquatable<Doki.TypeDocumentationReference>
+public record TypeDocumentationReference : Doki.MemberDocumentation
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [MemberDocumentation](Doki.MemberDocumentation.md) → TypeDocumentationReference

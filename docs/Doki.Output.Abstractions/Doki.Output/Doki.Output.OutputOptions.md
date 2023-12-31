@@ -13,7 +13,7 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 ---
 
 ```csharp
-public abstract class OutputOptions : System.IEquatable<Doki.Output.OutputOptions>
+public abstract record OutputOptions
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions

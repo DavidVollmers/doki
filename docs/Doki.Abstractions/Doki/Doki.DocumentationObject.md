@@ -13,7 +13,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 ---
 
 ```csharp
-public abstract class DocumentationObject : System.IEquatable<Doki.DocumentationObject>
+public abstract record DocumentationObject
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → DocumentationObject

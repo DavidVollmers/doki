@@ -13,7 +13,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 ---
 
 ```csharp
-public sealed class GenericTypeArgumentDocumentation : Doki.TypeDocumentationReference, System.IEquatable<Doki.GenericTypeArgumentDocumentation>
+public sealed record GenericTypeArgumentDocumentation : Doki.TypeDocumentationReference
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [MemberDocumentation](Doki.MemberDocumentation.md) → [TypeDocumentationReference](Doki.TypeDocumentationReference.md) → GenericTypeArgumentDocumentation

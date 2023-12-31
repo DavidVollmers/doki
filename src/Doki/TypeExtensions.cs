@@ -64,7 +64,10 @@ internal static class TypeExtensions
                 break;
         }
 
-        if (type.IsClass) builder.Append(" class");
+        var isRecord = type.IsClass && type.DeclaredProperties.Any(p => p.Name == "EqualityContract");
+
+        if (isRecord) builder.Append(" record");
+        else if (type.IsClass) builder.Append(" class");
         else if (type.IsEnum) builder.Append(" enum");
         else if (type.IsInterface) builder.Append(" interface");
         else if (type.IsValueType) builder.Append(" struct");
@@ -81,6 +84,12 @@ internal static class TypeExtensions
                 types.Add(type.BaseType.GetTypeInfo().GetSanitizedName(true));
 
             interfaces = interfaces.Except(type.BaseType.GetTypeInfo().ImplementedInterfaces).ToArray();
+
+            if (isRecord)
+            {
+                var genericType = typeof(IEquatable<>).MakeGenericType(type.AsType());
+                interfaces = interfaces.Except(new[] { genericType }).ToArray();
+            }
         }
 
         if (interfaces.Length != 0)

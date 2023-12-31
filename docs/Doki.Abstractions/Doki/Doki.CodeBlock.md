@@ -13,7 +13,7 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 ---
 
 ```csharp
-public sealed class CodeBlock : Doki.DocumentationObject, System.IEquatable<Doki.CodeBlock>
+public sealed record CodeBlock : Doki.DocumentationObject
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → CodeBlock
