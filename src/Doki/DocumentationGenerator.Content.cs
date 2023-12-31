@@ -111,7 +111,11 @@ public partial class DocumentationGenerator
             {
                 constructorId += "(";
                 constructorId += string.Join(",",
-                    parameters.Select(p => p.ParameterType.GetTypeInfo().GetSanitizedName(true)));
+                    parameters.Select(p =>
+                    {
+                        var name = p.ParameterType.GetTypeInfo().GetSanitizedName(true);
+                        return name.Replace('<', '{').Replace('>', '}');
+                    }));
                 constructorId += ")";
             }
 

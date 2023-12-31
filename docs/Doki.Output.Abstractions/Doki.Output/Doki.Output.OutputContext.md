@@ -12,6 +12,8 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
+**The context in which the output is being generated.**
+
 ```csharp
 public sealed record OutputContext
 ```
@@ -24,6 +26,6 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 
 |   |Summary|
 |---|---|
-|OutputContext(System.IO.DirectoryInfo, System.Nullable&lt;System.Text.Json.JsonElement&gt;)||
+|OutputContext(System.IO.DirectoryInfo, System.Nullable&lt;System.Text.Json.JsonElement&gt;)|The context in which the output is being generated.|
 
 
