@@ -13,6 +13,6 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 ---
 
 ```csharp
-public abstract interface IOutput
+public interface IOutput
 ```
 

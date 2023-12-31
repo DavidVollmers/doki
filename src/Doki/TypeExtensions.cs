@@ -51,9 +51,18 @@ internal static class TypeExtensions
         else if (type.IsNestedFamANDAssem) builder.Append("private protected");
         else if (type.IsNestedFamORAssem) builder.Append("protected internal");
 
-        if (type is { IsAbstract: true, IsSealed: true }) builder.Append(" static");
-        else if (type.IsAbstract) builder.Append(" abstract");
-        else if (type is { IsSealed: true, IsEnum: false }) builder.Append(" sealed");
+        switch (type)
+        {
+            case { IsAbstract: true, IsSealed: true }:
+                builder.Append(" static");
+                break;
+            case { IsAbstract: true, IsInterface: false }:
+                builder.Append(" abstract");
+                break;
+            case { IsSealed: true, IsEnum: false }:
+                builder.Append(" sealed");
+                break;
+        }
 
         if (type.IsClass) builder.Append(" class");
         else if (type.IsEnum) builder.Append(" enum");
