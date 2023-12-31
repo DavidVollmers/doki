@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.ConstructorDocumentation&gt;](https://lea
 
 |   |   |
 |---|---|
-|ConstructorDocumentation||
+|ConstructorDocumentation()||
 
 

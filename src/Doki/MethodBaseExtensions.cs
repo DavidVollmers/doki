@@ -26,6 +26,13 @@ internal static class MethodBaseExtensions
             }
         }
 
+        var parameters = methodBase.GetParameters();
+        if (parameters.Length <= 0) return name + "()";
+
+        name += "(";
+        name += string.Join(", ", parameters.Select(p => p.ParameterType.GetTypeInfo().GetSanitizedName(true)));
+        name += ")";
+
         return name;
     }
 }

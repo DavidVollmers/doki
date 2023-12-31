@@ -44,7 +44,7 @@ You can also use the doki cli tool to generate documentation. See the official [
 
 |   |   |
 |---|---|
-|DocumentationGenerator|Initializes a new instance of the [DocumentationGenerator](Doki.DocumentationGenerator.md) class.|
-|DocumentationGenerator|Initializes a new instance of the [DocumentationGenerator](Doki.DocumentationGenerator.md) class.|
+|DocumentationGenerator()|Initializes a new instance of the [DocumentationGenerator](Doki.DocumentationGenerator.md) class.|
+|DocumentationGenerator(System.Reflection.Assembly, System.Xml.XPath.XPathDocument)|Initializes a new instance of the [DocumentationGenerator](Doki.DocumentationGenerator.md) class.|
 
 

@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 
 |   |   |
 |---|---|
-|OutputContext||
+|OutputContext(System.IO.DirectoryInfo, System.Nullable&lt;System.Text.Json.JsonElement&gt;)||
 
 

@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 
 |   |   |
 |---|---|
-|CodeBlock||
+|CodeBlock()||
 
 

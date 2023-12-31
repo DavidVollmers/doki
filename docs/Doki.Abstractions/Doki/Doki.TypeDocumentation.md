@@ -24,6 +24,6 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 
 |   |   |
 |---|---|
-|TypeDocumentation||
+|TypeDocumentation()||
 
 

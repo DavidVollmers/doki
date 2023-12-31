@@ -22,6 +22,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |   |
 |---|---|
-|MarkdownOutput||
+|MarkdownOutput(Doki.Output.OutputContext)||
 
 
