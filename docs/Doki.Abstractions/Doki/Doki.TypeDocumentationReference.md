@@ -24,7 +24,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |TypeDocumentationReference()||
 |TypeDocumentationReference(Doki.TypeDocumentationReference)||

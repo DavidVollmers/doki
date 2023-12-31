@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |GenericTypeArgumentDocumentation()||
 

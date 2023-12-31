@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |TextContent()||
 

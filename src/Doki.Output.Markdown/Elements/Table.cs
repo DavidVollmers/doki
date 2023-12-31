@@ -5,7 +5,13 @@ namespace Doki.Output.Markdown.Elements;
 internal record Table : Element
 {
     private readonly List<Element[]> _rows = [];
-    
+    private readonly Element[] _headers;
+
+    public Table(params Element[] headers)
+    {
+        _headers = headers;
+    }
+
     public void AddRow(params Element[] elements)
     {
         _rows.Add(elements);
@@ -15,13 +21,14 @@ internal record Table : Element
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine("|" + string.Join("|", _rows[0].Select(_ => "   ")) + "|");
-        sb.AppendLine("|" + string.Join("|", _rows[0].Select(_ => "---")) + "|");
+        // ReSharper disable once CoVariantArrayConversion
+        sb.AppendLine("|" + string.Join("|", (object[])_headers) + "|");
+        sb.AppendLine("|" + string.Join("|", _headers.Select(_ => "---")) + "|");
 
         foreach (var row in _rows)
         {
             // ReSharper disable once CoVariantArrayConversion
-            sb.AppendLine("|" + string.Join("|", (object[]) row) + "|");
+            sb.AppendLine("|" + string.Join("|", (object[])row) + "|");
         }
 
         return sb.ToString();

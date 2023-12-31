@@ -24,7 +24,7 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |ContentList()||
 

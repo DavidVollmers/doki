@@ -192,7 +192,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
         {
             markdown.Add(new Heading("Constructors", 2));
 
-            var table = new Table();
+            var table = new Table(new Text("   "), new Text("Summary"));
             foreach (var constructor in typeDocumentation.Constructors)
             {
                 table.AddRow(new Text(constructor.Name),

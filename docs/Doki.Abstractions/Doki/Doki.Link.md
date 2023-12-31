@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |Link()||
 

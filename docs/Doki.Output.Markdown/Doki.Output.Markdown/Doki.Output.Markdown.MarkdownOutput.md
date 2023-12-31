@@ -20,7 +20,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |MarkdownOutput(Doki.Output.OutputContext)||
 

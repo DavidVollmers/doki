@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |OutputContext(System.IO.DirectoryInfo, System.Nullable&lt;System.Text.Json.JsonElement&gt;)||
 

@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.ConstructorDocumentation&gt;](https://lea
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |ConstructorDocumentation()||
 

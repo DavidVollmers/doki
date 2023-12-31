@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |CodeBlock()||
 

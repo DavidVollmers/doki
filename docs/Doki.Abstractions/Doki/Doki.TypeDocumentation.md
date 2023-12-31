@@ -22,7 +22,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 
 ## Constructors
 
-|   |   |
+|   |Summary|
 |---|---|
 |TypeDocumentation()||
 
