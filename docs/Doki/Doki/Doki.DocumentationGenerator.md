@@ -40,3 +40,11 @@ await generator.GenerateAsync(new ConsoleLogger());
 
 You can also use the doki cli tool to generate documentation. See the official [documentation](https://github.com/DavidVollmers/doki) for more information.
 
+## Constructors
+
+|   |   |
+|---|---|
+|.ctor||
+|.ctor||
+
+

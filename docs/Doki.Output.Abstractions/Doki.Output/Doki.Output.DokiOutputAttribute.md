@@ -18,3 +18,10 @@ public sealed class DokiOutputAttribute : System.Attribute
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [System.Attribute](https://learn.microsoft.com/en-us/dotnet/api/System.Attribute) → DokiOutputAttribute
 
+## Constructors
+
+|   |   |
+|---|---|
+|.ctor||
+
+

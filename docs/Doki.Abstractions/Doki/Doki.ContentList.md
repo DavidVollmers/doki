@@ -22,3 +22,10 @@ Derived: [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
 
 Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.ContentList&gt;)
 
+## Constructors
+
+|   |   |
+|---|---|
+|.ctor||
+
+

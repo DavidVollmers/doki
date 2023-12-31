@@ -188,6 +188,22 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
             }
         }
 
+        if (typeDocumentation.Constructors.Length != 0)
+        {
+            markdown.Add(new Heading("Constructors", 2));
+
+            var table = new Table();
+            foreach (var constructor in typeDocumentation.Constructors)
+            {
+                table.AddRow(new Text(constructor.Name),
+                    constructor.Description == null
+                        ? Text.Empty
+                        : markdown.BuildText(constructor.Description));
+            }
+
+            markdown.Add(table);
+        }
+
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
 

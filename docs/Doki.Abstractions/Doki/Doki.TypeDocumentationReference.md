@@ -22,3 +22,11 @@ Derived: [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentatio
 
 Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.TypeDocumentationReference&gt;)
 
+## Constructors
+
+|   |   |
+|---|---|
+|.ctor||
+|.ctor||
+
+
