@@ -31,6 +31,12 @@ public sealed partial class DocumentationGenerator
     private readonly Dictionary<string, XPathNavigator> _projects = new();
     private readonly List<IOutput> _outputs = [];
 
+    public Filter<Type> TypeFilter { get; } = new(t => t.IsPublic);
+    
+    public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
+    
+    public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.
     /// </summary>
@@ -253,7 +259,7 @@ public sealed partial class DocumentationGenerator
             BuildConstructorDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
         typeDocumentation.Fields = BuildFieldDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
-        
+
         // typeDocumentation.Properties =
         //     BuildPropertyDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
         //
@@ -313,9 +319,8 @@ public sealed partial class DocumentationGenerator
         return assemblyName.Name!.StartsWith("System") || assemblyName.Name.StartsWith("Microsoft");
     }
 
-    //TODO support exclude filtering
-    private static IEnumerable<Type> GetTypesToDocument(Assembly assembly)
+    private IEnumerable<Type> GetTypesToDocument(Assembly assembly)
     {
-        return assembly.GetTypes().Where(a => a.IsPublic);
+        return assembly.GetTypes().Where(TypeFilter.Expression ?? TypeFilter.Default);
     }
 }

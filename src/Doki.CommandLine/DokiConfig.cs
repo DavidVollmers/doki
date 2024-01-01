@@ -8,6 +8,8 @@ internal record DokiConfig
     [JsonPropertyName("input")] public string[]? Inputs { get; init; }
     
     [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; init; }
+    
+    [JsonPropertyName("filter")] public IDictionary<string, string>? Filter { get; init; }
 
     public record DokiConfigOutput
     {

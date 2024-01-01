@@ -8,5 +8,8 @@
       "type": "Doki.Output.Markdown",
       "from": "src/Doki.Output.Markdown/Doki.Output.Markdown.csproj"
     }
-  ]
+  ],
+  "filter": {
+    "System.Reflection.FieldInfo": "f => f.IsPublic && !f.IsStatic"
+  }
 }

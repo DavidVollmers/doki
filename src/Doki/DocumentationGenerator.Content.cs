@@ -102,7 +102,7 @@ public partial class DocumentationGenerator
     private IEnumerable<MemberDocumentation> BuildFieldDocumentation(Type type, DocumentationObject parent,
         XPathNavigator? assemblyXml, ILogger logger)
     {
-        var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+        var fields = type.GetFields().Where(FieldFilter.Expression ?? FieldFilter.Default);
 
         foreach (var field in fields)
         {
@@ -140,7 +140,7 @@ public partial class DocumentationGenerator
     private IEnumerable<MemberDocumentation> BuildConstructorDocumentation(Type type, DocumentationObject parent,
         XPathNavigator? assemblyXml, ILogger logger)
     {
-        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+        var constructors = type.GetConstructors().Where(ConstructorFilter.Expression ?? ConstructorFilter.Default);
 
         foreach (var constructor in constructors)
         {

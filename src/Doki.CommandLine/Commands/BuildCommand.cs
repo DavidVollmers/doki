@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using System.CodeDom.Compiler;
+using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Reflection;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Doki.CommandLine.Commands;
 
-internal class BuildCommand : Command
+internal partial class BuildCommand : Command
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
@@ -25,7 +26,7 @@ internal class BuildCommand : Command
         };
 
     private readonly Option<string> _buildConfigurationOption =
-        new(new[] {"-c", "--configuration"}, "The build configuration to use when building projects.")
+        new(new[] { "-c", "--configuration" }, "The build configuration to use when building projects.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
@@ -96,7 +97,8 @@ internal class BuildCommand : Command
             await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
         if (outputResult != 0) return outputResult;
 
-        return 0;
+        var filterResult = CompileFilters(generator, dokiConfig.Filter);
+        return filterResult != 0 ? filterResult : 0;
     }
 
     private async Task<int> LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
