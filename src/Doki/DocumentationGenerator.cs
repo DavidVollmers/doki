@@ -28,7 +28,7 @@ namespace Doki;
 public sealed partial class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
-    private readonly Dictionary<string, XPathNavigator> _projectMetadata = new();
+    private readonly Dictionary<string, XPathNavigator> _projects = new();
     private readonly List<IOutput> _outputs = [];
 
     /// <summary>
@@ -39,7 +39,7 @@ public sealed partial class DocumentationGenerator
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.
+    /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class with the specified assembly and xml documentation.
     /// </summary>
     /// <param name="assembly">The assembly to generate documentation for.</param>
     /// <param name="documentation">The xml documentation for the assembly.</param>
@@ -48,16 +48,22 @@ public sealed partial class DocumentationGenerator
         AddAssembly(assembly, documentation);
     }
 
-    public void AddAssembly(Assembly assembly, XPathDocument documentation, XPathDocument? projectMetadata = null)
+    /// <summary>
+    /// Adds an assembly to generate documentation for.
+    /// </summary>
+    /// <param name="assembly">The assembly to generate documentation for.</param>
+    /// <param name="documentation">The xml documentation for the assembly.</param>
+    /// <param name="project">The optional .csproj xml from which the assembly was built.</param>
+    public void AddAssembly(Assembly assembly, XPathDocument documentation, XPathDocument? project = null)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentNullException.ThrowIfNull(documentation);
 
         _assemblies.Add(assembly, documentation.CreateNavigator());
 
-        if (projectMetadata != null)
+        if (project != null)
         {
-            _projectMetadata.Add(assembly.GetName().Name!, projectMetadata.CreateNavigator());
+            _projects.Add(assembly.GetName().Name!, project.CreateNavigator());
         }
     }
 
@@ -118,7 +124,7 @@ public sealed partial class DocumentationGenerator
 
         string? packageId = null;
         var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
-        if (_projectMetadata.TryGetValue(assemblyId, out var projectMetadata))
+        if (_projects.TryGetValue(assemblyId, out var projectMetadata))
         {
             packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
 
@@ -245,6 +251,13 @@ public sealed partial class DocumentationGenerator
 
         typeDocumentation.Constructors =
             BuildConstructorDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+
+        typeDocumentation.Fields = BuildFieldDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        
+        // typeDocumentation.Properties =
+        //     BuildPropertyDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        //
+        // typeDocumentation.Methods = BuildMethodDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
         var baseType = typeInfo.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;

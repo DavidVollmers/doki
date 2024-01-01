@@ -4,7 +4,6 @@
 
 - [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
 - [CodeBlock](Doki.CodeBlock.md)
-- [ConstructorDocumentation](Doki.ConstructorDocumentation.md)
 - [ContentList](Doki.ContentList.md)
 - [DocumentationContent](Doki.DocumentationContent.md)
 - [DocumentationObject](Doki.DocumentationObject.md)

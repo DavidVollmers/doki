@@ -12,5 +12,11 @@ public sealed record TypeDocumentation : TypeDocumentationReference
 
     public TypeDocumentationReference[] DerivedTypes { get; internal set; } = Array.Empty<TypeDocumentationReference>();
     
-    public ConstructorDocumentation[] Constructors { get; internal set; } = Array.Empty<ConstructorDocumentation>();
+    public MemberDocumentation[] Constructors { get; internal set; } = Array.Empty<MemberDocumentation>();
+    
+    public MemberDocumentation[] Fields { get; internal set; } = Array.Empty<MemberDocumentation>();
+    
+    public MemberDocumentation[] Properties { get; internal set; } = Array.Empty<MemberDocumentation>();
+    
+    public MemberDocumentation[] Methods { get; internal set; } = Array.Empty<MemberDocumentation>();
 }

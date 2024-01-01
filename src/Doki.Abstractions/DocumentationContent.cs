@@ -17,4 +17,5 @@ public enum DocumentationContent
     CodeBlock,
     Link,
     Constructor,
+    Field,
 }

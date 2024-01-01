@@ -98,10 +98,49 @@ public partial class DocumentationGenerator
         }
     }
 
-    private IEnumerable<ConstructorDocumentation> BuildConstructorDocumentation(Type type, DocumentationObject parent,
+    // ReSharper disable once SuggestBaseTypeForParameter
+    private IEnumerable<MemberDocumentation> BuildFieldDocumentation(Type type, DocumentationObject parent,
         XPathNavigator? assemblyXml, ILogger logger)
     {
-        var constructors = type.GetConstructors();
+        var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+
+        foreach (var field in fields)
+        {
+            var fieldId = $"{parent.Id}.{field.Name}";
+
+            logger.LogDebug("Generating documentation for field {Field}.", fieldId);
+
+            var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='M:{fieldId}']");
+
+            var summary = memberXml?.SelectSingleNode("summary");
+            if (summary == null)
+            {
+                logger.LogWarning("No summary found for field {Field}.", fieldId);
+            }
+
+            var fieldAssembly = field.DeclaringType!.Assembly.GetName();
+
+            var fieldDocumentation = new MemberDocumentation
+            {
+                Id = fieldId,
+                Name = field.Name,
+                Content = DocumentationContent.Field,
+                Namespace = field.DeclaringType.Namespace,
+                Assembly = fieldAssembly.Name,
+                Parent = parent,
+            };
+
+            if (summary != null)
+                fieldDocumentation.Summary = BuildXmlDocumentation(summary, fieldDocumentation);
+
+            yield return fieldDocumentation;
+        }
+    }
+
+    private IEnumerable<MemberDocumentation> BuildConstructorDocumentation(Type type, DocumentationObject parent,
+        XPathNavigator? assemblyXml, ILogger logger)
+    {
+        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
         foreach (var constructor in constructors)
         {
@@ -131,7 +170,7 @@ public partial class DocumentationGenerator
 
             var constructorAssembly = constructor.DeclaringType!.Assembly.GetName();
 
-            var constructorDocumentation = new ConstructorDocumentation
+            var constructorDocumentation = new MemberDocumentation
             {
                 Id = constructorId,
                 Name = constructor.GetSanitizedName(),
