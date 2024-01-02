@@ -5,13 +5,8 @@ namespace Doki;
 
 internal static class TypeInfoExtensions
 {
-    private static readonly Dictionary<string, string> Cache = new();
-
     public static string GetDefinition(this TypeInfo type)
     {
-        var key = $"{nameof(GetDefinition)}:{type.GUID}:{{type.FullName ?? type.Name}}";
-        if (Cache.TryGetValue(key, out var cached)) return cached;
-
         var builder = new StringBuilder();
 
         if (type.IsPublic) builder.Append("public");
@@ -69,13 +64,11 @@ internal static class TypeInfoExtensions
             types.AddRange(interfaces.Select(i => i.GetSanitizedName(true)));
         }
 
-        if (types.Count != 0)
-        {
-            builder.Append(" : ");
-            builder.Append(string.Join(", ", types));
-        }
+        if (types.Count == 0) return builder.ToString();
+        
+        builder.Append(" : ");
+        builder.Append(string.Join(", ", types));
 
-        Cache.Add(key, builder.ToString());
         return builder.ToString();
     }
 }

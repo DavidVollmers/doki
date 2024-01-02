@@ -5,14 +5,8 @@ namespace Doki;
 
 internal static class TypeExtensions
 {
-    private static readonly Dictionary<string, string> Cache = new();
-
     public static string GetSanitizedName(this Type type, bool withNamespace = false, bool parseGenericTypes = true)
     {
-        var key =
-            $"{nameof(GetSanitizedName)}:{type.GUID}:{{type.FullName ?? type.Name}}:{withNamespace}:{parseGenericTypes}";
-        if (Cache.TryGetValue(key, out var cached)) return cached;
-
         var name = (withNamespace ? type.FullName : type.Name) ?? type.Name;
 
         if (type.IsGenericType)
@@ -32,7 +26,6 @@ internal static class TypeExtensions
             }
         }
 
-        Cache.Add(key, name);
         return name;
     }
 
@@ -44,10 +37,6 @@ internal static class TypeExtensions
     internal static string GetXmlDocumentationIdCore(this Type type, bool isOut = false,
         bool isMethodParameter = false, string[]? genericClassParams = null)
     {
-        var key =
-            $"{nameof(GetXmlDocumentationIdCore)}:{type.GUID}:{type.FullName ?? type.Name}:{isOut}:{isMethodParameter}:{genericClassParams}";
-        if (Cache.TryGetValue(key, out var cached)) return cached;
-
         if (type.IsGenericParameter)
             return $"{GetGenericParameterPrefix(type, genericClassParams)}{type.GenericParameterPosition}";
 
@@ -90,7 +79,6 @@ internal static class TypeExtensions
                 id.AsSpan(lastIndex));
         }
 
-        Cache.Add(key, id);
         return id;
     }
 
