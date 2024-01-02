@@ -35,7 +35,7 @@ public sealed partial class DocumentationGenerator
 
     public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
 
-    public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic);
+    public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic && !f.IsSpecialName);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.

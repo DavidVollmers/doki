@@ -201,6 +201,20 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             markdown.Add(table);
         }
+        
+        if (typeDocumentation.Fields.Length != 0)
+        {
+            markdown.Add(new Heading("Fields", 2));
+
+            var table = new Table(new Text("   "), new Text("Summary"));
+            foreach (var field in typeDocumentation.Fields)
+            {
+                table.AddRow(new Text(field.Name),
+                    field.Summary == null ? Text.Empty : markdown.BuildText(field.Summary));
+            }
+
+            markdown.Add(table);
+        }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
