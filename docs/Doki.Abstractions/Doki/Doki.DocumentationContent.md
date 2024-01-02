@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**The content of a documentation object.**
+
 ```csharp
 public enum DocumentationContent : System.Enum
 ```
@@ -22,7 +24,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Assemblies||
+|Assemblies|The root of the documentation, containing all assemblies/packages.|
 |Assembly||
 |Namespace||
 |TypeReference||
