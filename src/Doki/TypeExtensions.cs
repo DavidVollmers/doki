@@ -9,7 +9,8 @@ internal static class TypeExtensions
 
     public static string GetSanitizedName(this Type type, bool withNamespace = false, bool parseGenericTypes = true)
     {
-        var key = $"{nameof(GetSanitizedName)}:{type.GUID}:{withNamespace}:{parseGenericTypes}";
+        var key =
+            $"{nameof(GetSanitizedName)}:{type.GUID}:{{type.FullName ?? type.Name}}:{withNamespace}:{parseGenericTypes}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
         var name = (withNamespace ? type.FullName : type.Name) ?? type.Name;
@@ -43,7 +44,8 @@ internal static class TypeExtensions
     internal static string GetXmlDocumentationIdCore(this Type type, bool isOut = false,
         bool isMethodParameter = false, string[]? genericClassParams = null)
     {
-        var key = $"{nameof(GetXmlDocumentationIdCore)}:{type.GUID}:{isOut}:{isMethodParameter}:{genericClassParams}";
+        var key =
+            $"{nameof(GetXmlDocumentationIdCore)}:{type.GUID}:{type.FullName ?? type.Name}:{isOut}:{isMethodParameter}:{genericClassParams}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
         if (type.IsGenericParameter)

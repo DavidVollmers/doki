@@ -9,7 +9,7 @@ internal static class TypeInfoExtensions
 
     public static string GetDefinition(this TypeInfo type)
     {
-        var key = $"{nameof(GetDefinition)}:{type.GUID}";
+        var key = $"{nameof(GetDefinition)}:{type.GUID}:{{type.FullName ?? type.Name}}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
         var builder = new StringBuilder();
