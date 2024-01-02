@@ -11,11 +11,17 @@ internal static class MethodBaseExtensions
         {
             case ConstructorInfo:
                 name = methodBase.DeclaringType?.Name ?? name;
+                if (methodBase.DeclaringType?.IsGenericType == true)
+                {
+                    name = name[..name.IndexOf('`')];
+                }
                 break;
             case MethodInfo methodInfo:
             {
                 if (methodInfo.IsGenericMethod)
                 {
+                    name = name[..name.IndexOf('`')];
+                    
                     name += "<";
                     name += string.Join(", ", methodInfo.GetGenericArguments().Select(a =>
                         a.IsGenericParameter ? a.Name : a.GetTypeInfo().GetSanitizedName(true)));

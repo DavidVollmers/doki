@@ -12,7 +12,7 @@ internal static class TypeExtensions
         var key = $"{nameof(GetSanitizedName)}:{type.FullName}:{withNamespace}:{parseGenericTypes}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
-        var name = withNamespace ? type.FullName! : type.Name;
+        var name = (withNamespace ? type.FullName : type.Name) ?? type.Name;
 
         if (type.IsGenericType)
         {

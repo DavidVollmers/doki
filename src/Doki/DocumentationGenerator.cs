@@ -217,7 +217,7 @@ public sealed partial class DocumentationGenerator
         var summary = typeXml?.SelectSingleNode("summary");
         if (summary == null)
         {
-            logger.LogWarning("No summary found for type {Type}.", type);
+            logger.LogWarning("No summary found for type {Type}.", typeId);
         }
 
         var typeDocumentation = new TypeDocumentation
