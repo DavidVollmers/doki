@@ -23,6 +23,9 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 ## Type Parameters
 
 - `T`
+  
+  The type of the collection.
+
 
 
 ## Constructors

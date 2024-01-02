@@ -28,7 +28,9 @@ public partial class DocumentationGenerator
 
         foreach (var genericArgument in genericArguments)
         {
-            var genericArgumentId = genericArgument.GetXmlDocumentationId();
+            var genericArgumentId = genericArgument.IsGenericParameter
+                ? genericArgument.Name
+                : genericArgument.GetXmlDocumentationId();
 
             logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
 
