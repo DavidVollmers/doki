@@ -27,3 +27,31 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 |TypeDocumentation()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Definition||
+|Examples||
+|Remarks||
+|Interfaces||
+|DerivedTypes||
+|Constructors||
+|Fields||
+|Properties||
+|Methods||
+|IsGeneric||
+|FullName||
+|IsDocumented||
+|IsMicrosoft||
+|BaseType||
+|GenericArguments||
+|Name||
+|Namespace||
+|Assembly||
+|Summary||
+|Id||
+|Parent||
+|Content||
+
+

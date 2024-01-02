@@ -36,3 +36,15 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 |Assemblies||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Name||
+|Description||
+|Items||
+|Id||
+|Parent||
+|Content||
+
+

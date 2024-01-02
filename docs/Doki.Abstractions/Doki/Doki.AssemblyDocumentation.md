@@ -27,3 +27,18 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 |AssemblyDocumentation()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|FileName||
+|Version||
+|PackageId||
+|Name||
+|Description||
+|Items||
+|Id||
+|Parent||
+|Content||
+
+

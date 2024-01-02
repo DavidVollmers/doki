@@ -27,3 +27,14 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 |CodeBlock()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Language||
+|Code||
+|Id||
+|Parent||
+|Content||
+
+

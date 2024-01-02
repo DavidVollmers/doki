@@ -29,3 +29,11 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 |OutputContext(System.IO.DirectoryInfo, System.Nullable&lt;System.Text.Json.JsonElement&gt;)|The context in which the output is being generated.|
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|WorkingDirectory|The directory in which the output is being generated.|
+|Options|The JSON serialized options to use when generating the output.|
+
+

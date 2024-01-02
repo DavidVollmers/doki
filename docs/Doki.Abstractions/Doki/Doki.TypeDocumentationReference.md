@@ -30,3 +30,22 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |TypeDocumentationReference(Doki.TypeDocumentationReference)||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|IsGeneric||
+|FullName||
+|IsDocumented||
+|IsMicrosoft||
+|BaseType||
+|GenericArguments||
+|Name||
+|Namespace||
+|Assembly||
+|Summary||
+|Id||
+|Parent||
+|Content||
+
+

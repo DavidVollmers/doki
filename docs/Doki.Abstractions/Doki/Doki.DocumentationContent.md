@@ -40,5 +40,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |Link||
 |Constructor||
 |Field||
+|Property||
 
 

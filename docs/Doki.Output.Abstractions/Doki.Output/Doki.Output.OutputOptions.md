@@ -20,3 +20,11 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputOptions&gt;)
 
+## Properties
+
+|   |Summary|
+|---|---|
+|OutputPath||
+|Default||
+
+

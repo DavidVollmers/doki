@@ -22,3 +22,12 @@ Derived: [CodeBlock](Doki.CodeBlock.md), [ContentList](Doki.ContentList.md), [Li
 
 Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.DocumentationObject&gt;)
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Id||
+|Parent||
+|Content||
+
+

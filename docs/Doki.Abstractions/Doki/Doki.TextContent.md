@@ -27,3 +27,13 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 |TextContent()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Text||
+|Id||
+|Parent||
+|Content||
+
+

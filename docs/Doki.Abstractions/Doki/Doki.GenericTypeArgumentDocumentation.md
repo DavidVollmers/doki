@@ -27,3 +27,24 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 |GenericTypeArgumentDocumentation()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Description||
+|IsGenericParameter||
+|IsGeneric||
+|FullName||
+|IsDocumented||
+|IsMicrosoft||
+|BaseType||
+|GenericArguments||
+|Name||
+|Namespace||
+|Assembly||
+|Summary||
+|Id||
+|Parent||
+|Content||
+
+

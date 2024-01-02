@@ -25,3 +25,11 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |DokiOutputAttribute(System.String)||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Name||
+|TypeId||
+
+

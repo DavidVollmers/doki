@@ -30,3 +30,16 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 |MemberDocumentation(Doki.MemberDocumentation)||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Name||
+|Namespace||
+|Assembly||
+|Summary||
+|Id||
+|Parent||
+|Content||
+
+

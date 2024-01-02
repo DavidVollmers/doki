@@ -35,3 +35,11 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |Filter(Func&lt;T, System.Boolean&gt;)|Creates a new filter with the given default filter.|
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|Default||
+|Expression||
+
+
