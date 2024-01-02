@@ -45,8 +45,10 @@ internal static class MethodBaseExtensions
 
     public static string GetXmlDocumentationId(this MethodBase methodBase)
     {
-        return
+        var parentId = methodBase.DeclaringType?.GetXmlDocumentationId();
+        var methodId =
             $"{methodBase.GetShortMethodName()}{ParameterInfoExtensions.GetParametersXmlDocumentationIdString(methodBase.GetParameters(), methodBase.GetGenericClassParameters())}{methodBase.GetExplicitImplicitSuffix()}";
+        return parentId == null ? methodId : parentId + "." + methodId;
     }
 
     private static string GetShortMethodName(this MethodBase methodBase)

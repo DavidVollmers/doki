@@ -61,7 +61,7 @@ internal static class TypeExtensions
             var parameters = string.Join(",",
                 args.Select(a => a.GetXmlDocumentationIdCore(false, isMethodParameter, genericClassParams)));
             var name = Regex.Replace(type.Name, "`[0-9]+", $"{{{parameters}}}");
-            id = $"{@namespace}{name}{{{parameters}}}{suffix}";
+            id = $"{@namespace}{name}{suffix}";
         }
         else if (type.IsNested)
         {
