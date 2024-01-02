@@ -32,9 +32,9 @@ public sealed partial class DocumentationGenerator
     private readonly List<IOutput> _outputs = [];
 
     public Filter<Type> TypeFilter { get; } = new(t => t.IsPublic);
-    
+
     public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
-    
+
     public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic);
 
     /// <summary>

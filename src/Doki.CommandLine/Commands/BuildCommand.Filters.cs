@@ -41,7 +41,7 @@ namespace Doki.Generated
         };
 
         var syntax = CSharpSyntaxTree.ParseText(code);
-        var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true,
+        var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
             optimizationLevel: OptimizationLevel.Release);
         var compilation =
             CSharpCompilation.Create(GeneratedAssemblyName, new List<SyntaxTree> { syntax }, refs, options);
@@ -83,14 +83,12 @@ namespace Doki.Generated
                 return -1;
             }
 
-            switch (filter.Key)
+            if (filter.Key == typeof(FieldInfo).FullName)
+                generator.FieldFilter.Expression = (Func<FieldInfo, bool>)value;
+            else
             {
-                case "System.Reflection.FieldInfo":
-                    generator.FieldFilter.Expression = (Func<FieldInfo, bool>)value;
-                    break;
-                default:
-                    _logger.LogError("Unsupported filter type: {FilterType}", filter.Key);
-                    return -1;
+                _logger.LogError("Unsupported filter type: {FilterType}", filter.Key);
+                return -1;
             }
         }
 

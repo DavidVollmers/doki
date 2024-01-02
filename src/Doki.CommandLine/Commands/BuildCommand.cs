@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Reflection;
@@ -31,6 +30,7 @@ internal partial class BuildCommand : Command
             Arity = ArgumentArity.ZeroOrOne
         };
 
+    private readonly List<DokiAssemblyLoadContext> _assemblyLoadContexts = [];
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
@@ -156,6 +156,8 @@ internal partial class BuildCommand : Command
                 buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
 
             generator.AddAssembly(assembly, documentationFile, projectMetadata);
+            
+            _assemblyLoadContexts.Add(loadContext);
         }
 
         return 0;
@@ -203,6 +205,7 @@ internal partial class BuildCommand : Command
     {
         var outputContext = new OutputContext(workingDirectory, output.Options);
 
+        // ReSharper disable once InvertIf
         if (output.From!.EndsWith(".csproj"))
         {
             var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
