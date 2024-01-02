@@ -40,7 +40,7 @@ internal static class TypeExtensions
         return GetXmlDocumentationIdCore(type);
     }
 
-    private static string GetXmlDocumentationIdCore(this Type type, bool isOut = false,
+    internal static string GetXmlDocumentationIdCore(this Type type, bool isOut = false,
         bool isMethodParameter = false, string[]? genericClassParams = null)
     {
         var key = $"{nameof(GetXmlDocumentationIdCore)}:{type.GUID}:{isOut}:{isMethodParameter}:{genericClassParams}";

@@ -94,7 +94,6 @@ public partial class DocumentationGenerator
         }
     }
 
-    // ReSharper disable once SuggestBaseTypeForParameter
     private IEnumerable<MemberDocumentation> BuildFieldDocumentation(Type type, DocumentationObject parent,
         XPathNavigator? assemblyXml, ILogger logger)
     {
@@ -102,11 +101,11 @@ public partial class DocumentationGenerator
 
         foreach (var field in fields)
         {
-            var fieldId = $"{parent.Id}.{field.Name}";
+            var fieldId = field.GetXmlDocumentationId();
 
             logger.LogDebug("Generating documentation for field {Field}.", fieldId);
 
-            var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='M:{fieldId}']");
+            var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='F:{fieldId}']");
 
             var summary = memberXml?.SelectSingleNode("summary");
             if (summary == null)
@@ -140,19 +139,7 @@ public partial class DocumentationGenerator
 
         foreach (var constructor in constructors)
         {
-            var constructorId = $"{parent.Id}.#ctor";
-            var parameters = constructor.GetParameters();
-            if (parameters.Length > 0)
-            {
-                constructorId += "(";
-                constructorId += string.Join(",",
-                    parameters.Select(p =>
-                    {
-                        var name = p.ParameterType.GetSanitizedName(true);
-                        return name.Replace('<', '{').Replace('>', '}');
-                    }));
-                constructorId += ")";
-            }
+            var constructorId = constructor.GetXmlDocumentationId();
 
             logger.LogDebug("Generating documentation for constructor {Constructor}.", constructorId);
 

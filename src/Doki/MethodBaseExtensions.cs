@@ -15,13 +15,14 @@ internal static class MethodBaseExtensions
                 {
                     name = name[..name.IndexOf('`')];
                 }
+
                 break;
             case MethodInfo methodInfo:
             {
                 if (methodInfo.IsGenericMethod)
                 {
                     name = name[..name.IndexOf('`')];
-                    
+
                     name += "<";
                     name += string.Join(", ", methodInfo.GetGenericArguments().Select(a =>
                         a.IsGenericParameter ? a.Name : a.GetSanitizedName(true)));
@@ -40,5 +41,31 @@ internal static class MethodBaseExtensions
         name += ")";
 
         return name;
+    }
+
+    public static string GetXmlDocumentationId(this MethodBase methodBase)
+    {
+        return
+            $"{methodBase.GetShortMethodName()}{ParameterInfoExtensions.GetParametersXmlDocumentationIdString(methodBase.GetParameters(), methodBase.GetGenericClassParameters())}{methodBase.GetExplicitImplicitSuffix()}";
+    }
+
+    private static string GetShortMethodName(this MethodBase methodBase)
+    {
+        if (methodBase.IsConstructor) return "#ctor";
+        return (methodBase.IsIndexerProperty() ? "Item" : methodBase.Name) +
+               (methodBase.IsGenericMethod ? "``" + methodBase.GetGenericArguments().Length : null);
+    }
+
+    private static bool IsIndexerProperty(this MethodBase methodBase)
+    {
+        return methodBase is { IsSpecialName: true, Name: "get_Item" or "set_Item" };
+    }
+
+    private static string? GetExplicitImplicitSuffix(this MethodBase methodBase)
+    {
+        if (!methodBase.IsSpecialName ||
+            (methodBase.Name != "op_Explicit" && methodBase.Name != "op_Implicit")) return null;
+        if (methodBase is not MethodInfo methodInfo) return null;
+        return "~" + methodInfo.ReturnType.GetXmlDocumentationId();
     }
 }
