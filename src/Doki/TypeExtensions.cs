@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Doki;
 
@@ -7,9 +7,9 @@ internal static class TypeExtensions
 {
     private static readonly Dictionary<string, string> Cache = new();
 
-    public static string GetSanitizedName(this TypeInfo type, bool withNamespace = false, bool parseGenericTypes = true)
+    public static string GetSanitizedName(this Type type, bool withNamespace = false, bool parseGenericTypes = true)
     {
-        var key = $"{nameof(GetSanitizedName)}:{type.FullName}:{withNamespace}:{parseGenericTypes}";
+        var key = $"{nameof(GetSanitizedName)}:{type.GUID}:{withNamespace}:{parseGenericTypes}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
         var name = (withNamespace ? type.FullName : type.Name) ?? type.Name;
@@ -21,7 +21,7 @@ internal static class TypeExtensions
                 name = name[..name.IndexOf('`')];
 
                 var args = type.GetGenericArguments().Select(a =>
-                    a.IsGenericParameter ? a.Name : a.GetTypeInfo().GetSanitizedName(withNamespace));
+                    a.IsGenericParameter ? a.Name : a.GetSanitizedName(withNamespace));
                 name += $"<{string.Join(", ", args)}>";
             }
             else
@@ -35,75 +35,65 @@ internal static class TypeExtensions
         return name;
     }
 
-    public static string GetDefinition(this TypeInfo type)
+    public static string GetXmlDocumentationId(this Type type)
     {
-        var key = $"{nameof(GetDefinition)}:{type.FullName}";
+        return GetXmlDocumentationIdCore(type);
+    }
+
+    private static string GetXmlDocumentationIdCore(this Type type, bool isOut = false,
+        bool isMethodParameter = false, string[]? genericClassParams = null)
+    {
+        var key = $"{nameof(GetXmlDocumentationIdCore)}:{type.GUID}:{isOut}:{isMethodParameter}:{genericClassParams}";
         if (Cache.TryGetValue(key, out var cached)) return cached;
 
-        var builder = new StringBuilder();
+        if (type.IsGenericParameter)
+            return $"{GetGenericParameterPrefix(type, genericClassParams)}{type.GenericParameterPosition}";
 
-        if (type.IsPublic) builder.Append("public");
-        else if (type.IsNotPublic) builder.Append("internal");
-        else if (type.IsNestedPublic) builder.Append("public");
-        else if (type.IsNestedPrivate) builder.Append("private");
-        else if (type.IsNestedFamily) builder.Append("protected");
-        else if (type.IsNestedAssembly) builder.Append("internal");
-        else if (type.IsNestedFamANDAssem) builder.Append("private protected");
-        else if (type.IsNestedFamORAssem) builder.Append("protected internal");
+        string id;
 
-        switch (type)
+        var args = type.GetGenericArguments();
+        var @namespace = type.Namespace == null ? null : $"{type.Namespace}.";
+        var suffix = isOut ? "@" : null;
+
+        if (type is { MemberType: MemberTypes.TypeInfo, IsGenericTypeDefinition: false } &&
+            (type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
         {
-            case { IsAbstract: true, IsSealed: true }:
-                builder.Append(" static");
-                break;
-            case { IsAbstract: true, IsInterface: false }:
-                builder.Append(" abstract");
-                break;
-            case { IsSealed: true, IsEnum: false }:
-                builder.Append(" sealed");
-                break;
+            var parameters = string.Join(",",
+                args.Select(a => a.GetXmlDocumentationIdCore(false, isMethodParameter, genericClassParams)));
+            var name = Regex.Replace(type.Name, "`[0-9]+", $"{{{parameters}}}");
+            id = $"{@namespace}{name}{{{parameters}}}{suffix}";
+        }
+        else if (type.IsNested)
+        {
+            id = $"{@namespace}{type.DeclaringType!.Name}.{type.Name}{suffix}";
+        }
+        else if (type.ContainsGenericParameters && (type.IsArray || type.GetElementType() != null))
+        {
+            var typeName = type.GetElementType()
+                !.GetXmlDocumentationIdCore(false, isMethodParameter, genericClassParams);
+            id = $"{typeName}{(type.IsArray ? "[]" : null)}{suffix}";
+        }
+        else
+        {
+            id = $"{@namespace}{type.Name}{suffix}";
         }
 
-        var isRecord = type.IsClass && type.DeclaredProperties.Any(p => p.Name == "EqualityContract");
+        id = id.Replace("&", string.Empty);
 
-        if (isRecord) builder.Append(" record");
-        else if (type.IsClass) builder.Append(" class");
-        else if (type.IsEnum) builder.Append(" enum");
-        else if (type.IsInterface) builder.Append(" interface");
-        else if (type.IsValueType) builder.Append(" struct");
-
-        builder.Append(' ');
-        builder.Append(type.GetSanitizedName());
-
-        var types = new List<string>();
-
-        var interfaces = type.ImplementedInterfaces.ToArray();
-        if (type.BaseType != null)
+        while (id.Contains("[,"))
         {
-            if (type.BaseType != typeof(object))
-                types.Add(type.BaseType.GetTypeInfo().GetSanitizedName(true));
-
-            interfaces = interfaces.Except(type.BaseType.GetTypeInfo().ImplementedInterfaces).ToArray();
-
-            if (isRecord)
-            {
-                var genericType = typeof(IEquatable<>).MakeGenericType(type.AsType());
-                interfaces = interfaces.Except(new[] { genericType }).ToArray();
-            }
+            var index = id.IndexOf("[,", StringComparison.Ordinal);
+            var lastIndex = id.IndexOf(']', index);
+            id = string.Concat(id.AsSpan(0, index + 1), string.Join(",", Enumerable.Repeat("0:", lastIndex - index)),
+                id.AsSpan(lastIndex));
         }
 
-        if (interfaces.Length != 0)
-        {
-            types.AddRange(interfaces.Select(i => i.GetTypeInfo().GetSanitizedName(true)));
-        }
+        Cache.Add(key, id);
+        return id;
+    }
 
-        if (types.Count != 0)
-        {
-            builder.Append(" : ");
-            builder.Append(string.Join(", ", types));
-        }
-
-        Cache.Add(key, builder.ToString());
-        return builder.ToString();
+    private static string GetGenericParameterPrefix(MemberInfo member, string[]? genericClassParams)
+    {
+        return genericClassParams != null && genericClassParams.Contains(member.Name) ? "`" : "``";
     }
 }

@@ -37,7 +37,7 @@ namespace Doki.Generated
 
         var refs = new List<MetadataReference>
         {
-            MetadataReference.CreateFromFile(typeof(Type).GetTypeInfo().Assembly.Location)
+            MetadataReference.CreateFromFile(typeof(Type).Assembly.Location)
         };
 
         var syntax = CSharpSyntaxTree.ParseText(code);

@@ -204,9 +204,7 @@ public sealed partial class DocumentationGenerator
     private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent,
         ILogger logger, CancellationToken cancellationToken)
     {
-        var typeInfo = type.GetTypeInfo();
-
-        var typeId = typeInfo.GetSanitizedName(true, false);
+        var typeId = type.GetXmlDocumentationId();
 
         logger.LogDebug("Generating documentation for type {Type}.", typeId);
 
@@ -233,9 +231,9 @@ public sealed partial class DocumentationGenerator
                             ? DocumentationContent.Struct
                             : DocumentationContent.Type,
             Parent = parent,
-            Name = typeInfo.GetSanitizedName(),
-            FullName = typeInfo.GetSanitizedName(true),
-            Definition = typeInfo.GetDefinition(),
+            Name = type.GetSanitizedName(),
+            FullName = type.GetSanitizedName(true),
+            Definition = type.GetTypeInfo().GetDefinition(),
             Namespace = type.Namespace,
             Assembly = type.Assembly.GetName().Name,
             IsDocumented = true,
@@ -265,21 +263,19 @@ public sealed partial class DocumentationGenerator
         //
         // typeDocumentation.Methods = BuildMethodDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
-        var baseType = typeInfo.BaseType;
+        var baseType = type.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
         while (baseType != null)
         {
-            var baseTypeInfo = baseType.GetTypeInfo();
-
-            var baseTypeAssembly = baseTypeInfo.Assembly.GetName();
+            var baseTypeAssembly = baseType.Assembly.GetName();
 
             var typeReference = new TypeDocumentationReference
             {
-                Id = baseTypeInfo.GetSanitizedName(true, false),
+                Id = baseType.GetXmlDocumentationId(),
                 Content = DocumentationContent.TypeReference,
                 Parent = baseParent,
-                Name = baseTypeInfo.GetSanitizedName(),
-                FullName = baseTypeInfo.GetSanitizedName(true),
+                Name = baseType.GetSanitizedName(),
+                FullName = baseType.GetSanitizedName(true),
                 Namespace = baseType.Namespace,
                 Assembly = baseTypeAssembly.Name,
                 IsDocumented = IsTypeDocumented(baseType),
@@ -292,7 +288,7 @@ public sealed partial class DocumentationGenerator
 
             baseParent.BaseType = typeReference;
 
-            baseType = baseTypeInfo.BaseType;
+            baseType = baseType.BaseType;
             baseParent = typeReference;
         }
 

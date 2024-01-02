@@ -29,15 +29,11 @@ public partial class DocumentationGenerator
 
         foreach (var genericArgument in genericArguments)
         {
-            var genericArgumentInfo = genericArgument.GetTypeInfo();
-
-            var genericArgumentId = genericArgument.IsGenericParameter
-                ? genericArgument.Name
-                : genericArgumentInfo.GetSanitizedName(true, false);
+            var genericArgumentId = genericArgument.GetXmlDocumentationId();
 
             logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
 
-            var description = typeXml?.SelectSingleNode($"typeparam[@name='{genericArgumentInfo.Name}']");
+            var description = typeXml?.SelectSingleNode($"typeparam[@name='{genericArgumentId}']");
             if (description == null && typeXml != null)
             {
                 logger.LogWarning("No description found for generic argument {GenericArgument}.", genericArgument);
@@ -48,8 +44,8 @@ public partial class DocumentationGenerator
             var genericArgumentDocumentation = new GenericTypeArgumentDocumentation
             {
                 Id = genericArgumentId,
-                Name = genericArgumentInfo.GetSanitizedName(),
-                FullName = genericArgumentInfo.GetSanitizedName(true),
+                Name = genericArgument.GetSanitizedName(),
+                FullName = genericArgument.GetSanitizedName(true),
                 Content = DocumentationContent.GenericTypeArgument,
                 Namespace = genericArgument.Namespace,
                 Assembly = genericArgumentAssembly.Name,
@@ -152,7 +148,7 @@ public partial class DocumentationGenerator
                 constructorId += string.Join(",",
                     parameters.Select(p =>
                     {
-                        var name = p.ParameterType.GetTypeInfo().GetSanitizedName(true);
+                        var name = p.ParameterType.GetSanitizedName(true);
                         return name.Replace('<', '{').Replace('>', '}');
                     }));
                 constructorId += ")";
@@ -286,17 +282,15 @@ public partial class DocumentationGenerator
 
     private TypeDocumentationReference BuildTypeDocumentationReference(Type type, DocumentationObject parent)
     {
-        var typeInfo = type.GetTypeInfo();
-
-        var typeId = typeInfo.GetSanitizedName(true, false);
+        var typeId = type.GetXmlDocumentationId();
 
         var assembly = type.Assembly.GetName();
 
         return new TypeDocumentationReference
         {
             Id = typeId,
-            Name = typeInfo.GetSanitizedName(),
-            FullName = typeInfo.GetSanitizedName(true),
+            Name = type.GetSanitizedName(),
+            FullName = type.GetSanitizedName(true),
             Content = DocumentationContent.TypeReference,
             Namespace = type.Namespace,
             Assembly = assembly.Name,
