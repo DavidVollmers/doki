@@ -12,6 +12,8 @@ Package: [Doki](https://www.nuget.org/packages/Doki)
 
 ---
 
+**Represents a filter that can be applied to a collection.**
+
 ```csharp
 public sealed class Filter<T>
 ```
@@ -27,6 +29,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Filter(T)||
+|Filter(Func&lt;T, System.Boolean&gt;)|Creates a new filter with the given default filter.|
 
 
