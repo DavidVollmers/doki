@@ -37,6 +37,9 @@ public sealed partial class DocumentationGenerator
 
     public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic && !f.IsSpecialName);
 
+    public Filter<PropertyInfo> PropertyFilter { get; } =
+        new(p => p.GetMethod?.IsPublic == true || p.SetMethod?.IsPublic == true);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.
     /// </summary>
@@ -258,9 +261,9 @@ public sealed partial class DocumentationGenerator
 
         typeDocumentation.Fields = BuildFieldDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
-        // typeDocumentation.Properties =
-        //     BuildPropertyDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
-        //
+        typeDocumentation.Properties =
+            BuildPropertyDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+
         // typeDocumentation.Methods = BuildMethodDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
 
         var baseType = type.BaseType;

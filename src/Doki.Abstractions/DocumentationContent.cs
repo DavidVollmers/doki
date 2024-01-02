@@ -24,4 +24,5 @@ public enum DocumentationContent
     Link,
     Constructor,
     Field,
+    Property
 }

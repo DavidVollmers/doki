@@ -215,6 +215,20 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             markdown.Add(table);
         }
+        
+        if (typeDocumentation.Properties.Length != 0)
+        {
+            markdown.Add(new Heading("Properties", 2));
+
+            var table = new Table(new Text("   "), new Text("Summary"));
+            foreach (var property in typeDocumentation.Properties)
+            {
+                table.AddRow(new Text(property.Name),
+                    property.Summary == null ? Text.Empty : markdown.BuildText(property.Summary));
+            }
+
+            markdown.Add(table);
+        }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }

@@ -170,6 +170,44 @@ public partial class DocumentationGenerator
             yield return constructorDocumentation;
         }
     }
+    
+    private IEnumerable<MemberDocumentation> BuildPropertyDocumentation(Type type, DocumentationObject parent,
+        XPathNavigator? assemblyXml, ILogger logger)
+    {
+        var properties = type.GetProperties().Where(PropertyFilter.Expression ?? PropertyFilter.Default);
+
+        foreach (var property in properties)
+        {
+            var propertyId = property.GetXmlDocumentationId();
+
+            logger.LogDebug("Generating documentation for property {Property}.", propertyId);
+
+            var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='P:{propertyId}']");
+
+            var summary = memberXml?.SelectSingleNode("summary");
+            if (summary == null)
+            {
+                logger.LogWarning("No summary found for property {Property}.", propertyId);
+            }
+
+            var propertyAssembly = property.DeclaringType!.Assembly.GetName();
+
+            var propertyDocumentation = new MemberDocumentation
+            {
+                Id = propertyId,
+                Name = property.Name,
+                Content = DocumentationContent.Property,
+                Namespace = property.DeclaringType.Namespace,
+                Assembly = propertyAssembly.Name,
+                Parent = parent,
+            };
+
+            if (summary != null)
+                propertyDocumentation.Summary = BuildXmlDocumentation(summary, propertyDocumentation);
+
+            yield return propertyDocumentation;
+        }
+    }
 
     private DocumentationObject BuildXmlDocumentation(XPathNavigator navigator, DocumentationObject parent)
     {
