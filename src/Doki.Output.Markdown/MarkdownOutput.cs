@@ -229,6 +229,20 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOpt
 
             markdown.Add(table);
         }
+        
+        if (typeDocumentation.Methods.Length != 0)
+        {
+            markdown.Add(new Heading("Methods", 2));
+
+            var table = new Table(new Text("   "), new Text("Summary"));
+            foreach (var method in typeDocumentation.Methods)
+            {
+                table.AddRow(new Text(method.Name),
+                    method.Summary == null ? Text.Empty : markdown.BuildText(method.Summary));
+            }
+
+            markdown.Add(table);
+        }
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
