@@ -25,12 +25,11 @@ internal partial class BuildCommand : Command
         };
 
     private readonly Option<string> _buildConfigurationOption =
-        new(new[] { "-c", "--configuration" }, "The build configuration to use when building projects.")
+        new(["-c", "--configuration"], "The build configuration to use when building projects.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
-    private readonly List<DokiAssemblyLoadContext> _assemblyLoadContexts = [];
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
@@ -158,8 +157,6 @@ internal partial class BuildCommand : Command
                 buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
 
             generator.AddAssembly(assembly, documentationFile, projectMetadata);
-            
-            _assemblyLoadContexts.Add(loadContext);
         }
 
         return 0;
@@ -208,7 +205,7 @@ internal partial class BuildCommand : Command
         var outputContext = new OutputContext(workingDirectory, output.Options);
 
         // ReSharper disable once InvertIf
-        if (output.From!.EndsWith(".csproj"))
+        if (output.From?.EndsWith(".csproj") == true)
         {
             var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
@@ -226,6 +223,8 @@ internal partial class BuildCommand : Command
 
             return Activator.CreateInstance(outputType, outputContext) as IOutput;
         }
+        
+        //TODO add support for loading outputs from nuget.org
 
         return null;
     }
