@@ -12,6 +12,8 @@ internal class InitCommand : Command
     public InitCommand(ILogger<InitCommand> logger) : base("init", "Initialize the Doki configuration file.")
     {
         _logger = logger;
+
+        this.SetHandler(HandleCommandAsync);
     }
 
     private async Task<int> HandleCommandAsync(InvocationContext context)
