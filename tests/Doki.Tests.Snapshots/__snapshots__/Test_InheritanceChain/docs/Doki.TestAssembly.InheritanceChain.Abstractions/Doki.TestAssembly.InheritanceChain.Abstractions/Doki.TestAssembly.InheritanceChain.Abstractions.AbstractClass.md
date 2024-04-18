@@ -1,3 +1,5 @@
+[Packages](../../README.md) / [Doki.TestAssembly.InheritanceChain.Abstractions](../README.md) / [Doki.TestAssembly.InheritanceChain.Abstractions](README.md) / 
+
 # AbstractClass Class
 
 ## Definition

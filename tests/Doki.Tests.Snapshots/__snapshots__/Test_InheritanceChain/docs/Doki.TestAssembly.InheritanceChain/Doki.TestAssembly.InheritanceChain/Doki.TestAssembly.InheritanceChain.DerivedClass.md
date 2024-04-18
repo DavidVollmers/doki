@@ -1,3 +1,5 @@
+[Packages](../../README.md) / [Doki.TestAssembly.InheritanceChain](../README.md) / [Doki.TestAssembly.InheritanceChain](README.md) / 
+
 # DerivedClass Class
 
 ## Definition
@@ -13,4 +15,11 @@ public class DerivedClass : Doki.TestAssembly.InheritanceChain.GenericBaseClass<
 ```
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [AbstractClass](../../Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.md) → [GenericBaseClass](Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md)&lt;[SimpleClass](Doki.TestAssembly.InheritanceChain.SimpleClass.md)&gt; → DerivedClass
+
+## Constructors
+
+|   |Summary|
+|---|---|
+|DerivedClass()||
+
 

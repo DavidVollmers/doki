@@ -1,3 +1,5 @@
+[Packages](../../README.md) / [Doki.TestAssembly.InheritanceChain](../README.md) / [Doki.TestAssembly.InheritanceChain](README.md) / 
+
 # GenericBaseClass&lt;T&gt; Class
 
 ## Definition
