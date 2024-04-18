@@ -5,7 +5,9 @@ namespace Doki.CommandLine;
 
 internal record DokiConfig
 {
-    [JsonPropertyName("$schema")] internal string? Schema { get; init; }
+    [JsonInclude]
+    [JsonPropertyName("$schema")]
+    internal string? Schema { get; init; }
 
     [JsonPropertyName("input")] public string[]? Inputs { get; init; }
 

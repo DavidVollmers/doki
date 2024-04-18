@@ -28,6 +28,7 @@ internal partial class BuildCommand : Command
             Arity = ArgumentArity.ZeroOrOne
         };
 
+    private readonly List<DokiAssemblyLoadContext> _loadContexts = [];
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
@@ -71,6 +72,11 @@ internal partial class BuildCommand : Command
 
         _logger.LogInformation("[bold green]Documentation generated.[/]");
 
+        foreach (var loadContext in _loadContexts)
+        {
+            loadContext.Unload();
+        }
+
         return 0;
     }
 
@@ -85,7 +91,7 @@ internal partial class BuildCommand : Command
             _logger.LogError("Could not deserialize doki config file.");
             return -1;
         }
-        
+
         generator.IncludeInheritedMembers = dokiConfig.IncludeInheritedMembers;
 
         var inputResult = await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs,
@@ -155,6 +161,8 @@ internal partial class BuildCommand : Command
                 buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
 
             generator.AddAssembly(assembly, documentationFile, projectMetadata);
+
+            _loadContexts.Add(loadContext);
         }
 
         return 0;

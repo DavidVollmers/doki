@@ -44,7 +44,7 @@ internal class InitCommand : Command
         };
 
         await File.WriteAllTextAsync(dokiConfigFile.FullName,
-            JsonSerializer.Serialize(dokiConfig, new JsonSerializerOptions { WriteIndented = true }),
+            JsonSerializer.Serialize(dokiConfig, new JsonSerializerOptions { WriteIndented = true,  }),
             cancellationToken);
 
         _logger.LogInformation("[bold green]Created doki.config.json file.[/]");
