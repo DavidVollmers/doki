@@ -1,4 +1,5 @@
 {
+  "$schema": "src/Doki.CommandLine/doki.config.schema.json",
   "input": [
     "src/**/*.csproj",
     "!src/Doki.CommandLine/Doki.CommandLine.csproj"

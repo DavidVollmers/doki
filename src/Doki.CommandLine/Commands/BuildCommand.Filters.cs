@@ -83,8 +83,16 @@ namespace Doki.Generated
                 return -1;
             }
 
-            if (filter.Key == typeof(FieldInfo).FullName)
+            if (filter.Key == typeof(Type).FullName)
+                generator.TypeFilter.Expression = (Func<Type, bool>)value;
+            else if (filter.Key == typeof(ConstructorInfo).FullName)
+                generator.ConstructorFilter.Expression = (Func<ConstructorInfo, bool>)value;
+            else if (filter.Key == typeof(FieldInfo).FullName)
                 generator.FieldFilter.Expression = (Func<FieldInfo, bool>)value;
+            else if (filter.Key == typeof(PropertyInfo).FullName)
+                generator.PropertyFilter.Expression = (Func<PropertyInfo, bool>)value;
+            else if (filter.Key == typeof(MethodInfo).FullName)
+                generator.MethodFilter.Expression = (Func<MethodInfo, bool>)value;
             else
             {
                 _logger.LogError("Unsupported filter type: {FilterType}", filter.Key);

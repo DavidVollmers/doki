@@ -1,0 +1,79 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cdn.dvolper.dev/doki/1.0.0/doki.config.schema.json",
+  "title": "Doki Configuration",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "output": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/output"
+      },
+      "minItems": 1
+    },
+    "filter": {
+      "$ref": "#/$defs/filter"
+    },
+    "includeInheritedMembers": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "input",
+    "output"
+  ],
+  "$defs": {
+    "output": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/outputOptions"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "outputOptions": {
+      "type": "object",
+      "properties": {
+        "outputPath": {
+          "type": "string"
+        }
+      }
+    },
+    "filter": {
+      "type": "object",
+      "properties": {
+        "System.Type": {
+          "type": "string"
+        },
+        "System.Reflection.ConstructorInfo": {
+          "type": "string"
+        },
+        "System.Reflection.FieldInfo": {
+          "type": "string"
+        },
+        "System.Reflection.PropertyInfo": {
+          "type": "string"
+        },
+        "System.Reflection.MethodInfo": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
