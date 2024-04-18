@@ -1,10 +1,8 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
-using Doki.Output;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -197,36 +195,6 @@ internal partial class BuildCommand : Command
         }
 
         return 0;
-    }
-
-    private async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
-        DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
-    {
-        var outputContext = new OutputContext(workingDirectory, output.Options);
-
-        // ReSharper disable once InvertIf
-        if (output.From?.EndsWith(".csproj") == true)
-        {
-            var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
-
-            var buildResult = await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
-            if (buildResult != 0) return null;
-
-            var assembly = Assembly.LoadFrom(Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
-                $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll"));
-
-            var outputType = assembly.GetType(output.Type!) ?? assembly
-                .GetExportedTypes()
-                .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
-
-            if (outputType == null) return null;
-
-            return Activator.CreateInstance(outputType, outputContext) as IOutput;
-        }
-        
-        //TODO add support for loading outputs from nuget.org
-
-        return null;
     }
 
     private async Task<int> BuildProjectAsync(FileSystemInfo projectFile, string buildConfiguration,
