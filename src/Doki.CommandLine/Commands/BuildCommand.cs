@@ -171,13 +171,7 @@ internal partial class BuildCommand : Command
 
         foreach (var output in outputs)
         {
-            if (output.From == null)
-            {
-                _logger.LogError("No from configured.");
-                return -1;
-            }
-
-            if (output.Type == null)
+            if (string.IsNullOrWhiteSpace(output.Type))
             {
                 _logger.LogError("No type configured.");
                 return -1;

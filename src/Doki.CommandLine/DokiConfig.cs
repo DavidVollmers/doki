@@ -18,10 +18,10 @@ internal record DokiConfig
 
     public record DokiConfigOutput
     {
-        public string? Type { get; set; }
+        public string Type { get; init; } = null!;
 
-        public string? From { get; set; }
+        public string? From { get; init; } = null!;
 
-        public JsonElement? Options { get; set; }
+        public JsonElement? Options { get; init; }
     }
 }

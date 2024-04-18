@@ -48,6 +48,8 @@ internal class InitCommand : Command
             cancellationToken);
 
         _logger.LogInformation("[bold green]Created doki.config.json file.[/]");
+        
+        //TODO add or create .doki folder .gitignore entry
 
         _logger.LogInformation("You can now run 'doki build' to generate documentation.");
 
