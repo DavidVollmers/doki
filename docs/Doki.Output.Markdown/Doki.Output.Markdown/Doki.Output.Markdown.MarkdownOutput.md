@@ -25,3 +25,11 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |MarkdownOutput(Doki.Output.OutputContext)||
 
 
+## Methods
+
+|   |Summary|
+|---|---|
+|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
+|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
+
+

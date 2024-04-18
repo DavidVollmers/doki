@@ -31,3 +31,13 @@ Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.mi
 |Content||
 
 
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.DocumentationObject)||
+
+

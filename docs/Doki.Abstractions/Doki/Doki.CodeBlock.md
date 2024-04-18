@@ -33,8 +33,16 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 |---|---|
 |Language||
 |Code||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.DocumentationObject)||
+|Equals(Doki.CodeBlock)||
 
 

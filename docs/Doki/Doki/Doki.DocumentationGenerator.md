@@ -56,5 +56,16 @@ You can also use the doki cli tool to generate documentation. See the official [
 |ConstructorFilter||
 |FieldFilter||
 |PropertyFilter||
+|MethodFilter||
+|IncludeInheritedMembers||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|AddAssembly(System.Reflection.Assembly, System.Xml.XPath.XPathDocument, System.Xml.XPath.XPathDocument)|Adds an assembly to generate documentation for.|
+|AddOutput(Doki.Output.IOutput)||
+|GenerateAsync(Microsoft.Extensions.Logging.ILogger, System.Threading.CancellationToken)||
 
 

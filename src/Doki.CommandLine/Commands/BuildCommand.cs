@@ -88,6 +88,8 @@ internal partial class BuildCommand : Command
             _logger.LogError("Could not deserialize doki config file.");
             return -1;
         }
+        
+        generator.IncludeInheritedMembers = dokiConfig.IncludeInheritedMembers;
 
         var inputResult = await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs,
             buildConfiguration, cancellationToken);

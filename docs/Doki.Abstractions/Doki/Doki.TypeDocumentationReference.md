@@ -40,12 +40,16 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |IsMicrosoft||
 |BaseType||
 |GenericArguments||
-|Name||
-|Namespace||
-|Assembly||
-|Summary||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.MemberDocumentation)||
+|Equals(Doki.TypeDocumentationReference)||
 
 

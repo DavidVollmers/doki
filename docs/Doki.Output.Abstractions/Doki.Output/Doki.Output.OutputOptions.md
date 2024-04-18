@@ -28,3 +28,13 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.m
 |Default||
 
 
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.Output.OutputOptions)||
+
+

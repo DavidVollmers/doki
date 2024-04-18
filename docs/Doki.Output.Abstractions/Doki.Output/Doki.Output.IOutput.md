@@ -16,3 +16,11 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 public interface IOutput
 ```
 
+## Methods
+
+|   |Summary|
+|---|---|
+|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
+|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
+
+

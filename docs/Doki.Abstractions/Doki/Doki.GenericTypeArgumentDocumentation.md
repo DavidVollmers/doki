@@ -33,18 +33,16 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 |---|---|
 |Description||
 |IsGenericParameter||
-|IsGeneric||
-|FullName||
-|IsDocumented||
-|IsMicrosoft||
-|BaseType||
-|GenericArguments||
-|Name||
-|Namespace||
-|Assembly||
-|Summary||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.TypeDocumentationReference)||
+|Equals(Doki.GenericTypeArgumentDocumentation)||
 
 

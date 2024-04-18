@@ -35,12 +35,14 @@ public sealed partial class DocumentationGenerator
 
     public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
 
-    public Filter<FieldInfo> FieldFilter { get; } = new(f => f.IsPublic && !f.IsSpecialName);
+    public Filter<FieldInfo> FieldFilter { get; } = new(f => f is { IsPublic: true, IsSpecialName: false });
 
     public Filter<PropertyInfo> PropertyFilter { get; } =
         new(p => p.GetMethod?.IsPublic == true || p.SetMethod?.IsPublic == true);
+
+    public Filter<MethodInfo> MethodFilter { get; } = new(m => m is { IsPublic: true, IsSpecialName: false });
     
-    public Filter<MethodInfo> MethodFilter { get; } = new(m => m.IsPublic && !m.IsSpecialName);
+    public bool IncludeInheritedMembers { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class.

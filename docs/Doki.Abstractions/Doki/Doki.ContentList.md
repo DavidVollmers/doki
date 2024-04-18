@@ -43,8 +43,16 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 |Name||
 |Description||
 |Items||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.DocumentationObject)||
+|Equals(Doki.ContentList)||
 
 

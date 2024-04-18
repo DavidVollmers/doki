@@ -38,8 +38,16 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 |Namespace||
 |Assembly||
 |Summary||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.DocumentationObject)||
+|Equals(Doki.MemberDocumentation)||
 
 

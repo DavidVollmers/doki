@@ -10,6 +10,8 @@ internal record DokiConfig
     [JsonPropertyName("output")] public DokiConfigOutput[]? Outputs { get; init; }
     
     [JsonPropertyName("filter")] public IDictionary<string, string>? Filter { get; init; }
+    
+    [JsonPropertyName("includeInheritedMembers")] public bool IncludeInheritedMembers { get; init; }
 
     public record DokiConfigOutput
     {

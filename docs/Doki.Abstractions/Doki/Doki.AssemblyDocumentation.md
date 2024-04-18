@@ -34,11 +34,16 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 |FileName||
 |Version||
 |PackageId||
-|Name||
-|Description||
-|Items||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.ContentList)||
+|Equals(Doki.AssemblyDocumentation)||
 
 

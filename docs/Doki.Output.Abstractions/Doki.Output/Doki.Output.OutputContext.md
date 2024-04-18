@@ -37,3 +37,14 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputContext&gt;](https://learn.m
 |Options|The JSON serialized options to use when generating the output.|
 
 
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.Output.OutputContext)||
+|Deconstruct(System.IO.DirectoryInfo&, System.Nullable`1[[System.Text.Json.JsonElement, System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51]]&)||
+
+

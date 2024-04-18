@@ -40,18 +40,16 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 |Fields||
 |Properties||
 |Methods||
-|IsGeneric||
-|FullName||
-|IsDocumented||
-|IsMicrosoft||
-|BaseType||
-|GenericArguments||
-|Name||
-|Namespace||
-|Assembly||
-|Summary||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.TypeDocumentationReference)||
+|Equals(Doki.TypeDocumentation)||
 
 

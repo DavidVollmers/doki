@@ -33,8 +33,16 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 |---|---|
 |Url||
 |Text||
-|Id||
-|Parent||
-|Content||
+
+
+## Methods
+
+|   |Summary|
+|---|---|
+|ToString()||
+|GetHashCode()||
+|Equals(System.Object)||
+|Equals(Doki.DocumentationObject)||
+|Equals(Doki.Link)||
 
 

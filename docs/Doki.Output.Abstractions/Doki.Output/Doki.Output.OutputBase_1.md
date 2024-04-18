@@ -32,3 +32,11 @@ Implements: [IOutput](Doki.Output.IOutput.md)
 
 
 
+## Methods
+
+|   |Summary|
+|---|---|
+|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
+|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
+
+
