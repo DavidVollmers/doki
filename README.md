@@ -12,10 +12,16 @@ Install the `doki` Command-Line Interface:
 dotnet tool install --global Doki.CommandLine
 ```
 
-Run the following script in the root of your repository:
+Setup your repository to use Doki:
 
 ```bash
 doki init
+```
+
+Generate documentation:
+
+```bash
+doki build
 ```
 
 ## Documentation
