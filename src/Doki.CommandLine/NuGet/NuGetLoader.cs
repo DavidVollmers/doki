@@ -34,7 +34,7 @@ internal class NuGetLoader : IDisposable
         _sourceRepositoryProvider = new SourceRepositoryProvider(sourceProvider, Repository.Provider.GetCoreV3());
     }
 
-    public async Task LoadPackageAsync(string packageId, string destinationDirectory, bool allowPreview = false,
+    public async Task<string> LoadPackageAsync(string packageId, string destinationDirectory, bool allowPreview = false,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(packageId, nameof(packageId));
@@ -49,6 +49,9 @@ internal class NuGetLoader : IDisposable
         var settings = Settings.LoadDefaultSettings(destinationDirectory);
 
         await InstallPackagesAsync(packagesToInstall, destinationDirectory, settings, cancellationToken);
+
+        return Path.Combine(destinationDirectory, $"{packageIdentity.Id}.{packageIdentity.Version}", "lib", "net8.0",
+            $"{packageIdentity.Id}.dll");
     }
 
     private async Task InstallPackagesAsync(IEnumerable<SourcePackageDependencyInfo> packagesToInstall,

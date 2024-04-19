@@ -44,11 +44,10 @@ internal partial class GenerateCommand
 
         using var nugetLoader = new NuGetLoader(output.From);
 
-        await nugetLoader.LoadPackageAsync(output.Type, nugetFolder, allowPreview, cancellationToken);
+        var assemblyPath =
+            await nugetLoader.LoadPackageAsync(output.Type, nugetFolder, allowPreview, cancellationToken);
 
-        //TODO load assembly from package
-        return null;
-        // return LoadOutputFromAssembly(assemblyPath, output, outputContext);
+        return LoadOutputFromAssembly(assemblyPath, output, outputContext);
     }
 
     private async Task<IOutput?> LoadOutputFromProjectAsync(FileInfo fileInfo, DokiConfig.DokiConfigOutput output,
