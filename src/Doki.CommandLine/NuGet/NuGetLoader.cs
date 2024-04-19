@@ -155,7 +155,7 @@ internal class NuGetLoader : IDisposable
 
     private static bool IsDependencyProvided(PackageDependency dependency)
     {
-        if (dependency.Id == "Doki" || dependency.Id.StartsWith("Doki.")) return true;
+        if (dependency.Id is "Doki" or "Doki.Abstractions" or "Doki.Output.Abstractions") return true;
 
         var runtimeLibrary = DependencyContext.Default!.RuntimeLibraries.FirstOrDefault(r => r.Name == dependency.Id);
 
