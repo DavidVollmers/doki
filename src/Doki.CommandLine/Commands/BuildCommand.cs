@@ -45,6 +45,7 @@ internal partial class BuildCommand : Command
         AddArgument(_targetArgument);
 
         AddOption(_buildConfigurationOption);
+        AddOption(_noBuildOption);
 
         this.SetHandler(HandleCommandAsync);
     }
