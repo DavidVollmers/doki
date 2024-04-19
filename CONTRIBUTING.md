@@ -21,12 +21,12 @@ dotnet pack -c Release -p:Version=0.2.0-preview
 Then you can install the package as a local dotnet tool:
 
 ```bash
-dotnet tool install --global --add-source .\nuget --version 0.2.0-preview  Doki.CommandLine
+dotnet tool install --global --add-source .\nuget --version 0.2.0-preview Doki.CommandLine
 ```
 
 > If you already have the tool installed, you can update it with the following command:
 > ```bash
-> dotnet tool update --global --add-source .\nuget --version 0.2.0-preview  Doki.CommandLine
+> dotnet tool update --global --add-source .\nuget --version 0.2.0-preview Doki.CommandLine
 > ```
 
 Now you can use your version of the doki CLI on your local machine.
