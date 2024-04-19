@@ -14,12 +14,13 @@ internal partial class GenerateCommand
     private readonly SourceCacheContext _cacheContext = new();
 
     private async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
-        DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
+        DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
         var outputContext = new OutputContext(workingDirectory, output.Options);
 
-        if (output.From == null) return await LoadOutputFromNuGetAsync(output, outputContext, cancellationToken);
-        
+        if (output.From == null)
+            return await LoadOutputFromNuGetAsync(output, outputContext, allowPreview, cancellationToken);
+
         var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
         if (!fileInfo.Exists) return null;
@@ -34,7 +35,7 @@ internal partial class GenerateCommand
 
     //TODO support custom registries (using output.From)
     private async Task<IOutput?> LoadOutputFromNuGetAsync(DokiConfig.DokiConfigOutput output,
-        OutputContext outputContext, CancellationToken cancellationToken)
+        OutputContext outputContext, bool allowPreview, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Loading output from NuGet: {PackageId}", output.Type);
 
@@ -43,8 +44,12 @@ internal partial class GenerateCommand
         var versions = await packages.GetAllVersionsAsync(output.Type, _cacheContext, NullLogger.Instance,
             cancellationToken);
 
-        var latestVersion = versions.Where(v => v.OriginalVersion?.EndsWith("-preview") != true)
-            .OrderByDescending(v => v).First();
+        var latestVersion = versions.Where(v => allowPreview || !v.IsPrerelease).MaxBy(v => v);
+        if (latestVersion == null)
+        {
+            _logger.LogError("No versions found for package: {PackageId}", output.Type);
+            return null;
+        }
 
         var package = new PackageIdentity(output.From, latestVersion);
 
@@ -56,8 +61,12 @@ internal partial class GenerateCommand
 
         var result = await downloader.CopyNupkgFileToAsync(destination.FullName, cancellationToken);
 
-        if (!result) return null;
-        
+        if (!result)
+        {
+            _logger.LogError("Failed to download package: {PackageId}", output.Type);
+            return null;
+        }
+
         //TODO extract package
 
         return null;
@@ -88,7 +97,12 @@ internal partial class GenerateCommand
             .GetExportedTypes()
             .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
 
-        if (outputType == null) return null;
+        // ReSharper disable once InvertIf
+        if (outputType == null)
+        {
+            _logger.LogError("Could not find output type: {OutputType}", output.Type);
+            return null;
+        }
 
         return Activator.CreateInstance(outputType, outputContext) as IOutput;
     }

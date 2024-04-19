@@ -207,7 +207,7 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
-            var instance = await LoadOutputAsync(context.Directory, output, cancellationToken);
+            var instance = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
 
             if (instance == null)
             {
