@@ -10,9 +10,9 @@ internal partial class GenerateCommand
 {
     private const string GeneratedAssemblyName = "Doki.Generated";
 
-    private int CompileFilters(DocumentationGenerator generator, IDictionary<string, string>? filters)
+    private int CompileFilters(GenerateContext context)
     {
-        if (filters?.Any() != true)
+        if (context.DokiConfig.Filter?.Any() != true)
         {
             _logger.LogDebug("No filters configured.");
             return 0;
@@ -27,7 +27,7 @@ namespace Doki.Generated
 {{
     public static class Filters
     {{
-        {string.Join("\n", filters.Select(x => $@"
+        {string.Join("\n", context.DokiConfig.Filter.Select(x => $@"
         public static readonly Func<{x.Key}, bool> {x.Key.Replace('.', '_')} = {x.Value};
 "))}
     }}
@@ -66,7 +66,7 @@ namespace Doki.Generated
 
         var assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
-        foreach (var filter in filters)
+        foreach (var filter in context.DokiConfig.Filter)
         {
             var type = assembly.GetType("Doki.Generated.Filters");
             var field = type?.GetField(filter.Key.Replace('.', '_'), BindingFlags.Public | BindingFlags.Static);
@@ -84,15 +84,15 @@ namespace Doki.Generated
             }
 
             if (filter.Key == typeof(Type).FullName)
-                generator.TypeFilter.Expression = (Func<Type, bool>)value;
+                context.Generator.TypeFilter.Expression = (Func<Type, bool>)value;
             else if (filter.Key == typeof(ConstructorInfo).FullName)
-                generator.ConstructorFilter.Expression = (Func<ConstructorInfo, bool>)value;
+                context.Generator.ConstructorFilter.Expression = (Func<ConstructorInfo, bool>)value;
             else if (filter.Key == typeof(FieldInfo).FullName)
-                generator.FieldFilter.Expression = (Func<FieldInfo, bool>)value;
+                context.Generator.FieldFilter.Expression = (Func<FieldInfo, bool>)value;
             else if (filter.Key == typeof(PropertyInfo).FullName)
-                generator.PropertyFilter.Expression = (Func<PropertyInfo, bool>)value;
+                context.Generator.PropertyFilter.Expression = (Func<PropertyInfo, bool>)value;
             else if (filter.Key == typeof(MethodInfo).FullName)
-                generator.MethodFilter.Expression = (Func<MethodInfo, bool>)value;
+                context.Generator.MethodFilter.Expression = (Func<MethodInfo, bool>)value;
             else
             {
                 _logger.LogError("Unsupported filter type: {FilterType}", filter.Key);

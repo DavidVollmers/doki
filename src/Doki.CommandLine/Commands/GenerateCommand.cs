@@ -22,6 +22,12 @@ internal partial class GenerateCommand : Command
             Arity = ArgumentArity.ZeroOrOne
         };
 
+    private readonly Option<bool> _allowPreviewOption =
+        new("--allow-preview", "Allow preview versions for NuGet packages.")
+        {
+            Arity = ArgumentArity.ZeroOrOne
+        };
+
     private readonly Option<string> _buildConfigurationOption =
         new(["-c", "--configuration"], "The build configuration to use when building projects.")
         {
@@ -44,6 +50,7 @@ internal partial class GenerateCommand : Command
 
         AddArgument(_targetArgument);
 
+        AddOption(_allowPreviewOption);
         AddOption(_buildConfigurationOption);
         AddOption(_noBuildOption);
 
@@ -53,6 +60,7 @@ internal partial class GenerateCommand : Command
     private async Task<int> HandleCommandAsync(InvocationContext context)
     {
         var dokiConfigFile = context.ParseResult.GetValueForArgument(_targetArgument);
+        var allowPreview = context.ParseResult.GetValueForOption(_allowPreviewOption);
         var buildConfiguration = context.ParseResult.GetValueForOption(_buildConfigurationOption) ?? "Release";
         var noBuild = context.ParseResult.GetValueForOption(_noBuildOption);
 
@@ -69,11 +77,26 @@ internal partial class GenerateCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
+        var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
+            JsonSerializerOptions, cancellationToken);
+
+        if (dokiConfig == null)
+        {
+            _logger.LogError("Could not deserialize doki config file.");
+            return -1;
+        }
+
         var generator = new DocumentationGenerator();
 
-        var configureResult =
-            await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration, noBuild,
-                cancellationToken);
+        var configureResult = await ConfigureDocumentationGeneratorAsync(new GenerateContext
+        {
+            Generator = generator,
+            DokiConfig = dokiConfig,
+            AllowPreview = allowPreview,
+            BuildConfiguration = buildConfiguration,
+            NoBuild = noBuild,
+            Directory = dokiConfigFile.Directory!
+        }, cancellationToken);
         if (configureResult != 0) return configureResult;
 
         await generator.GenerateAsync(_logger, cancellationToken);
@@ -88,49 +111,37 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
-        FileInfo dokiConfigFile, string buildConfiguration, bool noBuild, CancellationToken cancellationToken)
+    private async Task<int> ConfigureDocumentationGeneratorAsync(GenerateContext context,
+        CancellationToken cancellationToken)
     {
-        var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
-            JsonSerializerOptions, cancellationToken);
+        context.Generator.IncludeInheritedMembers = context.DokiConfig.IncludeInheritedMembers;
 
-        if (dokiConfig == null)
-        {
-            _logger.LogError("Could not deserialize doki config file.");
-            return -1;
-        }
-
-        generator.IncludeInheritedMembers = dokiConfig.IncludeInheritedMembers;
-
-        var inputResult = await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs,
-            buildConfiguration, noBuild, cancellationToken);
+        var inputResult = await LoadInputsAsync(context, cancellationToken);
         if (inputResult != 0) return inputResult;
 
-        var outputResult =
-            await LoadOutputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Outputs, cancellationToken);
+        var outputResult = await LoadOutputsAsync(context, cancellationToken);
         if (outputResult != 0) return outputResult;
 
-        var filterResult = CompileFilters(generator, dokiConfig.Filter);
+        var filterResult = CompileFilters(context);
         return filterResult != 0 ? filterResult : 0;
     }
 
-    private async Task<int> LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
-        string[]? inputs, string buildConfiguration, bool noBuild, CancellationToken cancellationToken)
+    private async Task<int> LoadInputsAsync(GenerateContext context, CancellationToken cancellationToken)
     {
-        if (inputs == null)
+        if (context.DokiConfig.Inputs == null)
         {
             _logger.LogError("No inputs configured.");
             return -1;
         }
 
         var matcher = new Matcher();
-        foreach (var input in inputs)
+        foreach (var input in context.DokiConfig.Inputs)
         {
             if (input.StartsWith('!')) matcher.AddExclude(input[1..]);
             else matcher.AddInclude(input);
         }
 
-        var result = matcher.Execute(new DirectoryInfoWrapper(workingDirectory));
+        var result = matcher.Execute(new DirectoryInfoWrapper(context.Directory));
         if (!result.HasMatches)
         {
             _logger.LogError("No inputs matched.");
@@ -139,7 +150,7 @@ internal partial class GenerateCommand : Command
 
         foreach (var file in result.Files)
         {
-            var projectFile = new FileInfo(Path.Combine(workingDirectory.FullName, file.Path));
+            var projectFile = new FileInfo(Path.Combine(context.Directory.FullName, file.Path));
 
             var projectMetadata = new XPathDocument(projectFile.FullName);
 
@@ -153,9 +164,10 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
-            if (!noBuild)
+            if (!context.NoBuild)
             {
-                var buildResult = await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+                var buildResult =
+                    await BuildProjectAsync(projectFile, context.BuildConfiguration, true, cancellationToken);
                 if (buildResult != 0) return buildResult;
             }
 
@@ -163,15 +175,15 @@ internal partial class GenerateCommand : Command
 
             var projectName = projectFile.Name[..^projectFile.Extension.Length];
 
-            var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", buildConfiguration,
+            var assemblyPath = Path.Combine(projectFile.DirectoryName!, "bin", context.BuildConfiguration,
                 latestTargetFramework, $"{projectName}.dll");
             var loadContext = new DokiAssemblyLoadContext(assemblyPath);
             var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
 
             var documentationFile = new XPathDocument(Path.Combine(projectFile.DirectoryName!, "bin",
-                buildConfiguration, latestTargetFramework, $"{projectName}.xml"));
+                context.BuildConfiguration, latestTargetFramework, $"{projectName}.xml"));
 
-            generator.AddAssembly(assembly, documentationFile, projectMetadata);
+            context.Generator.AddAssembly(assembly, documentationFile, projectMetadata);
 
             _loadContexts.Add(loadContext);
         }
@@ -179,16 +191,15 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> LoadOutputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
-        DokiConfig.DokiConfigOutput[]? outputs, CancellationToken cancellationToken)
+    private async Task<int> LoadOutputsAsync(GenerateContext context, CancellationToken cancellationToken)
     {
-        if (outputs == null)
+        if (context.DokiConfig.Outputs == null)
         {
             _logger.LogError("No outputs configured.");
             return -1;
         }
 
-        foreach (var output in outputs)
+        foreach (var output in context.DokiConfig.Outputs)
         {
             if (string.IsNullOrWhiteSpace(output.Type))
             {
@@ -196,7 +207,7 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
-            var instance = await LoadOutputAsync(workingDirectory, output, cancellationToken);
+            var instance = await LoadOutputAsync(context.Directory, output, cancellationToken);
 
             if (instance == null)
             {
@@ -204,7 +215,7 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
-            generator.AddOutput(instance);
+            context.Generator.AddOutput(instance);
         }
 
         return 0;
@@ -256,5 +267,20 @@ internal partial class GenerateCommand : Command
         _builtProjects.Add(projectFile.FullName);
 
         return 0;
+    }
+
+    private class GenerateContext
+    {
+        public DocumentationGenerator Generator { get; init; } = null!;
+
+        public DokiConfig DokiConfig { get; init; } = null!;
+
+        public string BuildConfiguration { get; init; } = null!;
+
+        public bool NoBuild { get; init; }
+
+        public bool AllowPreview { get; init; }
+
+        public DirectoryInfo Directory { get; init; } = null!;
     }
 }
