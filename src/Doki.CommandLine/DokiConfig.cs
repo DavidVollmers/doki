@@ -20,10 +20,10 @@ internal record DokiConfig
 
     public record DokiConfigOutput
     {
-        public string Type { get; init; } = null!;
+        [JsonPropertyName("type")] public string Type { get; init; } = null!;
 
-        public string? From { get; init; } = null!;
+        [JsonPropertyName("from")] public string? From { get; init; } = null!;
 
-        public JsonElement? Options { get; init; }
+        [JsonPropertyName("options")] public JsonElement? Options { get; init; }
     }
 }
