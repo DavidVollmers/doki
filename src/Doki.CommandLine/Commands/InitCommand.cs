@@ -7,6 +7,8 @@ namespace Doki.CommandLine.Commands;
 
 internal class InitCommand : Command
 {
+    private const string GitIgnoreContent = ".doki/";
+
     private readonly ILogger _logger;
 
     public InitCommand(ILogger<InitCommand> logger) : base("init", "Initialize the Doki configuration file.")
@@ -18,8 +20,9 @@ internal class InitCommand : Command
 
     private async Task<int> HandleCommandAsync(InvocationContext context)
     {
-        var dokiConfigFile = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "doki.config.json"));
+        var currentDirectory = Directory.GetCurrentDirectory();
 
+        var dokiConfigFile = new FileInfo(Path.Combine(currentDirectory, "doki.config.json"));
         if (dokiConfigFile.Exists)
         {
             _logger.LogError("A doki.config.json file already exists.");
@@ -28,7 +31,7 @@ internal class InitCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        var version = GetType().Assembly.GetName().Version?.ToString();
+        var version = GetType().Assembly.GetName().Version?.ToString(3) ?? "latest";
 
         var dokiConfig = new DokiConfig
         {
@@ -44,12 +47,26 @@ internal class InitCommand : Command
         };
 
         await File.WriteAllTextAsync(dokiConfigFile.FullName,
-            JsonSerializer.Serialize(dokiConfig, new JsonSerializerOptions { WriteIndented = true,  }),
+            JsonSerializer.Serialize(dokiConfig, new JsonSerializerOptions { WriteIndented = true, }),
             cancellationToken);
 
         _logger.LogInformation("[bold green]Created doki.config.json file.[/]");
-        
-        //TODO add or create .doki folder .gitignore entry
+
+        var gitIgnoreFile = new FileInfo(Path.Combine(currentDirectory, ".gitignore"));
+        if (gitIgnoreFile.Exists)
+        {
+            var gitIgnoreContent = await File.ReadAllTextAsync(gitIgnoreFile.FullName, cancellationToken);
+            if (!gitIgnoreContent.Contains("doki-output"))
+            {
+                await File.AppendAllTextAsync(gitIgnoreFile.FullName, GitIgnoreContent, cancellationToken);
+                _logger.LogInformation("[bold green]Updated .gitignore file.[/]");
+            }
+        }
+        else
+        {
+            await File.WriteAllTextAsync(gitIgnoreFile.FullName, GitIgnoreContent, cancellationToken);
+            _logger.LogInformation("[bold green]Created .gitignore file.[/]");
+        }
 
         _logger.LogInformation("You can now run 'doki build' to generate documentation.");
 
