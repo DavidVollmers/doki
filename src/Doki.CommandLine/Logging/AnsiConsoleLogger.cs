@@ -23,8 +23,8 @@ internal partial class AnsiConsoleLogger : ILogger
 
         var message = formatter(state, exception);
 
-        var escapeRegex = new Regex(@"`1\[([a-zA-Z]+?)\]");
-        message = escapeRegex.Replace(message, "`1[[$1]]");
+        var escapeRegex = new Regex(@"\[([a-zA-Z]+?)\]");
+        message = escapeRegex.Replace(message, "[[$1]]");
 
         AnsiConsole.MarkupLine($"{markup}{message}[/]");
         
