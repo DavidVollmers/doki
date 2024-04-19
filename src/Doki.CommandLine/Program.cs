@@ -37,7 +37,8 @@ var parser = new CommandLineBuilder(rootCommand)
     .UseDefaults()
     .UseExceptionHandler((e, context) =>
     {
-        if (e is not TaskCanceledException) AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
+        if (e is not TaskCanceledException and not OperationCanceledException)
+            AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
         context.ExitCode = 1;
     })
     .Build();
