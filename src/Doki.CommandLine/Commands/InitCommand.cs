@@ -10,6 +10,12 @@ internal class InitCommand : Command
 {
     private const string GitIgnoreContent = ".doki/";
 
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+    };
+
     private readonly ILogger _logger;
 
     public InitCommand(ILogger<InitCommand> logger) : base("init", "Initialize the Doki configuration file.")
@@ -47,12 +53,7 @@ internal class InitCommand : Command
             ]
         };
 
-        await File.WriteAllTextAsync(dokiConfigFile.FullName,
-            JsonSerializer.Serialize(dokiConfig, new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.Always
-            }),
+        await File.WriteAllTextAsync(dokiConfigFile.FullName, JsonSerializer.Serialize(dokiConfig, SerializerOptions),
             cancellationToken);
 
         _logger.LogInformation("[bold green]Created doki.config.json file.[/]");
