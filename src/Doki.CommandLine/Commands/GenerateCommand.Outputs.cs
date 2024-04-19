@@ -8,7 +8,7 @@ using NuGet.Protocol.Core.Types;
 
 namespace Doki.CommandLine.Commands;
 
-internal partial class BuildCommand
+internal partial class GenerateCommand
 {
     private readonly SourceRepository _nuget = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
     private readonly SourceCacheContext _cacheContext = new();

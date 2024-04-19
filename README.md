@@ -21,7 +21,7 @@ doki init
 Generate documentation:
 
 ```bash
-doki build
+doki g
 ```
 
 ## Documentation

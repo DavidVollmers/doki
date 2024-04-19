@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Doki.CommandLine.Commands;
 
-internal partial class BuildCommand : Command
+internal partial class GenerateCommand : Command
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
@@ -38,7 +38,7 @@ internal partial class BuildCommand : Command
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
-    public BuildCommand(ILogger<BuildCommand> logger) : base("build", "Builds documentation for a project.")
+    public GenerateCommand(ILogger<GenerateCommand> logger) : base("g", "Generates documentation.")
     {
         _logger = logger;
 

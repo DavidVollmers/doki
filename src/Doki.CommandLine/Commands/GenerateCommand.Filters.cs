@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Doki.CommandLine.Commands;
 
-internal partial class BuildCommand
+internal partial class GenerateCommand
 {
     private const string GeneratedAssemblyName = "Doki.Generated";
 
