@@ -8,7 +8,7 @@ namespace Doki.CommandLine.Commands;
 
 internal class InitCommand : Command
 {
-    private const string GitIgnoreContent = ".doki/";
+    private const string GitIgnoreContent = "\n.doki/\n";
 
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
