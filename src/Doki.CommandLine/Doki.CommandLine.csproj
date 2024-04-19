@@ -12,7 +12,7 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/DavidVollmers/doki.git</RepositoryUrl>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -22,10 +22,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
-        <PackageReference Include="NuGet.Protocol" Version="6.9.1" />
+        <PackageReference Include="NuGet.Resolver" Version="6.9.1" />
         <PackageReference Include="Spectre.Console" Version="0.48.0"/>
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
     </ItemGroup>
