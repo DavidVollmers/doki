@@ -235,6 +235,8 @@ internal partial class GenerateCommand : Command
         var arguments = $"build \"{projectFile.FullName}\" -c {buildConfiguration}";
         if (buildForDoki) arguments += " /p:CopyLocalLockFileAssemblies=true /p:GenerateDocumentationFile=true";
 
+        _logger.LogDebug("dotnet {Arguments}", arguments);
+
         var process = Process.Start(new ProcessStartInfo
         {
             FileName = "dotnet",
@@ -250,7 +252,7 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
-        var output = await process.StandardOutput.ReadToEndAsync();
+        var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
 
         await process.WaitForExitAsync(cancellationToken);
 
@@ -260,6 +262,8 @@ internal partial class GenerateCommand : Command
             _logger.LogError(output);
             return -1;
         }
+
+        _logger.LogDebug(output);
 
         _logger.LogInformation("[bold green]Build succeeded.[/]");
 
