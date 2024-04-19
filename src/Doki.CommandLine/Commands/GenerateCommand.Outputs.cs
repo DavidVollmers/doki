@@ -33,11 +33,32 @@ internal partial class GenerateCommand
         };
     }
 
-    //TODO support custom registries (using output.From)
     private async Task<IOutput?> LoadOutputFromNuGetAsync(DokiConfig.DokiConfigOutput output,
         OutputContext outputContext, bool allowPreview, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Loading output from NuGet: {PackageId}", output.Type);
+
+        var nupkgFile = new FileInfo(Path.Combine(outputContext.WorkingDirectory.FullName, ".doki", "cache",
+            output.Type, $"{output.Type}.nupkg"));
+
+        if (!nupkgFile.Exists || nupkgFile.CreationTime < DateTime.Now.AddDays(-1))
+        {
+            await DownloadNuGetPackageAsync(nupkgFile, output, allowPreview, cancellationToken);
+        }
+
+        var assemblyPath = Path.Combine(outputContext.WorkingDirectory.FullName, ".doki", "cache",
+            output.Type, $"{output.Type}.dll");
+
+        return LoadOutputFromAssembly(assemblyPath, output, outputContext);
+    }
+
+    //TODO support custom registries (using output.From)
+    private async Task DownloadNuGetPackageAsync(FileInfo destination, DokiConfig.DokiConfigOutput output,
+        bool allowPreview, CancellationToken cancellationToken)
+    {
+        _logger.LogDebug("Downloading NuGet package: {PackageId}", output.Type);
+
+        if (destination.Exists) destination.Delete();
 
         var packages = await _nuget.GetResourceAsync<FindPackageByIdResource>(cancellationToken);
 
@@ -48,28 +69,25 @@ internal partial class GenerateCommand
         if (latestVersion == null)
         {
             _logger.LogError("No versions found for package: {PackageId}", output.Type);
-            return null;
+            return;
         }
 
-        var package = new PackageIdentity(output.From, latestVersion);
+        var package = new PackageIdentity(output.Type, latestVersion);
 
         var downloader =
             await packages.GetPackageDownloaderAsync(package, _cacheContext, NullLogger.Instance, cancellationToken);
 
-        var destination = new FileInfo(Path.Combine(outputContext.WorkingDirectory.FullName, ".doki", "cache",
-            "output", $"{output.Type}.nupkg"));
+        if (!destination.Directory!.Exists) destination.Directory.Create();
 
         var result = await downloader.CopyNupkgFileToAsync(destination.FullName, cancellationToken);
 
         if (!result)
         {
             _logger.LogError("Failed to download package: {PackageId}", output.Type);
-            return null;
+            return;
         }
 
-        //TODO extract package
-
-        return null;
+        //TODO extract package with caching
     }
 
     private async Task<IOutput?> LoadOutputFromProjectAsync(FileInfo fileInfo, DokiConfig.DokiConfigOutput output,
