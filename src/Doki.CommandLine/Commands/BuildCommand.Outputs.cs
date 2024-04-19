@@ -16,14 +16,13 @@ internal partial class BuildCommand
     private async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, CancellationToken cancellationToken)
     {
-        if (output.From == null) return null;
-
         var outputContext = new OutputContext(workingDirectory, output.Options);
 
+        if (output.From == null) return await LoadOutputFromNuGetAsync(output, outputContext, cancellationToken);
+        
         var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
-        //TODO load nuget package
-        if (!fileInfo.Exists) return await LoadOutputFromNuGetAsync(output, outputContext, cancellationToken);
+        if (!fileInfo.Exists) return null;
 
         return fileInfo.Extension.ToLower() switch
         {
