@@ -1,0 +1,29 @@
+name: CDN
+
+on:
+  push:
+    tags: [ '**' ]
+
+jobs:
+  Upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # https://github.com/actions/checkout/issues/701 https://github.com/actions/checkout/pull/579
+          fetch-depth: 0
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - run: echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+      - uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload --auth-mode key --account-name dvolper -f ./src/Doki.CommandLine/doki.config.schema.json -c cdn -n 'doki/$VERSION/doki.config.schema.json'
+      - uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge --content-paths  "/doki/*" --profile-name "dvolper-cdnp" --name "dvolper" --resource-group "dvolper-rg"
+      - run: |
+          az logout
+        if: always()

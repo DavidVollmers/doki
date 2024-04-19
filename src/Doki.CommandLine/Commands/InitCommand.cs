@@ -32,7 +32,7 @@ internal class InitCommand : Command
 
         var cancellationToken = context.GetCancellationToken();
 
-        var version = GetType().Assembly.GetName().Version?.ToString(3) ?? "latest";
+        var version = GetType().Assembly.GetName().Version?.ToString(3);
 
         var dokiConfig = new DokiConfig
         {
