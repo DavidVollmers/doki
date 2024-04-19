@@ -28,6 +28,12 @@ internal partial class BuildCommand : Command
             Arity = ArgumentArity.ZeroOrOne
         };
 
+    private readonly Option<bool> _noBuildOption =
+        new("--no-build", "Skip building projects.")
+        {
+            Arity = ArgumentArity.ZeroOrOne
+        };
+
     private readonly List<DokiAssemblyLoadContext> _loadContexts = [];
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
@@ -47,6 +53,7 @@ internal partial class BuildCommand : Command
     {
         var dokiConfigFile = context.ParseResult.GetValueForArgument(_targetArgument);
         var buildConfiguration = context.ParseResult.GetValueForOption(_buildConfigurationOption) ?? "Release";
+        var noBuild = context.ParseResult.GetValueForOption(_noBuildOption);
 
         if (dokiConfigFile == null)
         {
@@ -64,7 +71,7 @@ internal partial class BuildCommand : Command
         var generator = new DocumentationGenerator();
 
         var configureResult =
-            await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration,
+            await ConfigureDocumentationGeneratorAsync(generator, dokiConfigFile, buildConfiguration, noBuild,
                 cancellationToken);
         if (configureResult != 0) return configureResult;
 
@@ -81,7 +88,7 @@ internal partial class BuildCommand : Command
     }
 
     private async Task<int> ConfigureDocumentationGeneratorAsync(DocumentationGenerator generator,
-        FileInfo dokiConfigFile, string buildConfiguration, CancellationToken cancellationToken)
+        FileInfo dokiConfigFile, string buildConfiguration, bool noBuild, CancellationToken cancellationToken)
     {
         var dokiConfig = await JsonSerializer.DeserializeAsync<DokiConfig>(dokiConfigFile.OpenRead(),
             JsonSerializerOptions, cancellationToken);
@@ -95,7 +102,7 @@ internal partial class BuildCommand : Command
         generator.IncludeInheritedMembers = dokiConfig.IncludeInheritedMembers;
 
         var inputResult = await LoadInputsAsync(generator, dokiConfigFile.Directory!, dokiConfig.Inputs,
-            buildConfiguration, cancellationToken);
+            buildConfiguration, noBuild, cancellationToken);
         if (inputResult != 0) return inputResult;
 
         var outputResult =
@@ -107,7 +114,7 @@ internal partial class BuildCommand : Command
     }
 
     private async Task<int> LoadInputsAsync(DocumentationGenerator generator, DirectoryInfo workingDirectory,
-        string[]? inputs, string buildConfiguration, CancellationToken cancellationToken)
+        string[]? inputs, string buildConfiguration, bool noBuild, CancellationToken cancellationToken)
     {
         if (inputs == null)
         {
@@ -145,8 +152,11 @@ internal partial class BuildCommand : Command
                 return -1;
             }
 
-            var buildResult = await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
-            if (buildResult != 0) return buildResult;
+            if (!noBuild)
+            {
+                var buildResult = await BuildProjectAsync(projectFile, buildConfiguration, true, cancellationToken);
+                if (buildResult != 0) return buildResult;
+            }
 
             var latestTargetFramework = targetFrameworks.Split(';').OrderByDescending(x => x).First();
 
