@@ -2,7 +2,7 @@
 
 namespace Doki.Output;
 
-public abstract record OutputOptions
+public record OutputOptions
 {
     [JsonPropertyName("outputPath")] public string? OutputPath { get; init; }
     
