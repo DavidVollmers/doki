@@ -1,5 +1,9 @@
 ![](assets/logo-64x64.png)
 
+[![](https://img.shields.io/github/v/release/DavidVollmers/doki?include_prereleases)](https://github.com/DavidVollmers/doki/releases)
+[![](https://img.shields.io/nuget/dt/Doki.CommandLine)](https://www.nuget.org/packages/Doki.CommandLine)
+[![](https://img.shields.io/github/license/DavidVollmers/doki)](https://github.com/DavidVollmers/doki/blob/master/LICENSE.txt)
+
 # doki
 
 > A modern .NET Documentation Framework
