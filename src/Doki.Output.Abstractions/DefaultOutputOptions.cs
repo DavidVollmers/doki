@@ -1,6 +1,6 @@
 ﻿namespace Doki.Output;
 
-internal record DefaultOutputOptions : OutputOptions
+public sealed record DefaultOutputOptions : OutputOptions
 {
     public DefaultOutputOptions()
     {

@@ -6,7 +6,7 @@ namespace Doki.Output;
 /// Base class for file based outputs.
 /// </summary>
 /// <typeparam name="T">The type of options for the output.</typeparam>
-public abstract class OutputBase<T> : IOutput where T : OutputOptions
+public abstract class OutputBase<T> : IOutput where T : OutputOptions, new()
 {
     private readonly DirectoryInfo _outputDirectory;
 

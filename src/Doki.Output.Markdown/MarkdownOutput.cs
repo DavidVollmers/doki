@@ -4,7 +4,7 @@ using Doki.Output.Markdown.Elements;
 namespace Doki.Output.Markdown;
 
 [DokiOutput("Doki.Output.Markdown")]
-public sealed class MarkdownOutput(OutputContext context) : OutputBase<OutputOptions>(context)
+public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOutputOptions>(context)
 {
     public override async Task WriteAsync(ContentList contentList,
         CancellationToken cancellationToken = default)
