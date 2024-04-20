@@ -40,6 +40,9 @@ internal class InitCommand : Command
 
         var version = GetType().Assembly.GetName().Version?.ToString(3);
 
+        //TODO - Remove this when we release the first version
+        version += "-preview";
+        
         var dokiConfig = new DokiConfig
         {
             Schema = $"https://cdn.dvolper.dev/doki/{version}/doki.config.schema.json",
