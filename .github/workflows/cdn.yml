@@ -19,7 +19,7 @@ jobs:
       - uses: azure/CLI@v1
         with:
           inlineScript: |
-            az storage blob upload --auth-mode key --account-name dvolper -f ./src/Doki.CommandLine/doki.config.schema.json -c cdn -n 'doki/$VERSION/doki.config.schema.json'
+            az storage blob upload --auth-mode key --account-name dvolper -f ./src/Doki.CommandLine/doki.config.schema.json -c cdn -n doki/$VERSION/doki.config.schema.json
       - uses: azure/CLI@v1
         with:
           inlineScript: |
