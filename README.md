@@ -24,8 +24,11 @@ doki init
 Generate documentation:
 
 ```bash
-doki g
+doki g --allow-preview
 ```
+
+> **Note:** Doki is still in preview. Use the `--allow-preview` option to allow preview versions of the configured
+> output libraries to be used during documentation generation.
 
 ## Documentation
 
