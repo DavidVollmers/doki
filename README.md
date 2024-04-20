@@ -26,8 +26,7 @@ doki g
 
 ## Documentation
 
-Doki is documented using doki. You can find the markdown files in the [docs](docs/README.md) directory, or you can view
-the rendered documentation [here](https://doki.dvolper.dev).
+Doki is documented using doki. You can find the markdown documentation in the [docs](docs/README.md) directory.
 
 ---
 
