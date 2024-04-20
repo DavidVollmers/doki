@@ -62,7 +62,7 @@ internal class InitCommand : Command
         if (gitIgnoreFile.Exists)
         {
             var gitIgnoreContent = await File.ReadAllTextAsync(gitIgnoreFile.FullName, cancellationToken);
-            if (!gitIgnoreContent.Contains("doki-output"))
+            if (!gitIgnoreContent.Contains(".doki/"))
             {
                 await File.AppendAllTextAsync(gitIgnoreFile.FullName, GitIgnoreContent, cancellationToken);
                 _logger.LogInformation("[bold green]Updated .gitignore file.[/]");
