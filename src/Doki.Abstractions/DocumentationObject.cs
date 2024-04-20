@@ -1,12 +1,24 @@
 ﻿namespace Doki;
 
+/// <summary>
+/// Represents a documentation object.
+/// </summary>
 public abstract record DocumentationObject
 {
+    /// <summary>
+    /// Gets the ID of the documentation object.
+    /// </summary>
     public string Id { get; internal init; } = null!;
 
+    /// <summary>
+    /// Gets the parent of the documentation object.
+    /// </summary>
     public DocumentationObject? Parent { get; internal init; }
 
-    public DocumentationContent Content { get; internal init; }
+    /// <summary>
+    /// Gets the content type of the documentation object.
+    /// </summary>
+    public DocumentationContentType Content { get; internal init; }
 
     protected DocumentationObject()
     {

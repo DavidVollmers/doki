@@ -2,7 +2,7 @@
 
 public static class DocumentationObjectExtensions
 {
-    public static T? TryGetParent<T>(this DocumentationObject obj, DocumentationContent? expectedContent = null)
+    public static T? TryGetParent<T>(this DocumentationObject obj, DocumentationContentType? expectedContent = null)
         where T : DocumentationObject
     {
         ArgumentNullException.ThrowIfNull(obj);

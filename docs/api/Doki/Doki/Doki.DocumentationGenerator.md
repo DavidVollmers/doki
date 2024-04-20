@@ -52,12 +52,12 @@ You can also use the doki cli tool to generate documentation. See the official [
 
 |   |Summary|
 |---|---|
-|TypeFilter||
-|ConstructorFilter||
-|FieldFilter||
-|PropertyFilter||
-|MethodFilter||
-|IncludeInheritedMembers||
+|TypeFilter|Gets the filter for types to include in the documentation.|
+|ConstructorFilter|Gets the filter for constructors to include in the documentation.|
+|FieldFilter|Gets the filter for fields to include in the documentation.|
+|PropertyFilter|Gets the filter for properties to include in the documentation.|
+|MethodFilter|Gets the filter for methods to include in the documentation.|
+|IncludeInheritedMembers|Gets or sets a value indicating whether to include inherited members in the documentation.|
 
 
 ## Methods
@@ -65,7 +65,7 @@ You can also use the doki cli tool to generate documentation. See the official [
 |   |Summary|
 |---|---|
 |AddAssembly(System.Reflection.Assembly, System.Xml.XPath.XPathDocument, System.Xml.XPath.XPathDocument)|Adds an assembly to generate documentation for.|
-|AddOutput(Doki.Output.IOutput)||
-|GenerateAsync(Microsoft.Extensions.Logging.ILogger, System.Threading.CancellationToken)||
+|AddOutput(Doki.Output.IOutput)|Adds an output to write the documentation to.|
+|GenerateAsync(Microsoft.Extensions.Logging.ILogger, System.Threading.CancellationToken)|Generates the documentation for the assemblies and writes it to the outputs.|
 
 

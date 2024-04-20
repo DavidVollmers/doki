@@ -31,17 +31,35 @@ public sealed partial class DocumentationGenerator
     private readonly Dictionary<string, XPathNavigator> _projects = new();
     private readonly List<IOutput> _outputs = [];
 
+    /// <summary>
+    /// Gets the filter for types to include in the documentation.
+    /// </summary>
     public Filter<Type> TypeFilter { get; } = new(t => t.IsPublic);
 
+    /// <summary>
+    /// Gets the filter for constructors to include in the documentation.
+    /// </summary>
     public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
 
+    /// <summary>
+    /// Gets the filter for fields to include in the documentation.
+    /// </summary>
     public Filter<FieldInfo> FieldFilter { get; } = new(f => f is { IsPublic: true, IsSpecialName: false });
 
+    /// <summary>
+    /// Gets the filter for properties to include in the documentation.
+    /// </summary>
     public Filter<PropertyInfo> PropertyFilter { get; } =
         new(p => p.GetMethod?.IsPublic == true || p.SetMethod?.IsPublic == true);
 
+    /// <summary>
+    /// Gets the filter for methods to include in the documentation.
+    /// </summary>
     public Filter<MethodInfo> MethodFilter { get; } = new(m => m is { IsPublic: true, IsSpecialName: false });
-    
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to include inherited members in the documentation.
+    /// </summary>
     public bool IncludeInheritedMembers { get; set; }
 
     /// <summary>
@@ -80,6 +98,10 @@ public sealed partial class DocumentationGenerator
         }
     }
 
+    /// <summary>
+    /// Adds an output to write the documentation to.
+    /// </summary>
+    /// <param name="output">The output to write the documentation to.</param>
     public void AddOutput(IOutput output)
     {
         ArgumentNullException.ThrowIfNull(output);
@@ -87,6 +109,12 @@ public sealed partial class DocumentationGenerator
         _outputs.Add(output);
     }
 
+    /// <summary>
+    /// Generates the documentation for the assemblies and writes it to the outputs.
+    /// </summary>
+    /// <param name="logger">The logger to write log messages to.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <exception cref="InvalidOperationException">No assemblies added for documentation.</exception>
     public async Task GenerateAsync(ILogger logger, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -99,7 +127,7 @@ public sealed partial class DocumentationGenerator
         {
             Id = ContentList.Assemblies,
             Name = ContentList.Assemblies,
-            Content = DocumentationContent.Assemblies
+            Content = DocumentationContentType.Assemblies
         };
 
         var items = new List<DocumentationObject>();
@@ -120,7 +148,7 @@ public sealed partial class DocumentationGenerator
             await output.WriteAsync(assemblies, cancellationToken);
         }
     }
-
+    
     private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly,
         DocumentationObject parent, ILogger logger, CancellationToken cancellationToken)
     {
@@ -157,7 +185,7 @@ public sealed partial class DocumentationGenerator
             Id = assemblyId,
             Name = assemblyId,
             Parent = parent,
-            Content = DocumentationContent.Assembly,
+            Content = DocumentationContentType.Assembly,
             Description = description,
             FileName = assembly.Location.Split(Path.DirectorySeparatorChar).Last(),
             Version = assemblyName.Version?.ToString(),
@@ -176,7 +204,7 @@ public sealed partial class DocumentationGenerator
                 Id = @namespace,
                 Name = @namespace,
                 Parent = assemblyDocumentation,
-                Content = DocumentationContent.Namespace
+                Content = DocumentationContentType.Namespace
             };
 
             var items = new List<DocumentationObject>();
@@ -229,14 +257,14 @@ public sealed partial class DocumentationGenerator
         {
             Id = typeId,
             Content = type.IsClass
-                ? DocumentationContent.Class
+                ? DocumentationContentType.Class
                 : type.IsEnum
-                    ? DocumentationContent.Enum
+                    ? DocumentationContentType.Enum
                     : type.IsInterface
-                        ? DocumentationContent.Interface
+                        ? DocumentationContentType.Interface
                         : type.IsValueType
-                            ? DocumentationContent.Struct
-                            : DocumentationContent.Type,
+                            ? DocumentationContentType.Struct
+                            : DocumentationContentType.Type,
             Parent = parent,
             Name = type.GetSanitizedName(),
             FullName = type.GetSanitizedName(true),
@@ -279,7 +307,7 @@ public sealed partial class DocumentationGenerator
             var typeReference = new TypeDocumentationReference
             {
                 Id = baseType.GetXmlDocumentationId(),
-                Content = DocumentationContent.TypeReference,
+                Content = DocumentationContentType.TypeReference,
                 Parent = baseParent,
                 Name = baseType.GetSanitizedName(),
                 FullName = baseType.GetSanitizedName(true),

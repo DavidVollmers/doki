@@ -31,7 +31,7 @@ internal static class InternalExtensions
 
     public static Text BuildText(this MarkdownBuilder builder, DocumentationObject obj)
     {
-        if (obj is not ContentList { Content: DocumentationContent.XmlDocumentation } contentList)
+        if (obj is not ContentList { Content: DocumentationContentType.XmlDocumentation } contentList)
             throw new ArgumentException("DocumentationObject must be a ContentList with XmlDocumentation content.",
                 nameof(obj));
 
@@ -74,8 +74,8 @@ internal static class InternalExtensions
 
     public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
     {
-        var indexFile = to.Content is DocumentationContent.Assemblies or DocumentationContent.Assembly
-            or DocumentationContent.Namespace;
+        var indexFile = to.Content is DocumentationContentType.Assemblies or DocumentationContentType.Assembly
+            or DocumentationContentType.Namespace;
 
         var asText = false;
         string? relativePath = null;

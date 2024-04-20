@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a type documentation reference in the documentation.**
+
 ```csharp
 public record TypeDocumentationReference : Doki.MemberDocumentation
 ```
@@ -26,20 +28,20 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 
 |   |Summary|
 |---|---|
-|TypeDocumentationReference()||
-|TypeDocumentationReference(Doki.TypeDocumentationReference)||
+|TypeDocumentationReference()|Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
+|TypeDocumentationReference(Doki.TypeDocumentationReference)|Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|IsGeneric||
-|FullName||
-|IsDocumented||
-|IsMicrosoft||
-|BaseType||
-|GenericArguments||
+|IsGeneric|Gets a value indicating whether the type is generic.|
+|FullName|Gets the full name of the type.|
+|IsDocumented|Gets a value indicating whether the type is documented.|
+|IsMicrosoft|Gets a value indicating whether the type is from Microsoft.|
+|BaseType|Gets the base type of the type.|
+|GenericArguments|Gets the generic arguments of the type.|
 
 
 ## Methods

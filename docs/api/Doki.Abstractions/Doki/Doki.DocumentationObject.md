@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a documentation object.**
+
 ```csharp
 public abstract record DocumentationObject
 ```
@@ -26,9 +28,9 @@ Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.mi
 
 |   |Summary|
 |---|---|
-|Id||
-|Parent||
-|Content||
+|Id|Gets the ID of the documentation object.|
+|Parent|Gets the parent of the documentation object.|
+|Content|Gets the content type of the documentation object.|
 
 
 ## Methods

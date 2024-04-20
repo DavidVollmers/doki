@@ -47,7 +47,7 @@ public partial class DocumentationGenerator
                 Id = genericArgumentId,
                 Name = genericArgument.GetSanitizedName(),
                 FullName = genericArgument.GetSanitizedName(true),
-                Content = DocumentationContent.GenericTypeArgument,
+                Content = DocumentationContentType.GenericTypeArgument,
                 Namespace = genericArgument.Namespace,
                 Assembly = genericArgumentAssembly.Name,
                 IsGeneric = genericArgument.IsGenericType,
@@ -122,7 +122,7 @@ public partial class DocumentationGenerator
             {
                 Id = fieldId,
                 Name = field.Name,
-                Content = DocumentationContent.Field,
+                Content = DocumentationContentType.Field,
                 Namespace = field.DeclaringType.Namespace,
                 Assembly = fieldAssembly.Name,
                 Parent = parent,
@@ -162,7 +162,7 @@ public partial class DocumentationGenerator
             {
                 Id = constructorId,
                 Name = constructor.GetSanitizedName(),
-                Content = DocumentationContent.Constructor,
+                Content = DocumentationContentType.Constructor,
                 Namespace = constructor.DeclaringType.Namespace,
                 Assembly = constructorAssembly.Name,
                 Parent = parent,
@@ -202,7 +202,7 @@ public partial class DocumentationGenerator
             {
                 Id = propertyId,
                 Name = property.Name,
-                Content = DocumentationContent.Property,
+                Content = DocumentationContentType.Property,
                 Namespace = property.DeclaringType.Namespace,
                 Assembly = propertyAssembly.Name,
                 Parent = parent,
@@ -245,7 +245,7 @@ public partial class DocumentationGenerator
             {
                 Id = methodId,
                 Name = method.GetSanitizedName(),
-                Content = DocumentationContent.Property,
+                Content = DocumentationContentType.Property,
                 Namespace = method.DeclaringType.Namespace,
                 Assembly = methodAssembly.Name,
                 Parent = parent,
@@ -263,7 +263,7 @@ public partial class DocumentationGenerator
         var content = new ContentList
         {
             Id = navigator.BaseURI,
-            Content = DocumentationContent.XmlDocumentation,
+            Content = DocumentationContentType.XmlDocumentation,
             Parent = parent,
             Name = navigator.Name
         };
@@ -289,7 +289,7 @@ public partial class DocumentationGenerator
                                 items.Add(new Link
                                 {
                                     Id = node.BaseURI,
-                                    Content = DocumentationContent.Link,
+                                    Content = DocumentationContentType.Link,
                                     Parent = content,
                                     Url = href,
                                     Text = node.Value.TrimIndentation()
@@ -301,7 +301,7 @@ public partial class DocumentationGenerator
                             items.Add(new CodeBlock
                             {
                                 Id = node.BaseURI,
-                                Content = DocumentationContent.CodeBlock,
+                                Content = DocumentationContentType.CodeBlock,
                                 Parent = content,
                                 Language = language,
                                 Code = node.Value.TrimIndentation().TrimEnd()
@@ -317,7 +317,7 @@ public partial class DocumentationGenerator
                     items.Add(new TextContent
                     {
                         Id = node.BaseURI,
-                        Content = DocumentationContent.Text,
+                        Content = DocumentationContentType.Text,
                         Parent = content,
                         Text = node.Value.TrimIndentation()
                     });
@@ -338,7 +338,7 @@ public partial class DocumentationGenerator
         var typeName = cref[2..];
         if (!typeName.Contains('.'))
         {
-            var @namespace = parent.TryGetParent<ContentList>(DocumentationContent.Namespace);
+            var @namespace = parent.TryGetParent<ContentList>(DocumentationContentType.Namespace);
             if (@namespace != null) typeName = $"{@namespace.Id}.{typeName}";
         }
 
@@ -347,7 +347,7 @@ public partial class DocumentationGenerator
             return new TextContent
             {
                 Id = typeName,
-                Content = DocumentationContent.Text,
+                Content = DocumentationContentType.Text,
                 Parent = parent,
                 Text = typeName
             };
@@ -366,7 +366,7 @@ public partial class DocumentationGenerator
             Id = typeId,
             Name = type.GetSanitizedName(),
             FullName = type.GetSanitizedName(true),
-            Content = DocumentationContent.TypeReference,
+            Content = DocumentationContentType.TypeReference,
             Namespace = type.Namespace,
             Assembly = assembly.Name,
             IsGeneric = type.IsGenericType,

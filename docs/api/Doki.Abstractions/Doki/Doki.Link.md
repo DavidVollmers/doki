@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a link in the documentation.**
+
 ```csharp
 public sealed record Link : Doki.DocumentationObject
 ```
@@ -31,8 +33,8 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 
 |   |Summary|
 |---|---|
-|Url||
-|Text||
+|Url|Gets the URL of the link.|
+|Text|Gets the text of the link.|
 
 
 ## Methods

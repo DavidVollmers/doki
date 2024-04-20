@@ -5,7 +5,7 @@
 - [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
 - [CodeBlock](Doki.CodeBlock.md)
 - [ContentList](Doki.ContentList.md)
-- [DocumentationContent](Doki.DocumentationContent.md)
+- [DocumentationContentType](Doki.DocumentationContentType.md)
 - [DocumentationObject](Doki.DocumentationObject.md)
 - [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md)
 - [Link](Doki.Link.md)

@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents the documentation for a member.**
+
 ```csharp
 public record MemberDocumentation : Doki.DocumentationObject
 ```
@@ -26,18 +28,18 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 
 |   |Summary|
 |---|---|
-|MemberDocumentation()||
-|MemberDocumentation(Doki.MemberDocumentation)||
+|MemberDocumentation()|Initializes a new instance of the [MemberDocumentation](Doki.MemberDocumentation.md) class.|
+|MemberDocumentation(Doki.MemberDocumentation)|Initializes a new instance of the [MemberDocumentation](Doki.MemberDocumentation.md) class.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Name||
-|Namespace||
-|Assembly||
-|Summary||
+|Name|Gets the name of the member.|
+|Namespace|Gets the namespace of the member.|
+|Assembly|Gets the assembly of the member.|
+|Summary|Gets the summary of the member.|
 
 
 ## Methods

@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a list of content.**
+
 ```csharp
 public record ContentList : Doki.DocumentationObject
 ```
@@ -33,16 +35,16 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 
 |   |Summary|
 |---|---|
-|Assemblies||
+|Assemblies|Represents the assemblies content list.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Name||
-|Description||
-|Items||
+|Name|Gets the name of the content list.|
+|Description|Gets the description of the content list.|
+|Items|Gets the items in the content list.|
 
 
 ## Methods

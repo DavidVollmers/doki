@@ -39,7 +39,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Default||
-|Expression||
+|Default|Gets the default filter.|
+|Expression|Gets or sets the expression to filter the collection.|
 
 

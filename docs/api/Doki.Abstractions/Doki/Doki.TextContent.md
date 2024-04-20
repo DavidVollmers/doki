@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a text content in the documentation.**
+
 ```csharp
 public sealed record TextContent : Doki.DocumentationObject
 ```
@@ -31,7 +33,7 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 
 |   |Summary|
 |---|---|
-|Text||
+|Text|Gets the text content.|
 
 
 ## Methods

@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents the documentation for an assembly.**
+
 ```csharp
 public sealed record AssemblyDocumentation : Doki.ContentList
 ```
@@ -31,9 +33,9 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 
 |   |Summary|
 |---|---|
-|FileName||
-|Version||
-|PackageId||
+|FileName|Gets the name of the assembly.|
+|Version|Gets the version of the assembly.|
+|PackageId|Gets the NuGet package ID of the assembly.|
 
 
 ## Methods

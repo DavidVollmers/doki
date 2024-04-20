@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a code block in the documentation.**
+
 ```csharp
 public sealed record CodeBlock : Doki.DocumentationObject
 ```
@@ -31,8 +33,8 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 
 |   |Summary|
 |---|---|
-|Language||
-|Code||
+|Language|Gets the language of the code block.|
+|Code|Gets the code of the block.|
 
 
 ## Methods

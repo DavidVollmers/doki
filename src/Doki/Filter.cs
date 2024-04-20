@@ -6,8 +6,14 @@
 /// <typeparam name="T">The type of the collection.</typeparam>
 public sealed class Filter<T>
 {
+    /// <summary>
+    /// Gets the default filter.
+    /// </summary>
     public Func<T, bool> Default { get; }
 
+    /// <summary>
+    /// Gets or sets the expression to filter the collection.
+    /// </summary>
     public Func<T, bool>? Expression { get; set; }
     
     /// <summary>

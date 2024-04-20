@@ -12,6 +12,8 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 
 ---
 
+**Represents a generic type argument in the documentation.**
+
 ```csharp
 public sealed record GenericTypeArgumentDocumentation : Doki.TypeDocumentationReference
 ```
@@ -31,8 +33,8 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 
 |   |Summary|
 |---|---|
-|Description||
-|IsGenericParameter||
+|Description|Gets the description of the generic type argument.|
+|IsGenericParameter|Gets a value indicating whether the generic type argument is a generic parameter.|
 
 
 ## Methods

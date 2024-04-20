@@ -18,7 +18,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
         if (!targetFile.Directory!.Exists) targetFile.Directory.Create();
 
         var heading = new Heading(contentList.Name, 1);
-        if (contentList.Content == DocumentationContent.Namespace) heading.Append(" Namespace");
+        if (contentList.Content == DocumentationContentType.Namespace) heading.Append(" Namespace");
 
         var markdown = new MarkdownBuilder(currentPath).Add(heading);
 
@@ -30,10 +30,10 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
         switch (contentList.Content)
         {
-            case DocumentationContent.Assemblies:
+            case DocumentationContentType.Assemblies:
                 await BuildAssembliesListAsync(markdown, contentList, cancellationToken);
                 break;
-            case DocumentationContent.Assembly:
+            case DocumentationContentType.Assembly:
                 foreach (var item in contentList.Items)
                 {
                     if (item is not ContentList namespaceDocumentation) continue;
@@ -47,7 +47,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
                     Items = contentList.Items.Select(x => markdown.BuildLinkTo(x)).ToList()
                 });
                 break;
-            case DocumentationContent.Namespace:
+            case DocumentationContentType.Namespace:
                 markdown.Add(new Heading("Types", 2));
                 goto default;
             default:
@@ -77,7 +77,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
             .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 
-        var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DocumentationContent.Namespace);
+        var namespaceDocumentation = typeDocumentation.TryGetParent<ContentList>(DocumentationContentType.Namespace);
         if (namespaceDocumentation != null)
         {
             markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceDocumentation)));
