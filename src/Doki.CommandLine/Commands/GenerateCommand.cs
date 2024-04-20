@@ -17,25 +17,28 @@ internal partial class GenerateCommand : Command
     };
 
     private readonly Argument<FileInfo?> _targetArgument =
-        new("CONFIG", "The doki.config.json file to use for documentation generation.")
+        new("CONFIG",
+            "The path to the configuration file to use for documentation generation. If not specified, the command will look for a `doki.config.json` file in the current directory.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
     private readonly Option<bool> _allowPreviewOption =
-        new("--allow-preview", "Allow preview versions for NuGet packages.")
+        new("--allow-preview",
+            "Allow preview versions of the configured output libraries to be used during documentation generation.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
     private readonly Option<string> _buildConfigurationOption =
-        new(["-c", "--configuration"], "The build configuration to use when building projects.")
+        new(["-c", "--configuration"],
+            "Defines the build configuration for building projects. If not specified, the command will use the \"Release\" configuration.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
 
     private readonly Option<bool> _noBuildOption =
-        new("--no-build", "Skip building projects.")
+        new("--no-build", "Skip building the project/s before generating documentation.")
         {
             Arity = ArgumentArity.ZeroOrOne
         };
@@ -44,7 +47,8 @@ internal partial class GenerateCommand : Command
     private readonly List<string> _builtProjects = [];
     private readonly ILogger _logger;
 
-    public GenerateCommand(ILogger<GenerateCommand> logger) : base("g", "Generates documentation.")
+    public GenerateCommand(ILogger<GenerateCommand> logger) : base("g",
+        "Generate documentation for your .NET projects.")
     {
         _logger = logger;
 

@@ -12,6 +12,9 @@ Install the `doki` Command-Line Interface:
 dotnet tool install --global Doki.CommandLine --version 0.3.0-preview
 ```
 
+> **Note:** You can find the latest version of the CLI and how to install it
+> on [NuGet](https://www.nuget.org/packages/Doki.CommandLine).
+
 Set up your repository:
 
 ```bash
@@ -26,7 +29,9 @@ doki g
 
 ## Documentation
 
-Doki is documented using doki. You can find the markdown documentation in the [docs](docs/api/README.md) directory.
+Doki is documented using doki. You can find the generated API documentation [here](docs/api/README.md).
+
+You can find the CLI documentation [here](docs/cli/README.md).
 
 ---
 

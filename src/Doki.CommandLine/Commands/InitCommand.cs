@@ -18,7 +18,7 @@ internal class InitCommand : Command
 
     private readonly ILogger _logger;
 
-    public InitCommand(ILogger<InitCommand> logger) : base("init", "Initialize the Doki configuration file.")
+    public InitCommand(ILogger<InitCommand> logger) : base("init", "Set up your repository for documentation generation.")
     {
         _logger = logger;
 
