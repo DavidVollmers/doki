@@ -9,10 +9,10 @@
 Install the `doki` Command-Line Interface:
 
 ```bash
-dotnet tool install --global Doki.CommandLine
+dotnet tool install --global Doki.CommandLine --version 0.3.0-preview
 ```
 
-Setup your repository:
+Set up your repository:
 
 ```bash
 doki init
@@ -26,7 +26,7 @@ doki g
 
 ## Documentation
 
-Doki is documented using doki. You can find the markdown documentation in the [docs](docs/README.md) directory.
+Doki is documented using doki. You can find the markdown documentation in the [docs](docs/api/README.md) directory.
 
 ---
 

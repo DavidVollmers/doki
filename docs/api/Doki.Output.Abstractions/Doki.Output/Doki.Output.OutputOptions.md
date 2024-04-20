@@ -18,6 +18,8 @@ public abstract record OutputOptions
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions
 
+Derived: [DefaultOutputOptions](Doki.Output.DefaultOutputOptions.md)
+
 Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputOptions&gt;)
 
 ## Properties

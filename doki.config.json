@@ -7,7 +7,10 @@
   "output": [
     {
       "type": "Doki.Output.Markdown",
-      "from": "src/Doki.Output.Markdown/Doki.Output.Markdown.csproj"
+      "from": "src/Doki.Output.Markdown/Doki.Output.Markdown.csproj",
+      "options": {
+        "outputPath": "docs/api"
+      }
     }
   ]
 }
