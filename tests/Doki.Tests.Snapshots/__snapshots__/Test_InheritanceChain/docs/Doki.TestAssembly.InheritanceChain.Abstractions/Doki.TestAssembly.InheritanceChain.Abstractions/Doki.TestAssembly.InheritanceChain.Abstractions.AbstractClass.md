@@ -18,3 +18,10 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 Derived: [GenericBaseClass&lt;T&gt;](../../Doki.TestAssembly.InheritanceChain/Doki.TestAssembly.InheritanceChain/Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md)
 
+## Constructors
+
+|   |Summary|
+|---|---|
+|AbstractClass()||
+
+

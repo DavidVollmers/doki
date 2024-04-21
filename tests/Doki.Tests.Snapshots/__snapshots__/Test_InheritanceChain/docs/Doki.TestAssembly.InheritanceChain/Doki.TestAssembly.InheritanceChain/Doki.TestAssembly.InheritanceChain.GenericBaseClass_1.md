@@ -23,3 +23,10 @@ Derived: [DerivedClass](Doki.TestAssembly.InheritanceChain.DerivedClass.md)
 - `T`
 
 
+## Constructors
+
+|   |Summary|
+|---|---|
+|GenericBaseClass()||
+
+
