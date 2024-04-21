@@ -6,7 +6,12 @@
 
 # doki
 
-> A modern .NET Documentation Framework
+Doki is a .NET code documentation framework that allows you to generate documentation from your codebase.
+
+It uses the XML documentation comments in your code to generate documentation in various formats, such as Markdown,
+Blazor, and more.
+
+> **Note:** Doki is still in preview. Currently, only the Markdown output is available.
 
 ## Getting Started
 

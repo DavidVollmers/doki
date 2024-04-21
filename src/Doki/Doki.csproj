@@ -4,7 +4,7 @@
         <PackageId>Doki</PackageId>
         <Authors>david@vollmers.org</Authors>
         <Copyright>David Vollmers</Copyright>
-        <Description>A modern .NET Documentation Framework</Description>
+        <Description>A modern .NET Code Documentation Framework</Description>
         <PackageProjectUrl>https://github.com/DavidVollmers/doki</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
