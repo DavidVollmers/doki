@@ -21,7 +21,8 @@ internal static class MethodBaseExtensions
             {
                 if (methodInfo.IsGenericMethod)
                 {
-                    name = name[..name.IndexOf('`')];
+                    var indexOf = name.IndexOf('`');
+                    if (indexOf >= 0) name = name[..indexOf];
 
                     name += "<";
                     name += string.Join(", ", methodInfo.GetGenericArguments().Select(a =>

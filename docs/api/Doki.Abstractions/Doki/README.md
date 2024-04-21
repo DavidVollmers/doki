@@ -7,6 +7,7 @@
 - [ContentList](Doki.ContentList.md)
 - [DocumentationContentType](Doki.DocumentationContentType.md)
 - [DocumentationObject](Doki.DocumentationObject.md)
+- [DocumentationObjectExtensions](Doki.DocumentationObjectExtensions.md)
 - [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md)
 - [Link](Doki.Link.md)
 - [MemberDocumentation](Doki.MemberDocumentation.md)
