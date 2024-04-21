@@ -12,6 +12,8 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
+**Options for the output.**
+
 ```csharp
 public abstract record OutputOptions
 ```
@@ -35,8 +37,8 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.m
 |   |Summary|
 |---|---|
 |EqualityContract||
-|OutputPath||
-|Default||
+|OutputPath|Gets the output path.|
+|Default|Gets the default output options.|
 
 
 ## Methods

@@ -36,23 +36,23 @@ Implements: [IOutput](Doki.Output.IOutput.md)
 
 |   |Summary|
 |---|---|
-|OutputBase(Doki.Output.OutputContext)||
+|OutputBase(Doki.Output.OutputContext)|Initializes a new instance of the [OutputBase&lt;T&gt;](Doki.Output.OutputBase_1.md) class.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Options||
-|Context||
-|OutputDirectory||
+|Options|Gets the options for the output.|
+|Context|Gets the output context.|
+|OutputDirectory|Gets the output directory.|
 
 
 ## Methods
 
 |   |Summary|
 |---|---|
-|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
-|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
+|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)|Writes the content list to the output.|
+|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)|Writes the type documentation to the output.|
 
 

@@ -12,6 +12,8 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
+**Default output options.**
+
 ```csharp
 public sealed record DefaultOutputOptions : Doki.Output.OutputOptions
 ```
@@ -24,7 +26,7 @@ Implements: [System.IEquatable&lt;Doki.Output.DefaultOutputOptions&gt;](https://
 
 |   |Summary|
 |---|---|
-|DefaultOutputOptions()||
+|DefaultOutputOptions()|Initializes a new instance of the [DefaultOutputOptions](Doki.Output.DefaultOutputOptions.md) class.|
 
 
 ## Properties

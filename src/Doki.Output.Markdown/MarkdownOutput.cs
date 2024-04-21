@@ -3,9 +3,14 @@ using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
+/// <summary>
+/// The markdown output.
+/// </summary>
+/// <param name="context">The output context.</param>
 [DokiOutput("Doki.Output.Markdown")]
 public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOutputOptions>(context)
 {
+    /// <inheritdoc cref="OutputBase{TOptions}.WriteAsync(ContentList, CancellationToken)"/>
     public override async Task WriteAsync(ContentList contentList,
         CancellationToken cancellationToken = default)
     {
@@ -61,6 +66,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
         await WriteMarkdownAsync(targetFile, markdown, cancellationToken);
     }
 
+    /// <inheritdoc cref="OutputBase{TOptions}.WriteAsync(TypeDocumentation, CancellationToken)"/>
     public override async Task WriteAsync(TypeDocumentation typeDocumentation,
         CancellationToken cancellationToken = default)
     {

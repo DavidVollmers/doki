@@ -12,6 +12,8 @@ Package: [Doki.Output.Markdown](https://www.nuget.org/packages/Doki.Output.Markd
 
 ---
 
+**The markdown output.**
+
 ```csharp
 public sealed class MarkdownOutput : Doki.Output.OutputBase<Doki.Output.DefaultOutputOptions>
 ```
@@ -22,7 +24,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|MarkdownOutput(Doki.Output.OutputContext)||
+|MarkdownOutput(Doki.Output.OutputContext)|The markdown output.|
 
 
 ## Methods

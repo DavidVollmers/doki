@@ -12,6 +12,8 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
+**Attribute to mark a class as a Doki output.**
+
 ```csharp
 public sealed class DokiOutputAttribute : System.Attribute
 ```
@@ -22,13 +24,13 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|DokiOutputAttribute(System.String)||
+|DokiOutputAttribute(System.String)|Initializes a new instance of the [DokiOutputAttribute](Doki.Output.DokiOutputAttribute.md) class.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Name||
+|Name|Gets the name of the output.|
 
 
