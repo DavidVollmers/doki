@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Language|Gets the language of the code block.|
 |Code|Gets the code of the block.|
 
@@ -42,6 +43,7 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||

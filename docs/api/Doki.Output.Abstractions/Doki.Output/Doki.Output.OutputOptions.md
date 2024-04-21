@@ -22,10 +22,19 @@ Derived: [DefaultOutputOptions](Doki.Output.DefaultOutputOptions.md)
 
 Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputOptions&gt;)
 
+## Constructors
+
+|   |Summary|
+|---|---|
+|OutputOptions(Doki.Output.OutputOptions)||
+|OutputOptions()||
+
+
 ## Properties
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |OutputPath||
 |Default||
 
@@ -35,6 +44,7 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.m
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.Output.OutputOptions)||

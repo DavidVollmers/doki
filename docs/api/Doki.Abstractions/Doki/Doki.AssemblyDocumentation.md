@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |FileName|Gets the name of the assembly.|
 |Version|Gets the version of the assembly.|
 |PackageId|Gets the NuGet package ID of the assembly.|
@@ -43,6 +44,7 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.ContentList)||

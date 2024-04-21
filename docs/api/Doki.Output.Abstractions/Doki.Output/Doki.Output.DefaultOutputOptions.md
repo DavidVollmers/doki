@@ -27,11 +27,19 @@ Implements: [System.IEquatable&lt;Doki.Output.DefaultOutputOptions&gt;](https://
 |DefaultOutputOptions()||
 
 
+## Properties
+
+|   |Summary|
+|---|---|
+|EqualityContract||
+
+
 ## Methods
 
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.Output.OutputOptions)||

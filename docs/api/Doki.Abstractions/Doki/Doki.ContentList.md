@@ -28,6 +28,7 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 
 |   |Summary|
 |---|---|
+|ContentList(Doki.ContentList)||
 |ContentList()||
 
 
@@ -42,6 +43,7 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Name|Gets the name of the content list.|
 |Description|Gets the description of the content list.|
 |Items|Gets the items in the content list.|
@@ -52,6 +54,7 @@ Implements: [System.IEquatable&lt;Doki.ContentList&gt;](https://learn.microsoft.
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||

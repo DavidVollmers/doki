@@ -24,10 +24,19 @@ Derived: [CodeBlock](Doki.CodeBlock.md), [ContentList](Doki.ContentList.md), [Li
 
 Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.DocumentationObject&gt;)
 
+## Constructors
+
+|   |Summary|
+|---|---|
+|DocumentationObject()||
+|DocumentationObject(Doki.DocumentationObject)||
+
+
 ## Properties
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Id|Gets the ID of the documentation object.|
 |Parent|Gets the parent of the documentation object.|
 |Content|Gets the content type of the documentation object.|
@@ -38,6 +47,7 @@ Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.mi
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||

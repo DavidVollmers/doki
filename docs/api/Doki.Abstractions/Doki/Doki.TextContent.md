@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Text|Gets the text content.|
 
 
@@ -41,6 +42,7 @@ Implements: [System.IEquatable&lt;Doki.TextContent&gt;](https://learn.microsoft.
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||

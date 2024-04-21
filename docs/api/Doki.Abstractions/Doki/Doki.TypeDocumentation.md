@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Definition|Gets the definition of the type.|
 |Examples|Get the examples of the type.|
 |Remarks|Gets the remarks of the type.|
@@ -49,6 +50,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.TypeDocumentationReference)||

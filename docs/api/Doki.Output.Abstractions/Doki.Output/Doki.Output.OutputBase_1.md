@@ -32,6 +32,22 @@ Implements: [IOutput](Doki.Output.IOutput.md)
 
 
 
+## Constructors
+
+|   |Summary|
+|---|---|
+|OutputBase(Doki.Output.OutputContext)||
+
+
+## Properties
+
+|   |Summary|
+|---|---|
+|Options||
+|Context||
+|OutputDirectory||
+
+
 ## Methods
 
 |   |Summary|

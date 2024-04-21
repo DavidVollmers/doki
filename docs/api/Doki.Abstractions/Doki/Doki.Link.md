@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Url|Gets the URL of the link.|
 |Text|Gets the text of the link.|
 
@@ -42,6 +43,7 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||

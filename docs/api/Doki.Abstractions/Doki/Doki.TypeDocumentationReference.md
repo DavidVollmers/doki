@@ -36,6 +36,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |IsGeneric|Gets a value indicating whether the type is generic.|
 |FullName|Gets the full name of the type.|
 |IsDocumented|Gets a value indicating whether the type is documented.|
@@ -49,6 +50,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.MemberDocumentation)||

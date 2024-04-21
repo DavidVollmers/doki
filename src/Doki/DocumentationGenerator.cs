@@ -34,28 +34,44 @@ public sealed partial class DocumentationGenerator
     /// <summary>
     /// Gets the filter for types to include in the documentation.
     /// </summary>
+    /// <remarks>
+    /// The default filter includes only public types.
+    /// </remarks>
     public Filter<Type> TypeFilter { get; } = new(t => t.IsPublic);
 
     /// <summary>
     /// Gets the filter for constructors to include in the documentation.
     /// </summary>
-    public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic);
+    /// <remarks>
+    /// The default filter includes only public and protected constructors.
+    /// </remarks>
+    public Filter<ConstructorInfo> ConstructorFilter { get; } = new(c => c.IsPublic || c.IsFamily);
 
     /// <summary>
     /// Gets the filter for fields to include in the documentation.
     /// </summary>
-    public Filter<FieldInfo> FieldFilter { get; } = new(f => f is { IsPublic: true, IsSpecialName: false });
+    /// <remarks>
+    /// The default filter includes only public and protected fields.
+    /// </remarks>
+    public Filter<FieldInfo> FieldFilter { get; } = new(f => !f.IsSpecialName && (f.IsPublic || f.IsFamily));
 
     /// <summary>
     /// Gets the filter for properties to include in the documentation.
     /// </summary>
+    /// <remarks>
+    /// The default filter includes only public and protected properties.
+    /// </remarks>
     public Filter<PropertyInfo> PropertyFilter { get; } =
-        new(p => p.GetMethod?.IsPublic == true || p.SetMethod?.IsPublic == true);
+        new(p => p.GetMethod?.IsPublic == true || p.SetMethod?.IsPublic == true || p.GetMethod?.IsFamily == true ||
+                 p.SetMethod?.IsFamily == true);
 
     /// <summary>
     /// Gets the filter for methods to include in the documentation.
     /// </summary>
-    public Filter<MethodInfo> MethodFilter { get; } = new(m => m is { IsPublic: true, IsSpecialName: false });
+    /// <remarks>
+    /// The default filter includes only public and protected methods.
+    /// </remarks>
+    public Filter<MethodInfo> MethodFilter { get; } = new(m => !m.IsSpecialName && (m.IsPublic || m.IsFamily));
 
     /// <summary>
     /// Gets or sets a value indicating whether to include inherited members in the documentation.
@@ -148,7 +164,7 @@ public sealed partial class DocumentationGenerator
             await output.WriteAsync(assemblies, cancellationToken);
         }
     }
-    
+
     private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly,
         DocumentationObject parent, ILogger logger, CancellationToken cancellationToken)
     {

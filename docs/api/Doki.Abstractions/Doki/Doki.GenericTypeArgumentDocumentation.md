@@ -33,6 +33,7 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Description|Gets the description of the generic type argument.|
 |IsGenericParameter|Gets a value indicating whether the generic type argument is a generic parameter.|
 
@@ -42,6 +43,7 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.TypeDocumentationReference)||

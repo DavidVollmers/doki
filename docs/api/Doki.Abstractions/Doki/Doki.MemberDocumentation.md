@@ -36,6 +36,7 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Name|Gets the name of the member.|
 |Namespace|Gets the namespace of the member.|
 |Assembly|Gets the assembly of the member.|
@@ -47,6 +48,7 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
 |Equals(Doki.DocumentationObject)||
