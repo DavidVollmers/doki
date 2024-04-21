@@ -9,12 +9,12 @@ public record TypeDocumentationReference : MemberDocumentation
     /// Gets a value indicating whether the type is generic.
     /// </summary>
     public bool IsGeneric { get; internal init; }
-    
+
     /// <summary>
     /// Gets the full name of the type.
     /// </summary>
     public string FullName { get; internal init; } = null!;
-    
+
     /// <summary>
     /// Gets a value indicating whether the type is documented.
     /// </summary>
@@ -33,9 +33,8 @@ public record TypeDocumentationReference : MemberDocumentation
     /// <summary>
     /// Gets the generic arguments of the type.
     /// </summary>
-    public GenericTypeArgumentDocumentation[] GenericArguments { get; internal set; } =
-        Array.Empty<GenericTypeArgumentDocumentation>();
-    
+    public GenericTypeArgumentDocumentation[] GenericArguments { get; internal set; } = [];
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TypeDocumentationReference"/> class.
     /// </summary>

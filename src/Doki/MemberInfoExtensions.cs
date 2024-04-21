@@ -8,6 +8,6 @@ internal static class MemberInfoExtensions
     {
         return memberInfo.DeclaringType?.IsGenericType == true
             ? memberInfo.DeclaringType.GetGenericArguments().Select(t => t.Name).ToArray()
-            : Array.Empty<string>();
+            : [];
     }
 }

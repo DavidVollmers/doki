@@ -13,40 +13,40 @@ public sealed record TypeDocumentation : TypeDocumentationReference
     /// <summary>
     /// Get the examples of the type.
     /// </summary>
-    public DocumentationObject[] Examples { get; internal set; } = Array.Empty<DocumentationObject>();
+    public DocumentationObject[] Examples { get; internal set; } = [];
 
     /// <summary>
     /// Gets the remarks of the type.
     /// </summary>
-    public DocumentationObject[] Remarks { get; internal set; } = Array.Empty<DocumentationObject>();
+    public DocumentationObject[] Remarks { get; internal set; } = [];
 
     /// <summary>
     /// Gets the interfaces implemented by the type.
     /// </summary>
-    public TypeDocumentationReference[] Interfaces { get; internal set; } = Array.Empty<TypeDocumentationReference>();
+    public TypeDocumentationReference[] Interfaces { get; internal set; } = [];
 
     /// <summary>
     /// Gets the derived types of the type.
     /// </summary>
-    public TypeDocumentationReference[] DerivedTypes { get; internal set; } = Array.Empty<TypeDocumentationReference>();
+    public TypeDocumentationReference[] DerivedTypes { get; internal set; } = [];
 
     /// <summary>
     /// Gets the constructors of the type.
     /// </summary>
-    public MemberDocumentation[] Constructors { get; internal set; } = Array.Empty<MemberDocumentation>();
+    public MemberDocumentation[] Constructors { get; internal set; } = [];
 
     /// <summary>
     /// Gets the fields of the type.
     /// </summary>
-    public MemberDocumentation[] Fields { get; internal set; } = Array.Empty<MemberDocumentation>();
+    public MemberDocumentation[] Fields { get; internal set; } = [];
 
     /// <summary>
     /// Gets the properties of the type.
     /// </summary>
-    public MemberDocumentation[] Properties { get; internal set; } = Array.Empty<MemberDocumentation>();
+    public MemberDocumentation[] Properties { get; internal set; } = [];
 
     /// <summary>
     /// Gets the methods of the type.
     /// </summary>
-    public MemberDocumentation[] Methods { get; internal set; } = Array.Empty<MemberDocumentation>();
+    public MemberDocumentation[] Methods { get; internal set; } = [];
 }

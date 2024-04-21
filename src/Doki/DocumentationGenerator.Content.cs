@@ -71,8 +71,7 @@ public partial class DocumentationGenerator
 
     private IEnumerable<TypeDocumentationReference> BuildInterfaceDocumentation(Type type, DocumentationObject parent)
     {
-        var interfaces = type.GetInterfaces().Except(type.BaseType?.GetInterfaces() ?? Array.Empty<Type>())
-            .ToArray();
+        var interfaces = type.GetInterfaces().Except(type.BaseType?.GetInterfaces() ?? []).ToArray();
 
         foreach (var @interface in interfaces)
         {

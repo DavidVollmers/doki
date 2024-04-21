@@ -16,6 +16,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>Doki</RootNamespace>
         <PackageOutputPath>..\..\nuget</PackageOutputPath>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

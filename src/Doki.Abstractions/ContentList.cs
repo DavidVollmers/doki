@@ -23,5 +23,5 @@ public record ContentList : DocumentationObject
     /// <summary>
     /// Gets the items in the content list.
     /// </summary>
-    public DocumentationObject[] Items { get; internal set; } = Array.Empty<DocumentationObject>();
+    public DocumentationObject[] Items { get; internal set; } = [];
 }
