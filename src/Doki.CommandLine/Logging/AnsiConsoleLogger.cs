@@ -27,7 +27,20 @@ internal partial class AnsiConsoleLogger : ILogger
 
         message = UnescapeRegex().Replace(message, "[$1]$2[/]");
 
-        AnsiConsole.MarkupLine($"{markup}{message}[/]");
+        try
+        {
+            AnsiConsole.MarkupLine($"{markup}{message}[/]");
+        }
+        catch (Exception ex)
+        {
+            if (logLevel == LogLevel.Debug)
+            {
+                AnsiConsole.MarkupLine("[bold red]Failed to write markup log message:[/]");
+                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+            }
+
+            AnsiConsole.WriteLine(message);
+        }
 
         if (exception != null)
         {
