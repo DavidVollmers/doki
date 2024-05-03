@@ -133,6 +133,11 @@ public sealed partial class DocumentationGenerator
 
         _serviceCollection.AddSingleton(typeof(IOutput), output);
     }
+    
+    public void AddOutput<T>() where T : IOutput
+    {
+        _serviceCollection.AddSingleton(typeof(IOutput), typeof(T));
+    }
 
     public void AddScopedOutput<T>() where T : IOutput
     {

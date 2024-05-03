@@ -12,10 +12,7 @@ namespace Doki.CommandLine.Commands;
 
 internal partial class GenerateCommand
 {
-    private readonly SourceRepository _nuget = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
-    private readonly SourceCacheContext _cacheContext = new();
-
-    private async Task<IOutput?> LoadOutputAsync(DirectoryInfo workingDirectory,
+    private async Task<Type?> LoadOutputAsync(DirectoryInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
         var outputContext = new OutputContext(workingDirectory, output.Options);
@@ -29,13 +26,13 @@ internal partial class GenerateCommand
 
         return fileInfo.Extension.ToLower() switch
         {
-            ".csproj" => await LoadOutputFromProjectAsync(fileInfo, output, outputContext, cancellationToken),
-            ".dll" => LoadOutputFromAssembly(fileInfo.FullName, output, outputContext),
+            ".csproj" => await LoadOutputFromProjectAsync(fileInfo, output, cancellationToken),
+            ".dll" => LoadOutputFromAssembly(fileInfo.FullName, output),
             _ => null
         };
     }
 
-    private async Task<IOutput?> LoadOutputFromNuGetAsync(DokiConfig.DokiConfigOutput output,
+    private async Task<Type?> LoadOutputFromNuGetAsync(DokiConfig.DokiConfigOutput output,
         OutputContext outputContext, bool allowPreview, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Loading output from NuGet: {PackageId}", output.Type);
@@ -47,11 +44,11 @@ internal partial class GenerateCommand
         var assemblyPath =
             await nugetLoader.LoadPackageAsync(output.Type, nugetFolder, allowPreview, cancellationToken);
 
-        return LoadOutputFromAssembly(assemblyPath, output, outputContext);
+        return LoadOutputFromAssembly(assemblyPath, output);
     }
 
-    private async Task<IOutput?> LoadOutputFromProjectAsync(FileInfo fileInfo, DokiConfig.DokiConfigOutput output,
-        OutputContext outputContext, CancellationToken cancellationToken)
+    private async Task<Type?> LoadOutputFromProjectAsync(FileInfo fileInfo, DokiConfig.DokiConfigOutput output,
+        CancellationToken cancellationToken)
     {
         _logger.LogDebug("Loading output from project: {ProjectFileName}", fileInfo.Name);
 
@@ -61,27 +58,17 @@ internal partial class GenerateCommand
         var assemblyPath = Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
             $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll");
 
-        return LoadOutputFromAssembly(assemblyPath, output, outputContext);
+        return LoadOutputFromAssembly(assemblyPath, output);
     }
 
-    private IOutput? LoadOutputFromAssembly(string path, DokiConfig.DokiConfigOutput output,
-        OutputContext outputContext)
+    private Type? LoadOutputFromAssembly(string path, DokiConfig.DokiConfigOutput output)
     {
         _logger.LogDebug("Loading output from assembly: {AssemblyPath}", path);
 
         var assembly = Assembly.LoadFrom(path);
 
-        var outputType = assembly.GetType(output.Type) ?? assembly
+        return assembly.GetType(output.Type) ?? assembly
             .GetExportedTypes()
             .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
-
-        // ReSharper disable once InvertIf
-        if (outputType == null)
-        {
-            _logger.LogError("Could not find output type: {OutputType}", output.Type);
-            return null;
-        }
-
-        return Activator.CreateInstance(outputType, outputContext) as IOutput;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Doki.Output.ClassLibrary;
 
-[DokiOutput("Doki.Output.ClassLibrary")]
+[DokiOutput("Doki.Output.ClassLibrary", Scoped = true)]
 public sealed class ClassLibraryOutput(OutputContext context) : OutputBase<ClassLibraryOutputOptions>(context)
 {
     public override async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)

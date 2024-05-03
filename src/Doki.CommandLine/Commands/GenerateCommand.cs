@@ -1,8 +1,10 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
+using Doki.Output;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -207,19 +209,29 @@ internal partial class GenerateCommand : Command
         {
             if (string.IsNullOrWhiteSpace(output.Type))
             {
-                _logger.LogError("No type configured.");
+                _logger.LogError("No output type configured.");
                 return -1;
             }
 
-            var instance = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
+            var outputType = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
 
-            if (instance == null)
+            if (outputType == null)
             {
-                _logger.LogError("Could not load output.");
+                _logger.LogError("Could not load output: {OutputType}", output.Type);
                 return -1;
             }
 
-            context.Generator.AddOutput(instance);
+            _logger.LogDebug("Adding output: {OutputType}", outputType);
+
+            var outputAttribute = outputType.GetCustomAttribute<DokiOutputAttribute>();
+
+            var methodName = outputAttribute?.Scoped == true
+                ? nameof(DocumentationGenerator.AddScopedOutput)
+                : nameof(DocumentationGenerator.AddOutput);
+
+            var genericMethod = typeof(DocumentationGenerator).GetMethod(methodName)!.MakeGenericMethod(outputType);
+
+            genericMethod.Invoke(context.Generator, []);
         }
 
         return 0;

@@ -11,6 +11,8 @@ public sealed class DokiOutputAttribute : Attribute
     /// </summary>
     public string Name { get; }
 
+    public bool Scoped { get; set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DokiOutputAttribute"/> class.
     /// </summary>
