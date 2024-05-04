@@ -47,11 +47,16 @@ internal partial class GenerateCommand
     {
         _logger.LogDebug("Loading output registration from project: {ProjectFileName}", fileInfo.Name);
 
-        var buildResult = await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
+        var fileName = fileInfo.Name[..^fileInfo.Extension.Length];
+
+        // this is needed so we can document Doki using Doki
+        var buildForDoki = fileName.StartsWith("Doki.Output.");
+
+        var buildResult =
+            await BuildProjectAsync(fileInfo, "Release", buildForDoki, cancellationToken);
         if (buildResult != 0) return null;
 
-        var assemblyPath = Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
-            $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll");
+        var assemblyPath = Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0", $"{fileName}.dll");
 
         return LoadOutputRegistrationFromAssembly(assemblyPath);
     }
