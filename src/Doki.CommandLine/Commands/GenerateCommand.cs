@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
 using Doki.Output;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -92,7 +93,16 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
-        var generator = new DocumentationGenerator();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddSingleton(_logger);
+        serviceCollection.AddSingleton(provider =>
+            new DocumentationGenerator(provider.GetRequiredService<IServiceProvider>()));
+
+        //TODO load outputs
+
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var generator = serviceProvider.GetRequiredService<DocumentationGenerator>();
 
         var configureResult = await ConfigureDocumentationGeneratorAsync(new GenerateContext
         {
@@ -214,7 +224,7 @@ internal partial class GenerateCommand : Command
             }
 
             //TODO refactor output loading
-            
+
             var outputType = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
 
             if (outputType == null)
@@ -226,8 +236,6 @@ internal partial class GenerateCommand : Command
             _logger.LogDebug("Adding output: {OutputType}", outputType);
 
             var outputAttribute = outputType.GetCustomAttribute<DokiOutputAttribute>();
-
-            
         }
 
         return 0;
