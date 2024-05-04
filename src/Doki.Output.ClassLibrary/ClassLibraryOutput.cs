@@ -1,15 +1,13 @@
 ﻿namespace Doki.Output.ClassLibrary;
 
-[DokiOutput("Doki.Output.ClassLibrary", Scoped = true)]
-public sealed class ClassLibraryOutput(OutputContext context) : OutputBase<ClassLibraryOutputOptions>(context)
+public sealed class ClassLibraryOutput(IOutputOptions<ClassLibraryOutput> options) : IOutput
 {
-    public override async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(contentList);
     }
 
-    public override async Task WriteAsync(TypeDocumentation typeDocumentation,
-        CancellationToken cancellationToken = default)
+    public async Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
     }

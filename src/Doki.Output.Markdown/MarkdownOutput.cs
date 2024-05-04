@@ -3,22 +3,15 @@ using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
-/// <summary>
-/// The markdown output.
-/// </summary>
-/// <param name="context">The output context.</param>
-[DokiOutput("Doki.Output.Markdown")]
-public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOutputOptions>(context)
+public sealed class MarkdownOutput(IOutputOptions<MarkdownOutput> options) : IOutput
 {
-    /// <inheritdoc cref="OutputBase{TOptions}.WriteAsync(ContentList, CancellationToken)"/>
-    public override async Task WriteAsync(ContentList contentList,
-        CancellationToken cancellationToken = default)
+    public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(contentList);
 
         var currentPath = contentList.GetPath();
 
-        var targetFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath, "README.md"));
+        var targetFile = new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath, "README.md"));
 
         if (!targetFile.Directory!.Exists) targetFile.Directory.Create();
 
@@ -66,15 +59,13 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
         await WriteMarkdownAsync(targetFile, markdown, cancellationToken);
     }
 
-    /// <inheritdoc cref="OutputBase{TOptions}.WriteAsync(TypeDocumentation, CancellationToken)"/>
-    public override async Task WriteAsync(TypeDocumentation typeDocumentation,
-        CancellationToken cancellationToken = default)
+    public async Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
 
         var currentPath = typeDocumentation.GetPath() + ".md";
 
-        var typeDocumentationFile = new FileInfo(Path.Combine(OutputDirectory.FullName, currentPath));
+        var typeDocumentationFile = new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath));
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
@@ -207,7 +198,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
 
             markdown.Add(table);
         }
-        
+
         if (typeDocumentation.Fields.Length != 0)
         {
             markdown.Add(new Heading("Fields", 2));
@@ -221,7 +212,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
 
             markdown.Add(table);
         }
-        
+
         if (typeDocumentation.Properties.Length != 0)
         {
             markdown.Add(new Heading("Properties", 2));
@@ -235,7 +226,7 @@ public sealed class MarkdownOutput(OutputContext context) : OutputBase<DefaultOu
 
             markdown.Add(table);
         }
-        
+
         if (typeDocumentation.Methods.Length != 0)
         {
             markdown.Add(new Heading("Methods", 2));

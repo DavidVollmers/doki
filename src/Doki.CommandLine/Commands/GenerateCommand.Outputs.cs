@@ -12,13 +12,11 @@ namespace Doki.CommandLine.Commands;
 
 internal partial class GenerateCommand
 {
-    private async Task<Type?> LoadOutputAsync(DirectoryInfo workingDirectory,
+    private async Task<Type?> LoadOutputAsync(FileSystemInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
-        var outputContext = new OutputContext(workingDirectory, output.Options);
-
         if (output.From == null)
-            return await LoadOutputFromNuGetAsync(output, outputContext, allowPreview, cancellationToken);
+            return await LoadOutputFromNuGetAsync(workingDirectory, output, allowPreview, cancellationToken);
 
         var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
@@ -32,12 +30,12 @@ internal partial class GenerateCommand
         };
     }
 
-    private async Task<Type?> LoadOutputFromNuGetAsync(DokiConfig.DokiConfigOutput output,
-        OutputContext outputContext, bool allowPreview, CancellationToken cancellationToken)
+    private async Task<Type?> LoadOutputFromNuGetAsync(FileSystemInfo workingDirectory,
+        DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Loading output from NuGet: {PackageId}", output.Type);
 
-        var nugetFolder = Path.Combine(outputContext.WorkingDirectory.FullName, ".doki", "nuget");
+        var nugetFolder = Path.Combine(workingDirectory.FullName, ".doki", "nuget");
 
         using var nugetLoader = new NuGetLoader(output.From);
 

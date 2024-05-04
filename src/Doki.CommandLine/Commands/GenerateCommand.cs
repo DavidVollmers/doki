@@ -213,6 +213,8 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
+            //TODO refactor output loading
+            
             var outputType = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
 
             if (outputType == null)
@@ -225,13 +227,7 @@ internal partial class GenerateCommand : Command
 
             var outputAttribute = outputType.GetCustomAttribute<DokiOutputAttribute>();
 
-            var methodName = outputAttribute?.Scoped == true
-                ? nameof(DocumentationGenerator.AddScopedOutput)
-                : nameof(DocumentationGenerator.AddOutput);
-
-            var genericMethod = typeof(DocumentationGenerator).GetMethod(methodName)!.MakeGenericMethod(outputType);
-
-            genericMethod.Invoke(context.Generator, []);
+            
         }
 
         return 0;

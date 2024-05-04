@@ -30,8 +30,8 @@ public sealed partial class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
     private readonly Dictionary<string, XPathNavigator> _projects = new();
-    private readonly ServiceCollection _serviceCollection = [];
     private readonly IServiceProvider? _serviceProvider;
+    private readonly List<IOutput> _outputs = [];
 
     /// <summary>
     /// Gets the filter for types to include in the documentation.
@@ -131,17 +131,7 @@ public sealed partial class DocumentationGenerator
     {
         ArgumentNullException.ThrowIfNull(output);
 
-        _serviceCollection.AddSingleton(typeof(IOutput), output);
-    }
-    
-    public void AddOutput<T>() where T : IOutput
-    {
-        _serviceCollection.AddSingleton(typeof(IOutput), typeof(T));
-    }
-
-    public void AddScopedOutput<T>() where T : IOutput
-    {
-        _serviceCollection.AddScoped(typeof(IOutput), typeof(T));
+        _outputs.Add(output);
     }
 
     /// <summary>
@@ -156,13 +146,9 @@ public sealed partial class DocumentationGenerator
 
         if (_assemblies.Count == 0) throw new InvalidOperationException("No assemblies added for documentation.");
 
-        logger.LogDebug("Building output service provider...");
+        await using var builder = new OutputBuilder(_serviceProvider, _outputs);
 
-        var serviceProvider = _serviceProvider?.With(_serviceCollection) ?? _serviceCollection.BuildServiceProvider();
-
-        await using var scope = serviceProvider.CreateAsyncScope();
-
-        var outputs = scope.ServiceProvider.GetServices<IOutput>().ToArray();
+        var outputs = builder.Build().ToArray();
 
         logger.LogDebug("{OutputCount} outputs found.", outputs.Length);
 

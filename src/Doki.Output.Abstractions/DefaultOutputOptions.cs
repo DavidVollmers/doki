@@ -3,13 +3,13 @@
 /// <summary>
 /// Default output options.
 /// </summary>
-public sealed record DefaultOutputOptions : OutputOptions
+public sealed record DefaultOutputOptions<T> : IOutputOptions<T> where T : IOutput
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DefaultOutputOptions"/> class.
-    /// </summary>
-    public DefaultOutputOptions()
+    /// <inheritdoc />
+    public DirectoryInfo OutputDirectory { get; }
+
+    internal DefaultOutputOptions(DirectoryInfo outputDirectory)
     {
-        OutputPath = "docs";
+        OutputDirectory = outputDirectory;
     }
 }
