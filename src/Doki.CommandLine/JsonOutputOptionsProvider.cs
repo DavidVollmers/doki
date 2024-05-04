@@ -6,14 +6,25 @@ namespace Doki.CommandLine;
 
 internal class JsonOutputOptionsProvider : IOutputOptionsProvider
 {
-    public TOptions RequireOptions<TOutput, TOptions>(string outputType) where TOutput : class, IOutput
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    private readonly Dictionary<string, JsonElement?> _options = new();
+
+    public TOptions? GetOptions<TOutput, TOptions>(string outputType) where TOutput : class, IOutput
         where TOptions : class, IOutputOptions<TOutput>
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(outputType);
+
+        return _options.TryGetValue(outputType, out var options)
+            ? options?.Deserialize<TOptions>(JsonSerializerOptions)
+            : null;
     }
 
     public void AddOptions(string outputType, JsonElement? options)
     {
-        throw new NotImplementedException();
+        _options[outputType] = options;
     }
 }

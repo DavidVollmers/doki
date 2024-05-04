@@ -19,9 +19,9 @@ public static class OutputExtensions
         services.AddSingleton<IOutputOptions<TOutput>>(provider =>
         {
             var optionsProvider = provider.GetService<IOutputOptionsProvider>();
-            if (optionsProvider != null) return optionsProvider.RequireOptions<TOutput, TOptions>(outputType);
+            var options = optionsProvider?.GetOptions<TOutput, TOptions>(outputType);
 
-            return ActivatorUtilities.CreateInstance<TOptions>(provider);
+            return options ?? ActivatorUtilities.CreateInstance<TOptions>(provider);
         });
 
         return services;
