@@ -98,13 +98,22 @@ internal partial class GenerateCommand : Command
         serviceCollection.AddSingleton(provider =>
             new DocumentationGenerator(provider.GetRequiredService<IServiceProvider>()));
 
-        //TODO load outputs
+        var outputResult = await LoadOutputServicesAsync(new ServiceContext
+        {
+            ServiceCollection = serviceCollection,
+            DokiConfig = dokiConfig,
+            AllowPreview = allowPreview,
+            BuildConfiguration = buildConfiguration,
+            NoBuild = noBuild,
+            Directory = dokiConfigFile.Directory!
+        }, cancellationToken);
+        if (outputResult != 0) return outputResult;
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         var generator = serviceProvider.GetRequiredService<DocumentationGenerator>();
 
-        var configureResult = await ConfigureDocumentationGeneratorAsync(new GenerateContext
+        var configureResult = await ConfigureGeneratorAsync(new GeneratorContext
         {
             Generator = generator,
             DokiConfig = dokiConfig,
@@ -127,22 +136,18 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> ConfigureDocumentationGeneratorAsync(GenerateContext context,
-        CancellationToken cancellationToken)
+    private async Task<int> ConfigureGeneratorAsync(GeneratorContext context, CancellationToken cancellationToken)
     {
         context.Generator.IncludeInheritedMembers = context.DokiConfig.IncludeInheritedMembers;
 
         var inputResult = await LoadInputsAsync(context, cancellationToken);
         if (inputResult != 0) return inputResult;
 
-        var outputResult = await LoadOutputsAsync(context, cancellationToken);
-        if (outputResult != 0) return outputResult;
-
         var filterResult = CompileFilters(context);
         return filterResult != 0 ? filterResult : 0;
     }
 
-    private async Task<int> LoadInputsAsync(GenerateContext context, CancellationToken cancellationToken)
+    private async Task<int> LoadInputsAsync(GeneratorContext context, CancellationToken cancellationToken)
     {
         if (context.DokiConfig.Inputs == null)
         {
@@ -207,7 +212,7 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> LoadOutputsAsync(GenerateContext context, CancellationToken cancellationToken)
+    private async Task<int> LoadOutputServicesAsync(ServiceContext context, CancellationToken cancellationToken)
     {
         if (context.DokiConfig.Outputs == null)
         {
@@ -223,19 +228,16 @@ internal partial class GenerateCommand : Command
                 return -1;
             }
 
-            //TODO refactor output loading
+            var outputRegistration =
+                await LoadOutputRegistrationAsync(context.Directory, output, context.AllowPreview, cancellationToken);
 
-            var outputType = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
-
-            if (outputType == null)
+            if (outputRegistration == null)
             {
-                _logger.LogError("Could not load output: {OutputType}", output.Type);
+                _logger.LogError("Could not load output registration: {OutputType}", output.Type);
                 return -1;
             }
 
-            _logger.LogDebug("Adding output: {OutputType}", outputType);
-
-            var outputAttribute = outputType.GetCustomAttribute<DokiOutputAttribute>();
+            outputRegistration(context.ServiceCollection);
         }
 
         return 0;
@@ -293,10 +295,18 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private class GenerateContext
+    private class GeneratorContext : ContextBase
     {
         public DocumentationGenerator Generator { get; init; } = null!;
+    }
 
+    private class ServiceContext : ContextBase
+    {
+        public IServiceCollection ServiceCollection { get; init; } = null!;
+    }
+
+    private abstract class ContextBase
+    {
         public DokiConfig DokiConfig { get; init; } = null!;
 
         public string BuildConfiguration { get; init; } = null!;

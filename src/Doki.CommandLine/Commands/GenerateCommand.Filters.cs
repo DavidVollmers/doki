@@ -10,7 +10,7 @@ internal partial class GenerateCommand
 {
     private const string GeneratedAssemblyName = "Doki.Generated";
 
-    private int CompileFilters(GenerateContext context)
+    private int CompileFilters(GeneratorContext context)
     {
         if (context.DokiConfig.Filter?.Any() != true)
         {

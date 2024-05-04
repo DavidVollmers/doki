@@ -1,22 +1,19 @@
 ﻿using System.Reflection;
 using Doki.CommandLine.NuGet;
-using Doki.Output;
+using Doki.Output.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NuGet.Common;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Protocol;
-using NuGet.Protocol.Core.Types;
 
 namespace Doki.CommandLine.Commands;
 
 internal partial class GenerateCommand
 {
-    private async Task<Type?> LoadOutputAsync(FileSystemInfo workingDirectory,
+    private async Task<OutputRegistration?> LoadOutputRegistrationAsync(FileSystemInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
         if (output.From == null)
-            return await LoadOutputFromNuGetAsync(workingDirectory, output, allowPreview, cancellationToken);
+            return await LoadOutputRegistrationFromNuGetAsync(workingDirectory, output, allowPreview,
+                cancellationToken);
 
         var fileInfo = new FileInfo(Path.Combine(workingDirectory.FullName, output.From));
 
@@ -24,16 +21,16 @@ internal partial class GenerateCommand
 
         return fileInfo.Extension.ToLower() switch
         {
-            ".csproj" => await LoadOutputFromProjectAsync(fileInfo, output, cancellationToken),
-            ".dll" => LoadOutputFromAssembly(fileInfo.FullName, output),
+            ".csproj" => await LoadOutputRegistrationFromProjectAsync(fileInfo, cancellationToken),
+            ".dll" => LoadOutputRegistrationFromAssembly(fileInfo.FullName),
             _ => null
         };
     }
 
-    private async Task<Type?> LoadOutputFromNuGetAsync(FileSystemInfo workingDirectory,
+    private async Task<OutputRegistration?> LoadOutputRegistrationFromNuGetAsync(FileSystemInfo workingDirectory,
         DokiConfig.DokiConfigOutput output, bool allowPreview, CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Loading output from NuGet: {PackageId}", output.Type);
+        _logger.LogDebug("Loading output registration from NuGet: {PackageId}", output.Type);
 
         var nugetFolder = Path.Combine(workingDirectory.FullName, ".doki", "nuget");
 
@@ -42,13 +39,13 @@ internal partial class GenerateCommand
         var assemblyPath =
             await nugetLoader.LoadPackageAsync(output.Type, nugetFolder, allowPreview, cancellationToken);
 
-        return LoadOutputFromAssembly(assemblyPath, output);
+        return LoadOutputRegistrationFromAssembly(assemblyPath);
     }
 
-    private async Task<Type?> LoadOutputFromProjectAsync(FileInfo fileInfo, DokiConfig.DokiConfigOutput output,
+    private async Task<OutputRegistration?> LoadOutputRegistrationFromProjectAsync(FileInfo fileInfo,
         CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Loading output from project: {ProjectFileName}", fileInfo.Name);
+        _logger.LogDebug("Loading output registration from project: {ProjectFileName}", fileInfo.Name);
 
         var buildResult = await BuildProjectAsync(fileInfo, "Release", false, cancellationToken);
         if (buildResult != 0) return null;
@@ -56,17 +53,33 @@ internal partial class GenerateCommand
         var assemblyPath = Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0",
             $"{fileInfo.Name[..^fileInfo.Extension.Length]}.dll");
 
-        return LoadOutputFromAssembly(assemblyPath, output);
+        return LoadOutputRegistrationFromAssembly(assemblyPath);
     }
 
-    private Type? LoadOutputFromAssembly(string path, DokiConfig.DokiConfigOutput output)
+    private OutputRegistration? LoadOutputRegistrationFromAssembly(string path)
     {
-        _logger.LogDebug("Loading output from assembly: {AssemblyPath}", path);
+        _logger.LogDebug("Loading output registration from assembly: {AssemblyPath}", path);
 
         var assembly = Assembly.LoadFrom(path);
 
-        return assembly.GetType(output.Type) ?? assembly
-            .GetExportedTypes()
-            .FirstOrDefault(t => t.GetCustomAttribute<DokiOutputAttribute>()?.Name == output.Type);
+        var registrationMethod = assembly.GetExportedTypes()
+            .SelectMany(x => x.GetMethods(BindingFlags.Static | BindingFlags.Public))
+            .FirstOrDefault(x => x.GetCustomAttribute<DokiOutputRegistrationAttribute>() != null);
+
+        if (registrationMethod == null) return null;
+
+        var parameters = registrationMethod.GetParameters();
+        if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IServiceCollection))
+            return services =>
+            {
+                _logger.LogDebug("Using output registration method: {Method}", registrationMethod.Name);
+
+                registrationMethod.Invoke(null, [services]);
+            };
+
+        _logger.LogError("Output registration method must have a single parameter of type IServiceCollection.");
+        return null;
     }
+
+    private delegate void OutputRegistration(IServiceCollection services);
 }

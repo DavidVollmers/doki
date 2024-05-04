@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Doki.Output.Extensions\Doki.Output.Extensions.csproj" />
         <ProjectReference Include="..\Doki\Doki.csproj"/>
     </ItemGroup>
 
