@@ -10,7 +10,7 @@ public static class ClassLibraryOutputExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        //TODO add options
+        services.AddOutputOptions<ClassLibraryOutput, ClassLibraryOutputOptions>("Doki.Output.ClassLibrary");
 
         services.AddSingleton<IOutput, ClassLibraryOutput>();
 

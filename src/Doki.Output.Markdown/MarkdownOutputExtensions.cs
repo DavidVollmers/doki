@@ -10,7 +10,7 @@ public static class MarkdownOutputExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        //TODO add options
+        services.AddOutputOptions<MarkdownOutput>("Doki.Output.Markdown");
 
         services.AddSingleton<IOutput, MarkdownOutput>();
 

@@ -1,10 +1,10 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
 using Doki.Output;
+using Doki.Output.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
@@ -18,6 +18,8 @@ internal partial class GenerateCommand : Command
     {
         PropertyNameCaseInsensitive = true
     };
+
+    private readonly JsonOutputOptionsProvider _outputOptionsProvider = new();
 
     private readonly Argument<FileInfo?> _targetArgument =
         new("CONFIG",
@@ -95,8 +97,8 @@ internal partial class GenerateCommand : Command
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton(_logger);
-        serviceCollection.AddSingleton(provider =>
-            new DocumentationGenerator(provider.GetRequiredService<IServiceProvider>()));
+        serviceCollection.AddSingleton<IOutputOptionsProvider>(_outputOptionsProvider);
+        serviceCollection.AddSingleton(provider => new DocumentationGenerator(provider));
 
         var outputResult = await LoadOutputServicesAsync(new ServiceContext
         {
@@ -220,12 +222,19 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
+        var loadedOutputs = new List<string>();
         foreach (var output in context.DokiConfig.Outputs)
         {
             if (string.IsNullOrWhiteSpace(output.Type))
             {
                 _logger.LogError("No output type configured.");
                 return -1;
+            }
+
+            if (loadedOutputs.Contains(output.Type))
+            {
+                _logger.LogWarning("Output already loaded: {OutputType}", output.Type);
+                continue;
             }
 
             var outputRegistration =
@@ -238,6 +247,10 @@ internal partial class GenerateCommand : Command
             }
 
             outputRegistration(context.ServiceCollection);
+
+            loadedOutputs.Add(output.Type);
+
+            _outputOptionsProvider.AddOptions(output.Type, output.Options);
         }
 
         return 0;
