@@ -1,9 +1,11 @@
-﻿namespace Doki.Output;
+﻿using System.Text.Json.Serialization;
+
+namespace Doki.Output;
 
 /// <summary>
 /// Default output options.
 /// </summary>
 public sealed record DefaultOutputOptions<T> : IOutputOptions<T> where T : IOutput
 {
-    public DirectoryInfo OutputDirectory { get; init; } = null!;
+    [JsonPropertyName("outputPath")] public DirectoryInfo OutputDirectory { get; init; } = null!;
 }

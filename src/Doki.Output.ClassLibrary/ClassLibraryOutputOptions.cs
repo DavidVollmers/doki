@@ -11,6 +11,6 @@ public sealed record ClassLibraryOutputOptions : IOutputOptions<ClassLibraryOutp
     [JsonPropertyName("targetFramework")] public string TargetFramework { get; init; } = "net8.0";
 
     [JsonPropertyName("targetFrameworks")] public string[]? TargetFrameworks { get; init; }
-    
-    public DirectoryInfo OutputDirectory { get; init; } = null!;
+
+    [JsonPropertyName("outputPath")] public DirectoryInfo OutputDirectory { get; init; } = null!;
 }

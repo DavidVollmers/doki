@@ -1,8 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace Doki.Output;
 
-namespace Doki.Output;
-
+// ReSharper disable once UnusedTypeParameter
 public interface IOutputOptions<T> where T : IOutput
 {
-    [JsonPropertyName("outputPath")] DirectoryInfo OutputDirectory { get; }
+    DirectoryInfo OutputDirectory { get; }
 }
