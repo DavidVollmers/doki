@@ -4,5 +4,6 @@
 
 - [IOutput](Doki.Output.IOutput.md)
 - [OutputOptions&lt;T&gt;](Doki.Output.OutputOptions_1.md)
+- [OutputOptionsExtensions](Doki.Output.OutputOptionsExtensions.md)
 
 

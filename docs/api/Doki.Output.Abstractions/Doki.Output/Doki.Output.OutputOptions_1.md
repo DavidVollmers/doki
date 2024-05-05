@@ -41,6 +41,7 @@ Implements: [IEquatable&lt;Doki.Output.OutputOptions&lt;T&gt;&gt;](https://learn
 |---|---|
 |EqualityContract||
 |OutputDirectory||
+|ClearOutput||
 
 
 ## Methods

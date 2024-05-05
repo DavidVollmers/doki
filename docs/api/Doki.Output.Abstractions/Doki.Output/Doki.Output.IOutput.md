@@ -22,6 +22,8 @@ public interface IOutput
 
 |   |Summary|
 |---|---|
+|BeginAsync(System.Threading.CancellationToken)||
+|EndAsync(System.Threading.CancellationToken)||
 |WriteAsync(Doki.ContentList, System.Threading.CancellationToken)|Writes the content list to the output.|
 |WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)|Writes the type documentation to the output.|
 
