@@ -6,8 +6,8 @@ namespace Doki;
 
 public partial class DocumentationGenerator
 {
-    private static readonly BindingFlags AllMembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic |
-                                                                  BindingFlags.Instance | BindingFlags.Static;
+    private const BindingFlags AllMembersBindingFlags =
+        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
     private IEnumerable<DocumentationObject> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
         DocumentationObject parent)

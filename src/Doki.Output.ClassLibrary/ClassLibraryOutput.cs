@@ -1,8 +1,10 @@
-﻿namespace Doki.Output.ClassLibrary;
+﻿using System.Text;
+
+namespace Doki.Output.ClassLibrary;
 
 public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOutput
 {
-    public Task BeginAsync(CancellationToken cancellationToken = default)
+    public async Task BeginAsync(CancellationToken cancellationToken = default)
     {
         options.ClearOutputDirectoryIfRequired();
 
@@ -34,18 +36,51 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                                   </Project>
                                   """;
 
-        File.WriteAllText(projectFilePath, projectFileContent);
-
-        return Task.CompletedTask;
+        await File.WriteAllTextAsync(projectFilePath, projectFileContent, cancellationToken);
     }
 
     public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(contentList);
+
+        var contentListFilePath = Path.Combine(options.OutputDirectory.FullName, "Documentation.cs");
+
+        var contentListContent = new StringBuilder($$"""
+                                                     using Doki;
+                                                      
+                                                     namespace {{options.Namespace}};
+
+                                                     public static class Documentation
+                                                     {
+                                                         public static readonly AssemblyDocumentation[] Assemblies =
+                                                         [
+                                                     """);
+
+        foreach (var item in contentList.Items)
+        {
+            if (item is not AssemblyDocumentation assemblyDocumentation) continue;
+
+            BuildAssemblyDocumentation(assemblyDocumentation, contentListContent);
+        }
+
+        contentListContent.Append("""
+                                      ];
+                                  }
+                                  """);
+
+        await File.WriteAllTextAsync(contentListFilePath, contentListContent.ToString(), cancellationToken);
     }
 
     public async Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
+    }
+
+    private static void BuildAssemblyDocumentation(AssemblyDocumentation assemblyDocumentation,
+        StringBuilder contentListContent)
+    {
+//         contentListContent.Append($"""
+//                                        public static
+//                                    """);
     }
 }
