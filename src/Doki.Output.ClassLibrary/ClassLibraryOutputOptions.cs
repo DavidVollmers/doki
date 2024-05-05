@@ -2,7 +2,7 @@
 
 namespace Doki.Output.ClassLibrary;
 
-public sealed record ClassLibraryOutputOptions(DirectoryInfo OutputDirectory) : IOutputOptions<ClassLibraryOutput>
+public sealed record ClassLibraryOutputOptions : IOutputOptions<ClassLibraryOutput>
 {
     [JsonPropertyName("namespace")] public string Namespace { get; init; } = "Doki.Content";
 
@@ -11,4 +11,6 @@ public sealed record ClassLibraryOutputOptions(DirectoryInfo OutputDirectory) : 
     [JsonPropertyName("targetFramework")] public string TargetFramework { get; init; } = "net8.0";
 
     [JsonPropertyName("targetFrameworks")] public string[]? TargetFrameworks { get; init; }
+    
+    public DirectoryInfo OutputDirectory { get; init; } = null!;
 }

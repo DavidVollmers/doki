@@ -4,7 +4,7 @@ using Doki.Output.Extensions;
 
 namespace Doki.CommandLine.Json;
 
-internal class JsonOutputOptionsProvider(DirectoryInfo workingDirectory) : IOutputOptionsProvider
+internal class JsonOutputOptionsProvider(FileSystemInfo workingDirectory) : IOutputOptionsProvider
 {
     private readonly Dictionary<string, JsonElement?> _options = new();
 
@@ -13,7 +13,7 @@ internal class JsonOutputOptionsProvider(DirectoryInfo workingDirectory) : IOutp
         PropertyNameCaseInsensitive = true,
         Converters =
         {
-            new OutputDirectoryConverter(workingDirectory)
+            new DirectoryInfoJsonConverter(workingDirectory)
         }
     };
 

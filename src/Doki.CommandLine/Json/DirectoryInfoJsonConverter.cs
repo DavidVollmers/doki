@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Doki.CommandLine.Json;
 
-internal class OutputDirectoryConverter(FileSystemInfo workingDirectory) : JsonConverter<DirectoryInfo>
+internal class DirectoryInfoJsonConverter(FileSystemInfo workingDirectory) : JsonConverter<DirectoryInfo>
 {
     public override DirectoryInfo? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
