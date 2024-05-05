@@ -5,6 +5,13 @@ namespace Doki.Output.Markdown;
 
 public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOutput
 {
+    public Task BeginAsync(CancellationToken cancellationToken = default)
+    {
+        options.ClearOutputDirectoryIfRequired();
+
+        return Task.CompletedTask;
+    }
+
     public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(contentList);

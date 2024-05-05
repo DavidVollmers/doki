@@ -5,6 +5,10 @@
 /// </summary>
 public interface IOutput
 {
+    Task BeginAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    Task EndAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
     /// <summary>
     /// Writes the content list to the output.
     /// </summary>

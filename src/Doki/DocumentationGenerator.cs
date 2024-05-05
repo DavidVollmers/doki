@@ -154,6 +154,11 @@ public sealed partial class DocumentationGenerator
 
         logger.LogInformation("Generating documentation for {AssemblyCount} assemblies.", _assemblies.Count);
 
+        foreach (var output in outputs)
+        {
+            await output.BeginAsync(cancellationToken);
+        }
+
         var assemblies = new ContentList
         {
             Id = ContentList.Assemblies,
@@ -183,6 +188,11 @@ public sealed partial class DocumentationGenerator
         foreach (var output in outputs)
         {
             await output.WriteAsync(assemblies, cancellationToken);
+        }
+
+        foreach (var output in outputs)
+        {
+            await output.EndAsync(cancellationToken);
         }
     }
 

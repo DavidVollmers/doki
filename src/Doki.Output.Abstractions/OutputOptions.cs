@@ -6,4 +6,6 @@ namespace Doki.Output;
 public record OutputOptions<T> where T : IOutput
 {
     [JsonPropertyName("outputPath")] public DirectoryInfo OutputDirectory { get; init; } = null!;
+
+    [JsonPropertyName("clearOutput")] public bool ClearOutput { get; init; } = true;
 }
