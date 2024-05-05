@@ -10,6 +10,13 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
 
         var projectFilePath = Path.Combine(options.OutputDirectory.FullName, $"{options.Namespace}.csproj");
 
+#if DEBUG
+        const string dokiReference = "<ProjectReference Include=\"..\\Doki.Abstractions\\Doki.Abstractions.csproj\" />";
+#else
+        var dokiVersion = typeof(DocumentationObject).Assembly.GetName().Version!.ToString();
+        var dokiReference = $"<PackageReference Include=\"Doki.Abstractions\" Version=\"{dokiVersion}\" />";
+#endif
+
         var projectFileContent = $"""
                                   <Project Sdk="Microsoft.NET.Sdk">
                                   
@@ -19,6 +26,10 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                                           <ImplicitUsings>enable</ImplicitUsings>
                                           <Nullable>enable</Nullable>
                                       </PropertyGroup>
+                                  
+                                      <ItemGroup>
+                                          {dokiReference}
+                                      </ItemGroup>
 
                                   </Project>
                                   """;

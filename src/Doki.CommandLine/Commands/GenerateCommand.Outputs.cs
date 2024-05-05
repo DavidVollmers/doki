@@ -49,14 +49,20 @@ internal partial class GenerateCommand
 
         var fileName = fileInfo.Name[..^fileInfo.Extension.Length];
 
-        // this is needed so we can document Doki using Doki
-        var buildForDoki = fileName.StartsWith("Doki.Output.");
+#if DEBUG
+        const bool buildForDoki = true;
+        const string buildConfiguration = "Debug";
+#else
+        const bool buildForDoki = false;
+        const string buildConfiguration = "Release";
+#endif
 
         var buildResult =
-            await BuildProjectAsync(fileInfo, "Release", buildForDoki, cancellationToken);
+            await BuildProjectAsync(fileInfo, buildConfiguration, buildForDoki, cancellationToken);
         if (buildResult != 0) return null;
 
-        var assemblyPath = Path.Combine(fileInfo.DirectoryName!, "bin", "Release", "net8.0", $"{fileName}.dll");
+        var assemblyPath =
+            Path.Combine(fileInfo.DirectoryName!, "bin", buildConfiguration, "net8.0", $"{fileName}.dll");
 
         return LoadOutputRegistrationFromAssembly(assemblyPath);
     }
