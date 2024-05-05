@@ -1,6 +1,6 @@
 # Doki
 
-A modern .NET Documentation Framework
+A modern .NET Code Documentation Framework
 
 ## Namespaces
 

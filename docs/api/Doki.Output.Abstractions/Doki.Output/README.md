@@ -2,11 +2,8 @@
 
 ## Types
 
-- [DefaultOutputOptions](Doki.Output.DefaultOutputOptions.md)
-- [DokiOutputAttribute](Doki.Output.DokiOutputAttribute.md)
+- [DefaultOutputOptions&lt;T&gt;](Doki.Output.DefaultOutputOptions_1.md)
 - [IOutput](Doki.Output.IOutput.md)
-- [OutputBase&lt;T&gt;](Doki.Output.OutputBase_1.md)
-- [OutputContext](Doki.Output.OutputContext.md)
-- [OutputOptions](Doki.Output.OutputOptions.md)
+- [IOutputOptions&lt;T&gt;](Doki.Output.IOutputOptions_1.md)
 
 
