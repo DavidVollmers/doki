@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.ClassLibrary", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Extensions", "src\Doki.Output.Extensions\Doki.Output.Extensions.csproj", "{A89D22B2-2427-4863-A2D9-9E1BEFF37C61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Documentation.Content", "src\Doki.Documentation.Content\Doki.Documentation.Content.csproj", "{B810F145-0631-4240-AE20-EE816DB45B1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,5 +91,9 @@ Global
 		{A89D22B2-2427-4863-A2D9-9E1BEFF37C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A89D22B2-2427-4863-A2D9-9E1BEFF37C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A89D22B2-2427-4863-A2D9-9E1BEFF37C61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B810F145-0631-4240-AE20-EE816DB45B1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B810F145-0631-4240-AE20-EE816DB45B1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B810F145-0631-4240-AE20-EE816DB45B1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B810F145-0631-4240-AE20-EE816DB45B1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -6,6 +6,25 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
     {
         options.ClearOutputDirectoryIfRequired();
 
+        options.OutputDirectory.Create();
+
+        var projectFilePath = Path.Combine(options.OutputDirectory.FullName, $"{options.Namespace}.csproj");
+
+        var projectFileContent = $"""
+                                  <Project Sdk="Microsoft.NET.Sdk">
+                                  
+                                      <PropertyGroup>
+                                          {options.GetTargetFrameworkProperty()}
+                                          <LangVersion>12</LangVersion>
+                                          <ImplicitUsings>enable</ImplicitUsings>
+                                          <Nullable>enable</Nullable>
+                                      </PropertyGroup>
+
+                                  </Project>
+                                  """;
+
+        File.WriteAllText(projectFilePath, projectFileContent);
+
         return Task.CompletedTask;
     }
 
