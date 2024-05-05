@@ -16,7 +16,7 @@ public static class OutputExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(outputType);
 
-        services.AddSingleton<OutputOptions<TOutput>>(provider =>
+        services.AddSingleton<TOptions>(provider =>
         {
             var optionsProvider = provider.GetService<IOutputOptionsProvider>();
             var options = optionsProvider?.GetOptions<TOutput, TOptions>(outputType);

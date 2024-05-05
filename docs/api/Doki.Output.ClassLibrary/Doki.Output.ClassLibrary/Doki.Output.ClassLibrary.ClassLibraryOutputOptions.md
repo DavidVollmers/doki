@@ -13,12 +13,12 @@ Package: [Doki.Output.ClassLibrary](https://www.nuget.org/packages/Doki.Output.C
 ---
 
 ```csharp
-public sealed record ClassLibraryOutputOptions : Doki.Output.IOutputOptions<Doki.Output.ClassLibrary.ClassLibraryOutput>
+public sealed record ClassLibraryOutputOptions : Doki.Output.OutputOptions<Doki.Output.ClassLibrary.ClassLibraryOutput>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → ClassLibraryOutputOptions
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [OutputOptions](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.OutputOptions_1.md)&lt;[ClassLibraryOutput](Doki.Output.ClassLibrary.ClassLibraryOutput.md)&gt; → ClassLibraryOutputOptions
 
-Implements: [IOutputOptions&lt;ClassLibraryOutput&gt;](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.IOutputOptions{Doki.Output.ClassLibrary.ClassLibraryOutput}.md), [System.IEquatable&lt;Doki.Output.ClassLibrary.ClassLibraryOutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.ClassLibrary.ClassLibraryOutputOptions&gt;)
+Implements: [System.IEquatable&lt;Doki.Output.ClassLibrary.ClassLibraryOutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.ClassLibrary.ClassLibraryOutputOptions&gt;)
 
 ## Constructors
 
@@ -31,11 +31,11 @@ Implements: [IOutputOptions&lt;ClassLibraryOutput&gt;](../../Doki.Output.Abstrac
 
 |   |Summary|
 |---|---|
+|EqualityContract||
 |Namespace||
 |ProjectName||
 |TargetFramework||
 |TargetFrameworks||
-|OutputDirectory||
 
 
 ## Methods
@@ -43,8 +43,10 @@ Implements: [IOutputOptions&lt;ClassLibraryOutput&gt;](../../Doki.Output.Abstrac
 |   |Summary|
 |---|---|
 |ToString()||
+|PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
+|Equals(Doki.Output.OutputOptions&lt;Doki.Output.ClassLibrary.ClassLibraryOutput&gt;)||
 |Equals(Doki.Output.ClassLibrary.ClassLibraryOutputOptions)||
 
 
