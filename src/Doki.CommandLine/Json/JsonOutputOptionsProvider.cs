@@ -2,16 +2,20 @@
 using Doki.Output;
 using Doki.Output.Extensions;
 
-namespace Doki.CommandLine;
+namespace Doki.CommandLine.Json;
 
-internal class JsonOutputOptionsProvider : IOutputOptionsProvider
+internal class JsonOutputOptionsProvider(DirectoryInfo workingDirectory) : IOutputOptionsProvider
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     private readonly Dictionary<string, JsonElement?> _options = new();
+
+    private readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters =
+        {
+            new OutputDirectoryConverter(workingDirectory)
+        }
+    };
 
     public TOptions? GetOptions<TOutput, TOptions>(string outputType) where TOutput : class, IOutput
         where TOptions : class, IOutputOptions<TOutput>
@@ -19,7 +23,7 @@ internal class JsonOutputOptionsProvider : IOutputOptionsProvider
         ArgumentNullException.ThrowIfNull(outputType);
 
         return _options.TryGetValue(outputType, out var options)
-            ? options?.Deserialize<TOptions>(JsonSerializerOptions)
+            ? options?.Deserialize<TOptions>(_serializerOptions)
             : null;
     }
 

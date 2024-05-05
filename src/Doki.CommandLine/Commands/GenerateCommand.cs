@@ -3,7 +3,7 @@ using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.XPath;
-using Doki.Output;
+using Doki.CommandLine.Json;
 using Doki.Output.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileSystemGlobbing;
@@ -18,8 +18,6 @@ internal partial class GenerateCommand : Command
     {
         PropertyNameCaseInsensitive = true
     };
-
-    private readonly JsonOutputOptionsProvider _outputOptionsProvider = new();
 
     private readonly Argument<FileInfo?> _targetArgument =
         new("CONFIG",
@@ -95,14 +93,17 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
+        var outputOptionsProvider = new JsonOutputOptionsProvider(dokiConfigFile.Directory!);
+
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton(_logger);
-        serviceCollection.AddSingleton<IOutputOptionsProvider>(_outputOptionsProvider);
+        serviceCollection.AddSingleton<IOutputOptionsProvider>(outputOptionsProvider);
         serviceCollection.AddSingleton(provider => new DocumentationGenerator(provider));
 
         var outputResult = await LoadOutputServicesAsync(new ServiceContext
         {
             ServiceCollection = serviceCollection,
+            OutputOptionsProvider = outputOptionsProvider,
             DokiConfig = dokiConfig,
             AllowPreview = allowPreview,
             BuildConfiguration = buildConfiguration,
@@ -250,7 +251,7 @@ internal partial class GenerateCommand : Command
 
             loadedOutputs.Add(output.Type);
 
-            _outputOptionsProvider.AddOptions(output.Type, output.Options);
+            context.OutputOptionsProvider.AddOptions(output.Type, output.Options);
         }
 
         return 0;
@@ -316,6 +317,8 @@ internal partial class GenerateCommand : Command
     private class ServiceContext : ContextBase
     {
         public IServiceCollection ServiceCollection { get; init; } = null!;
+
+        public JsonOutputOptionsProvider OutputOptionsProvider { get; init; } = null!;
     }
 
     private abstract class ContextBase
