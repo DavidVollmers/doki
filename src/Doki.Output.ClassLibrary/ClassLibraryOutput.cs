@@ -1,6 +1,6 @@
 ﻿namespace Doki.Output.ClassLibrary;
 
-internal class ClassLibraryOutput(IOutputOptions<ClassLibraryOutput> options) : IOutput
+public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOutput
 {
     public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {

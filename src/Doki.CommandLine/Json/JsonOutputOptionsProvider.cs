@@ -18,7 +18,7 @@ internal class JsonOutputOptionsProvider(FileSystemInfo workingDirectory) : IOut
     };
 
     public TOptions? GetOptions<TOutput, TOptions>(string outputType) where TOutput : class, IOutput
-        where TOptions : class, IOutputOptions<TOutput>
+        where TOptions : OutputOptions<TOutput>
     {
         ArgumentNullException.ThrowIfNull(outputType);
 

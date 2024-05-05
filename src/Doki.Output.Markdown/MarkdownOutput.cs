@@ -3,7 +3,7 @@ using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
-internal class MarkdownOutput(IOutputOptions<MarkdownOutput> options) : IOutput
+public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOutput
 {
     public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
     {
