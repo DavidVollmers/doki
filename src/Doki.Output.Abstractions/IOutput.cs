@@ -17,6 +17,12 @@ public interface IOutput
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task WriteAsync(DocumentationRoot root, CancellationToken cancellationToken = default);
 
+    Task WriteAsync(AssemblyDocumentation assemblyDocumentation, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
+    Task WriteAsync(NamespaceDocumentation namespaceDocumentation, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
     /// <summary>
     /// Writes a specific type documentation.
     /// </summary>

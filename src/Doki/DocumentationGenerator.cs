@@ -240,44 +240,73 @@ public sealed partial class DocumentationGenerator
         var namespaceItems = new List<NamespaceDocumentation>();
         foreach (var @namespace in namespaces)
         {
-            var namespaceDocumentation = new NamespaceDocumentation
-            {
-                Id = @namespace,
-                Name = @namespace,
-                Parent = assemblyDocumentation
-            };
-
-            var typeItems = new List<TypeDocumentation>();
-            foreach (var type in types.Where(t => t.Namespace == @namespace))
-            {
-                try
-                {
-                    var typeDocumentation =
-                        await GenerateTypeDocumentationAsync(new GeneratorContext<Type>
-                            {
-                                Logger = context.Logger,
-                                Parent = namespaceDocumentation,
-                                Current = type,
-                                Outputs = context.Outputs
-                            },
-                            cancellationToken);
-
-                    typeItems.Add(typeDocumentation);
-                }
-                catch (Exception e)
-                {
-                    context.Logger.LogError(e, "Failed to generate documentation for type {Type}.", type);
-                }
-            }
-
-            namespaceDocumentation.InternalTypes = typeItems.ToArray();
+            var namespaceDocumentation =
+                await GenerateNamespaceDocumentationAsync(new GeneratorContext<string>
+                    {
+                        Logger = context.Logger,
+                        Parent = assemblyDocumentation,
+                        Current = @namespace,
+                        Outputs = context.Outputs
+                    },
+                    types.Where(t => t.Namespace == @namespace),
+                    cancellationToken);
 
             namespaceItems.Add(namespaceDocumentation);
         }
 
         assemblyDocumentation.InternalNamespaces = namespaceItems.ToArray();
 
+        foreach (var output in context.Outputs)
+        {
+            await output.WriteAsync(assemblyDocumentation, cancellationToken);
+        }
+
         return assemblyDocumentation;
+    }
+
+    private async Task<NamespaceDocumentation> GenerateNamespaceDocumentationAsync(GeneratorContext<string> context,
+        IEnumerable<Type> types, CancellationToken cancellationToken)
+    {
+        var @namespace = context.Current;
+
+        var namespaceDocumentation = new NamespaceDocumentation
+        {
+            Id = @namespace,
+            Name = @namespace,
+            Parent = context.Parent
+        };
+
+        var typeItems = new List<TypeDocumentation>();
+        foreach (var type in types)
+        {
+            try
+            {
+                var typeDocumentation =
+                    await GenerateTypeDocumentationAsync(new GeneratorContext<Type>
+                        {
+                            Logger = context.Logger,
+                            Parent = namespaceDocumentation,
+                            Current = type,
+                            Outputs = context.Outputs
+                        },
+                        cancellationToken);
+
+                typeItems.Add(typeDocumentation);
+            }
+            catch (Exception e)
+            {
+                context.Logger.LogError(e, "Failed to generate documentation for type {Type}.", type);
+            }
+        }
+
+        namespaceDocumentation.InternalTypes = typeItems.ToArray();
+
+        foreach (var output in context.Outputs)
+        {
+            await output.WriteAsync(namespaceDocumentation, cancellationToken);
+        }
+
+        return namespaceDocumentation;
     }
 
     private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(GeneratorContext<Type> context,
