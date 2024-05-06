@@ -14,4 +14,9 @@ public sealed record GenericTypeArgumentDocumentation : TypeDocumentationReferen
     /// Gets a value indicating whether the generic type argument is a generic parameter.
     /// </summary>
     public bool IsGenericParameter { get; internal init; }
+
+    public GenericTypeArgumentDocumentation()
+    {
+        Content = DocumentationContentType.GenericTypeArgument;
+    }
 }

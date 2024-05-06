@@ -49,4 +49,6 @@ public sealed record TypeDocumentation : TypeDocumentationReference
     /// Gets the methods of the type.
     /// </summary>
     public MemberDocumentation[] Methods { get; internal set; } = [];
+    
+    public new DocumentationContentType Content { get; internal init; }
 }

@@ -227,7 +227,6 @@ public sealed partial class DocumentationGenerator
             Id = assemblyId,
             Name = assemblyId,
             Parent = context.Parent,
-            Content = DocumentationContentType.Assembly,
             Description = description,
             FileName = context.Current.Location.Split(Path.DirectorySeparatorChar).Last(),
             Version = assemblyName.Version?.ToString(),
@@ -245,8 +244,7 @@ public sealed partial class DocumentationGenerator
             {
                 Id = @namespace,
                 Name = @namespace,
-                Parent = assemblyDocumentation,
-                Content = DocumentationContentType.Namespace
+                Parent = assemblyDocumentation
             };
 
             var typeItems = new List<TypeDocumentation>();
@@ -356,7 +354,6 @@ public sealed partial class DocumentationGenerator
             var typeReference = new TypeDocumentationReference
             {
                 Id = baseType.GetXmlDocumentationId(),
-                Content = DocumentationContentType.TypeReference,
                 Parent = baseParent,
                 Name = baseType.GetSanitizedName(),
                 FullName = baseType.GetSanitizedName(true),

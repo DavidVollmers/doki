@@ -13,4 +13,9 @@ public sealed record NamespaceDocumentation : DocumentationObject
         get => InternalTypes;
         init => InternalTypes = value;
     }
+
+    public NamespaceDocumentation()
+    {
+        Content = DocumentationContentType.Namespace;
+    }
 }

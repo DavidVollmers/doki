@@ -31,4 +31,9 @@ public sealed record AssemblyDocumentation : DocumentationObject
         get => InternalNamespaces;
         init => InternalNamespaces = value;
     }
+
+    public AssemblyDocumentation()
+    {
+        Content = DocumentationContentType.Assembly;
+    }
 }

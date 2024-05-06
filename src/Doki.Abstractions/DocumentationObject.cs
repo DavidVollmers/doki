@@ -18,7 +18,7 @@ public abstract record DocumentationObject
     /// <summary>
     /// Gets the content type of the documentation object.
     /// </summary>
-    public DocumentationContentType Content { get; internal init; }
+    public DocumentationContentType Content { get; protected set; }
 
     protected DocumentationObject()
     {

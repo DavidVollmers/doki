@@ -25,25 +25,5 @@ public record MemberDocumentation : DocumentationObject
     /// </summary>
     public DocumentationObject? Summary { get; internal set; }
     
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MemberDocumentation"/> class.
-    /// </summary>
-    public MemberDocumentation()
-    {
-    }
-    
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MemberDocumentation"/> class.
-    /// </summary>
-    /// <param name="obj">The object to copy.</param>
-    /// <exception cref="ArgumentException"></exception>
-    public MemberDocumentation(MemberDocumentation obj) : base(obj)
-    {
-        ArgumentNullException.ThrowIfNull(obj);
-
-        Name = obj.Name ?? throw new ArgumentException("MemberDocumentation.Name cannot be null.", nameof(obj));
-        Namespace = obj.Namespace;
-        Assembly = obj.Assembly;
-        Summary = obj.Summary;
-    }
+    public new DocumentationContentType Content { get; internal init; }
 }

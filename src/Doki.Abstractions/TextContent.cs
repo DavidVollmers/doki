@@ -9,4 +9,9 @@ public sealed record TextContent : DocumentationObject
     /// Gets the text content.
     /// </summary>
     public string Text { get; internal init; } = null!;
+
+    public TextContent()
+    {
+        Content = DocumentationContentType.Text;
+    }
 }
