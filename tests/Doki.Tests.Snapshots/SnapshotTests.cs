@@ -1,4 +1,5 @@
 ﻿using System.Xml.XPath;
+using Doki.Output;
 using Doki.Output.Markdown;
 using Doki.TestAssembly;
 using Doki.TestAssembly.InheritanceChain;
@@ -21,13 +22,16 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
 
         generator.AddAssembly(typeof(TestParentRootNamespaceClass).Assembly, emptyDocumentation);
 
-        generator.AddOutput(new MarkdownOutput(snapshot.Context));
+        generator.AddOutput(new MarkdownOutput(new OutputOptions<MarkdownOutput>
+        {
+            OutputDirectory = snapshot.OutputDirectory
+        }));
 
         await generator.GenerateAsync(NullLogger.Instance);
 
         await snapshot.SaveIfNotExists().MatchSnapshotAsync(testOutputHelper);
     }
-    
+
     [Fact]
     public async Task Test_InheritanceChain()
     {
@@ -40,7 +44,10 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
         generator.AddAssembly(typeof(AbstractClass).Assembly, emptyDocumentation);
         generator.AddAssembly(typeof(SimpleClass).Assembly, emptyDocumentation);
 
-        generator.AddOutput(new MarkdownOutput(snapshot.Context));
+        generator.AddOutput(new MarkdownOutput(new OutputOptions<MarkdownOutput>
+        {
+            OutputDirectory = snapshot.OutputDirectory
+        }));
 
         await generator.GenerateAsync(NullLogger.Instance);
 

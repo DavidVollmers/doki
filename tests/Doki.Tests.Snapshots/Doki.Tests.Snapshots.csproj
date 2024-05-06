@@ -29,8 +29,4 @@
       <ProjectReference Include="..\assemblies\Doki.TestAssembly.InheritanceChain\Doki.TestAssembly.InheritanceChain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="__snapshots__\" />
-    </ItemGroup>
-
 </Project>

@@ -12,8 +12,8 @@ public class Snapshot
 
     public string Name { get; init; }
 
-    public OutputContext Context { get; init; } =
-        new(new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"))), null);
+    public DirectoryInfo OutputDirectory { get; init; } =
+        new(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
 
     private Snapshot(string name)
     {
@@ -33,7 +33,7 @@ public class Snapshot
 
         _snapshotDirectory.Create();
 
-        var sourcePath = Context.WorkingDirectory.FullName;
+        var sourcePath = OutputDirectory.FullName;
         var targetPath = _snapshotDirectory.FullName;
 
         foreach (var dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
@@ -58,13 +58,13 @@ public class Snapshot
         }
 
         testOutputHelper.WriteLine($"Verifying snapshot '{Name}'");
-        testOutputHelper.WriteLine($"Generated snapshot directory: {Context.WorkingDirectory.FullName}");
+        testOutputHelper.WriteLine($"Generated snapshot directory: {OutputDirectory.FullName}");
 
         var snapshotFiles = _snapshotDirectory.GetFiles("*.*", SearchOption.AllDirectories);
         foreach (var snapshotFile in snapshotFiles)
         {
             var relativePath = snapshotFile.FullName.Replace(_snapshotDirectory.FullName, "");
-            var sourceFile = new FileInfo(Context.WorkingDirectory.FullName + relativePath);
+            var sourceFile = new FileInfo(OutputDirectory.FullName + relativePath);
 
             if (!sourceFile.Exists)
             {
