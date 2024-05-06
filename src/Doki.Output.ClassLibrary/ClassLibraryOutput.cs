@@ -55,6 +55,7 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                                                          public static readonly AssemblyDocumentation[] Assemblies =
                                                          [
                                                      """);
+        contentListContent.AppendLine();
 
         foreach (var item in contentList.Items)
         {
@@ -80,25 +81,25 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
         StringBuilder contentListContent)
     {
         contentListContent.AppendLine($$"""
-                                            new AssemblyDocumentation
-                                            {
-                                                Name = "{{assemblyDocumentation.Name}}",
-                                                Description = "{{assemblyDocumentation.Description}}",
-                                                FileName = "{{assemblyDocumentation.FileName}}",
-                                                Version = "{{assemblyDocumentation.Version}}",
-                                                PackageId = "{{assemblyDocumentation.PackageId}}",
-                                                Items =
-                                                [
+                                                new AssemblyDocumentation
+                                                {
+                                                    Name = "{{assemblyDocumentation.Name}}",
+                                                    Description = "{{assemblyDocumentation.Description}}",
+                                                    FileName = "{{assemblyDocumentation.FileName}}",
+                                                    Version = "{{assemblyDocumentation.Version}}",
+                                                    PackageId = "{{assemblyDocumentation.PackageId}}",
+                                                    Items =
+                                                    [
                                         """);
 
         foreach (var item in assemblyDocumentation.Items)
         {
-            BuildContentList(item, contentListContent, 3);
+            BuildContentList(item, contentListContent, 4);
         }
 
         contentListContent.AppendLine("""
-                                              ]
-                                          },
+                                                  ]
+                                              },
                                       """);
     }
 
@@ -107,7 +108,7 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
     {
         if (documentationObject is not ContentList contentList) return;
 
-        var i = new string(' ', indent);
+        var i = new string(' ', indent * 4);
 
         contentListContent.AppendLine($$"""
                                         {{i}}new ContentList

@@ -13,15 +13,15 @@ public record ContentList : DocumentationObject
     /// <summary>
     /// Gets the name of the content list.
     /// </summary>   
-    public string Name { get; internal init; } = null!;
+    public string Name { get; init; } = null!;
     
     /// <summary>
     /// Gets the description of the content list.
     /// </summary>
-    public string? Description { get; internal init; }
+    public string? Description { get; init; }
 
     /// <summary>
     /// Gets the items in the content list.
     /// </summary>
-    public DocumentationObject[] Items { get; internal set; } = [];
+    public DocumentationObject[] Items { get; set; } = [];
 }
