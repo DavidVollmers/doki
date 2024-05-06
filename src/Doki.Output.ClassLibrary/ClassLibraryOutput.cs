@@ -63,10 +63,10 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
             BuildAssemblyDocumentation(assemblyDocumentation, contentListContent);
         }
 
-        contentListContent.Append("""
-                                      ];
-                                  }
-                                  """);
+        contentListContent.AppendLine("""
+                                          ];
+                                      }
+                                      """);
 
         await File.WriteAllTextAsync(contentListFilePath, contentListContent.ToString(), cancellationToken);
     }
@@ -79,8 +79,59 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
     private static void BuildAssemblyDocumentation(AssemblyDocumentation assemblyDocumentation,
         StringBuilder contentListContent)
     {
-//         contentListContent.Append($"""
-//                                        public static
-//                                    """);
+        contentListContent.AppendLine($$"""
+                                            new AssemblyDocumentation
+                                            {
+                                                Name = "{{assemblyDocumentation.Name}}",
+                                                Description = "{{assemblyDocumentation.Description}}",
+                                                FileName = "{{assemblyDocumentation.FileName}}",
+                                                Version = "{{assemblyDocumentation.Version}}",
+                                                PackageId = "{{assemblyDocumentation.PackageId}}",
+                                                Items =
+                                                [
+                                        """);
+
+        foreach (var item in assemblyDocumentation.Items)
+        {
+            BuildContentList(item, contentListContent, 3);
+        }
+
+        contentListContent.AppendLine("""
+                                              ]
+                                          },
+                                      """);
+    }
+
+    private static void BuildContentList(DocumentationObject documentationObject, StringBuilder contentListContent,
+        int indent)
+    {
+        if (documentationObject is not ContentList contentList) return;
+
+        var i = new string(' ', indent);
+
+        contentListContent.AppendLine($$"""
+                                        {{i}}new ContentList
+                                        {{i}}{
+                                        {{i}}    Name = "{{contentList.Name}}",
+                                        {{i}}    Description = "{{contentList.Description}}",
+                                        {{i}}    Items =
+                                        {{i}}    [
+                                        """);
+
+        foreach (var item in contentList.Items)
+        {
+            if (item is TypeDocumentationReference typeDocumentationReference)
+            {
+                //TODO - Add type documentation reference
+                continue;
+            }
+
+            BuildContentList(item, contentListContent, indent + 2);
+        }
+
+        contentListContent.AppendLine($$"""
+                                        {{i}}    ]
+                                        {{i}}},
+                                        """);
     }
 }
