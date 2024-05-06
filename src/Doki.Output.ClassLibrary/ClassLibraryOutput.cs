@@ -111,11 +111,39 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
 
         foreach (var typeDocumentation in namespaceDocumentation.Types)
         {
-            //TODO Add type documentation
+            BuildTypeDocumentation(typeDocumentation, content, indent + 1);
         }
 
         content.AppendLine($$"""
                              {{i}}    ]
+                             {{i}}},
+                             """);
+    }
+
+    private static void BuildTypeDocumentation(TypeDocumentation typeDocumentation, StringBuilder content, int indent)
+    {
+        var i = new string(' ', indent * 4);
+
+        content.AppendLine($$"""
+                             {{i}}new TypeDocumentation
+                             {{i}}{
+                             {{i}}    Name = "{{typeDocumentation.Name}}",
+                             {{i}}    ContentType = DocumentationContentType.{{Enum.GetName(typeDocumentation.ContentType)}},
+                             {{i}}    Definition = "{{typeDocumentation.Definition}}",
+                             {{i}}    IsGeneric = {{typeDocumentation.IsGeneric.ToString().ToLowerInvariant()}},
+                             {{i}}    FullName = "{{typeDocumentation.FullName}}",
+                             {{i}}    IsDocumented = {{typeDocumentation.IsDocumented.ToString().ToLowerInvariant()}},
+                             {{i}}    IsMicrosoft = {{typeDocumentation.IsMicrosoft.ToString().ToLowerInvariant()}},
+                             {{i}}    Namespace = "{{typeDocumentation.Namespace}}",
+                             {{i}}    Assembly = "{{typeDocumentation.Assembly}}",
+                             """);
+
+        // foreach (var memberDocumentation in typeDocumentation.Members)
+        // {
+        //     BuildMemberDocumentation(memberDocumentation, content, indent + 1);
+        // }
+
+        content.AppendLine($$"""
                              {{i}}},
                              """);
     }

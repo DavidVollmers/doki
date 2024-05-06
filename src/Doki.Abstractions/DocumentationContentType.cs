@@ -6,12 +6,6 @@
 public enum DocumentationContentType
 {
     /// <summary>
-    /// An object in the documentation. This is the default content type.
-    /// </summary>
-    // ReSharper disable once UnusedMember.Global
-    Object,
-    
-    /// <summary>
     /// The root of the documentation, containing all assemblies/packages.
     /// </summary>
     Root,

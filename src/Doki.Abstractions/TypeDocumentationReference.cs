@@ -40,6 +40,6 @@ public record TypeDocumentationReference : MemberDocumentation
     /// </summary>
     public TypeDocumentationReference()
     {
-        Content = DocumentationContentType.TypeReference;
+        ContentType = DocumentationContentType.TypeReference;
     }
 }

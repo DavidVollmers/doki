@@ -87,7 +87,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
 
         var markdown = new MarkdownBuilder(currentPath);
         markdown.Add(markdown.BuildBreadcrumbs(typeDocumentation))
-            .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.Content)}"))
+            .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.ContentType)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 
         var namespaceDocumentation =

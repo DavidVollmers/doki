@@ -329,7 +329,7 @@ public sealed partial class DocumentationGenerator
         var typeDocumentation = new TypeDocumentation
         {
             Id = typeId,
-            Content = context.Current.IsClass
+            ContentType = context.Current.IsClass
                 ? DocumentationContentType.Class
                 : context.Current.IsEnum
                     ? DocumentationContentType.Enum

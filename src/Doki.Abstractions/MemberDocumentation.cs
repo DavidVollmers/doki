@@ -19,11 +19,11 @@ public record MemberDocumentation : DocumentationObject
     /// Gets the assembly of the member.
     /// </summary>
     public string? Assembly { get; internal init; }
-    
+
     /// <summary>
     /// Gets the summary of the member.
     /// </summary>
-    public DocumentationObject? Summary { get; internal set; }
-    
-    public new DocumentationContentType Content { get; internal init; }
+    public XmlDocumentation? Summary { get; internal set; }
+
+    public new DocumentationContentType ContentType { get; internal init; }
 }

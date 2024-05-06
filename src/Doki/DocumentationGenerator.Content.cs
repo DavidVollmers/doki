@@ -124,7 +124,7 @@ public partial class DocumentationGenerator
             {
                 Id = fieldId,
                 Name = field.Name,
-                Content = DocumentationContentType.Field,
+                ContentType = DocumentationContentType.Field,
                 Namespace = field.DeclaringType.Namespace,
                 Assembly = fieldAssembly.Name,
                 Parent = parent,
@@ -165,7 +165,7 @@ public partial class DocumentationGenerator
             {
                 Id = constructorId,
                 Name = constructor.GetSanitizedName(),
-                Content = DocumentationContentType.Constructor,
+                ContentType = DocumentationContentType.Constructor,
                 Namespace = constructor.DeclaringType.Namespace,
                 Assembly = constructorAssembly.Name,
                 Parent = parent,
@@ -206,7 +206,7 @@ public partial class DocumentationGenerator
             {
                 Id = propertyId,
                 Name = property.Name,
-                Content = DocumentationContentType.Property,
+                ContentType = DocumentationContentType.Property,
                 Namespace = property.DeclaringType.Namespace,
                 Assembly = propertyAssembly.Name,
                 Parent = parent,
@@ -249,7 +249,7 @@ public partial class DocumentationGenerator
             {
                 Id = methodId,
                 Name = method.GetSanitizedName(),
-                Content = DocumentationContentType.Property,
+                ContentType = DocumentationContentType.Property,
                 Namespace = method.DeclaringType.Namespace,
                 Assembly = methodAssembly.Name,
                 Parent = parent,
@@ -365,7 +365,7 @@ public partial class DocumentationGenerator
             Id = typeId,
             Name = type.GetSanitizedName(),
             FullName = type.GetSanitizedName(true),
-            Content = DocumentationContentType.TypeReference,
+            ContentType = DocumentationContentType.TypeReference,
             Namespace = type.Namespace,
             Assembly = assembly.Name,
             IsGeneric = type.IsGenericType,
