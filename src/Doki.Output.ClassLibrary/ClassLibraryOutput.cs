@@ -111,7 +111,7 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
 
         foreach (var typeDocumentation in namespaceDocumentation.Types)
         {
-            BuildTypeDocumentation(typeDocumentation, content, indent + 1);
+            BuildTypeDocumentation(typeDocumentation, content, indent + 2);
         }
 
         content.AppendLine($$"""
@@ -136,12 +136,46 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                              {{i}}    IsMicrosoft = {{typeDocumentation.IsMicrosoft.ToString().ToLowerInvariant()}},
                              {{i}}    Namespace = "{{typeDocumentation.Namespace}}",
                              {{i}}    Assembly = "{{typeDocumentation.Assembly}}",
+                             {{i}}    Summary =
                              """);
 
-        // foreach (var memberDocumentation in typeDocumentation.Members)
-        // {
-        //     BuildMemberDocumentation(memberDocumentation, content, indent + 1);
-        // }
+        BuildXmlDocumentation(typeDocumentation.Summary, content, indent + 1);
+
+        content.AppendLine($$"""
+                             {{i}}    BaseType =
+                             """);
+
+        BuildTypeDocumentationReference(typeDocumentation.BaseType, content, indent + 1);
+
+        content.AppendLine($$"""
+                             {{i}}    GenericArguments =
+                             {{i}}    [
+                             """);
+
+        foreach (var genericTypeArgumentDocumentation in typeDocumentation.GenericArguments)
+        {
+            BuildGenericTypeArgumentDocumentation(genericTypeArgumentDocumentation, content, indent + 1);
+        }
+
+        content.AppendLine($$"""
+                             {{i}}    ],
+                             """);
+
+        //TODO Examples
+        
+        //TODO Remarks
+        
+        //TODO Interfaces
+        
+        //TODO DerivedTypes
+        
+        //TODO Constructors
+        
+        //TODO Fields
+        
+        //TODO Properties
+        
+        //TODO Methods
 
         content.AppendLine($$"""
                              {{i}}},
