@@ -31,15 +31,15 @@ internal static class InternalExtensions
 
     public static Text BuildText(this MarkdownBuilder builder, DocumentationObject obj)
     {
-        if (obj is not ContentList { Content: DocumentationContentType.XmlDocumentation } contentList)
+        if (obj is not XmlDocumentation { ContentType: DocumentationContentType.Xml } xmlDocumentation)
             throw new ArgumentException("DocumentationObject must be a ContentList with XmlDocumentation content.",
                 nameof(obj));
 
         var text = Text.Empty;
 
-        foreach (var item in contentList.Items)
+        foreach (var content in xmlDocumentation.Contents)
         {
-            switch (item)
+            switch (content)
             {
                 case TextContent textContent:
                     text.Append(textContent.Text);
@@ -59,7 +59,7 @@ internal static class InternalExtensions
                     break;
                 default:
                     throw new NotSupportedException(
-                        $"Unsupported {nameof(DocumentationObject)} type: {item.GetType().Name}");
+                        $"Unsupported {nameof(DocumentationObject)} type: {content.GetType().Name}");
             }
         }
 
@@ -74,7 +74,7 @@ internal static class InternalExtensions
 
     public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
     {
-        var indexFile = to.Content is DocumentationContentType.Assemblies or DocumentationContentType.Assembly
+        var indexFile = to.ContentType is DocumentationContentType.Root or DocumentationContentType.Assembly
             or DocumentationContentType.Namespace;
 
         var asText = false;

@@ -302,7 +302,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         if (!file.Directory!.Exists) file.Directory.Create();
 
         var heading = new Heading(name, 1);
-        if (documentationObject.Content == DocumentationContentType.Namespace) heading.Append(" Namespace");
+        if (documentationObject.ContentType == DocumentationContentType.Namespace) heading.Append(" Namespace");
 
         var markdown = new MarkdownBuilder(documentationObject.GetPath()).Add(heading);
 

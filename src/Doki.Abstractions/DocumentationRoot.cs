@@ -15,6 +15,6 @@ public sealed record DocumentationRoot : DocumentationObject
     public DocumentationRoot()
     {
         Id = "root";
-        Content = DocumentationContentType.Root;
+        ContentType = DocumentationContentType.Root;
     }
 }

@@ -16,6 +16,6 @@ public sealed record XmlDocumentation : DocumentationObject
     
     public XmlDocumentation()
     {
-        Content = DocumentationContentType.Xml;
+        ContentType = DocumentationContentType.Xml;
     }
 }

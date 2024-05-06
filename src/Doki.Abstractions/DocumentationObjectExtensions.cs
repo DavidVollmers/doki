@@ -10,7 +10,7 @@ public static class DocumentationObjectExtensions
         var parent = obj.Parent;
         while (parent != null)
         {
-            if (parent is T t && (expectedContent == null || t.Content == expectedContent)) return t;
+            if (parent is T t && (expectedContent == null || t.ContentType == expectedContent)) return t;
 
             parent = parent.Parent;
         }

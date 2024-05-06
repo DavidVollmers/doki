@@ -18,7 +18,7 @@ public abstract record DocumentationObject
     /// <summary>
     /// Gets the content type of the documentation object.
     /// </summary>
-    public DocumentationContentType Content { get; protected set; }
+    public DocumentationContentType ContentType { get; protected init; }
 
     protected DocumentationObject()
     {
@@ -30,6 +30,6 @@ public abstract record DocumentationObject
 
         Id = obj.Id ?? throw new ArgumentException("DocumentationObject.Id cannot be null.", nameof(obj));
         Parent = obj.Parent;
-        Content = obj.Content;
+        ContentType = obj.ContentType;
     }
 }

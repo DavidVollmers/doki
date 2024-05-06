@@ -34,6 +34,6 @@ public sealed record AssemblyDocumentation : DocumentationObject
 
     public AssemblyDocumentation()
     {
-        Content = DocumentationContentType.Assembly;
+        ContentType = DocumentationContentType.Assembly;
     }
 }

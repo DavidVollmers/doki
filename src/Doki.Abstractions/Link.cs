@@ -17,6 +17,6 @@ public sealed record Link : DocumentationObject
 
     public Link()
     {
-        Content = DocumentationContentType.Link;
+        ContentType = DocumentationContentType.Link;
     }
 }

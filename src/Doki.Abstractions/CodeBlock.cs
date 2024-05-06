@@ -17,6 +17,6 @@ public sealed record CodeBlock : DocumentationObject
 
     public CodeBlock()
     {
-        Content = DocumentationContentType.CodeBlock;
+        ContentType = DocumentationContentType.CodeBlock;
     }
 }

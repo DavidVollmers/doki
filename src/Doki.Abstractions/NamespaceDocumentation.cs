@@ -16,6 +16,6 @@ public sealed record NamespaceDocumentation : DocumentationObject
 
     public NamespaceDocumentation()
     {
-        Content = DocumentationContentType.Namespace;
+        ContentType = DocumentationContentType.Namespace;
     }
 }

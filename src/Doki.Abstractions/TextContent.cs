@@ -12,6 +12,6 @@ public sealed record TextContent : DocumentationObject
 
     public TextContent()
     {
-        Content = DocumentationContentType.Text;
+        ContentType = DocumentationContentType.Text;
     }
 }

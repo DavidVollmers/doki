@@ -80,7 +80,7 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                                          FileName = "{{assemblyDocumentation.FileName}}",
                                          Version = "{{assemblyDocumentation.Version}}",
                                          PackageId = "{{assemblyDocumentation.PackageId}}",
-                                         Items =
+                                         Namespaces =
                                          [
                              """);
 
@@ -101,11 +101,11 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
         var i = new string(' ', indent * 4);
 
         content.AppendLine($$"""
-                             {{i}}new ContentList
+                             {{i}}new NamespaceDocumentation
                              {{i}}{
                              {{i}}    Name = "{{namespaceDocumentation.Name}}",
                              {{i}}    Description = "{{namespaceDocumentation.Description}}",
-                             {{i}}    Items =
+                             {{i}}    Types =
                              {{i}}    [
                              """);
 
