@@ -350,28 +350,30 @@ public sealed partial class DocumentationGenerator
 
         if (summary != null) typeDocumentation.Summary = BuildXmlDocumentation(summary, typeDocumentation);
 
-        typeDocumentation.GenericArguments =
+        typeDocumentation.InternalGenericArguments =
             BuildGenericTypeArgumentDocumentation(context.Current, typeDocumentation, typeXml, context.Logger)
                 .ToArray();
 
-        typeDocumentation.Interfaces = BuildInterfaceDocumentation(context.Current, typeDocumentation).ToArray();
+        typeDocumentation.InternalInterfaces =
+            BuildInterfaceDocumentation(context.Current, typeDocumentation).ToArray();
 
-        typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(context.Current, typeDocumentation).ToArray();
+        typeDocumentation.InternalDerivedTypes =
+            BuildDerivedTypeDocumentation(context.Current, typeDocumentation).ToArray();
 
-        typeDocumentation.Examples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
+        typeDocumentation.InternalExamples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
 
-        typeDocumentation.Remarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
+        typeDocumentation.InternalRemarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
 
-        typeDocumentation.Constructors =
+        typeDocumentation.InternalConstructors =
             BuildConstructorDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Fields =
+        typeDocumentation.InternalFields =
             BuildFieldDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Properties =
+        typeDocumentation.InternalProperties =
             BuildPropertyDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Methods =
+        typeDocumentation.InternalMethods =
             BuildMethodDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
         var baseType = context.Current.BaseType;
@@ -393,10 +395,10 @@ public sealed partial class DocumentationGenerator
                 IsGeneric = baseType.IsGenericType
             };
 
-            typeReference.GenericArguments =
+            typeReference.InternalGenericArguments =
                 BuildGenericTypeArgumentDocumentation(baseType, typeReference, null, context.Logger).ToArray();
 
-            baseParent.BaseType = typeReference;
+            baseParent.InternalBaseType = typeReference;
 
             baseType = baseType.BaseType;
             baseParent = typeReference;

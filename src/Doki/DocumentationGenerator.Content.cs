@@ -9,7 +9,7 @@ public partial class DocumentationGenerator
     private const BindingFlags AllMembersBindingFlags =
         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-    private IEnumerable<DocumentationObject> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
+    private IEnumerable<XmlDocumentation> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
         DocumentationObject parent)
     {
         var xml = typeXml?.Select(xpath);
