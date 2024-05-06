@@ -8,7 +8,7 @@ public enum DocumentationContentType
     /// <summary>
     /// The root of the documentation, containing all assemblies/packages.
     /// </summary>
-    Assemblies,
+    Root,
     /// <summary>
     /// An assembly in the documentation.
     /// </summary>

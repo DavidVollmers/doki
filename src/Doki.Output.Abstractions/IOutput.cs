@@ -10,18 +10,19 @@ public interface IOutput
     Task EndAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     /// <summary>
-    /// Writes the content list to the output.
+    /// Writes the documentation.
     /// </summary>
-    /// <param name="contentList">The content list to write.</param>
+    /// <param name="root">The documentation to write.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default);
+    Task WriteAsync(DocumentationRoot root, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Writes the type documentation to the output.
+    /// Writes a specific type documentation.
     /// </summary>
     /// <param name="typeDocumentation">The type documentation to write.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default);
+    Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
 }

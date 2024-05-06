@@ -42,19 +42,4 @@ public record TypeDocumentationReference : MemberDocumentation
     {
         Content = DocumentationContentType.TypeReference;
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TypeDocumentationReference"/> class.
-    /// </summary>
-    /// <param name="reference">The reference to copy.</param>
-    public TypeDocumentationReference(TypeDocumentationReference reference) : base(reference)
-    {
-        Content = DocumentationContentType.TypeReference;
-        IsGeneric = reference.IsGeneric;
-        GenericArguments = reference.GenericArguments;
-        FullName = reference.FullName;
-        IsDocumented = reference.IsDocumented;
-        IsMicrosoft = reference.IsMicrosoft;
-        BaseType = reference.BaseType;
-    }
 }

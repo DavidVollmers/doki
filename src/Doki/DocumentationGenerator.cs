@@ -159,14 +159,9 @@ public sealed partial class DocumentationGenerator
             await output.BeginAsync(cancellationToken);
         }
 
-        var assemblies = new ContentList
-        {
-            Id = ContentList.Assemblies,
-            Name = ContentList.Assemblies,
-            Content = DocumentationContentType.Assemblies
-        };
+        var root = new DocumentationRoot();
 
-        var items = new List<DocumentationObject>();
+        var assemblies = new List<AssemblyDocumentation>();
         foreach (var (assembly, _) in _assemblies)
         {
             var assemblyDocumentation =
@@ -174,20 +169,20 @@ public sealed partial class DocumentationGenerator
                 {
                     Logger = logger,
                     Outputs = outputs,
-                    Parent = assemblies,
+                    Parent = root,
                     Current = assembly
                 }, cancellationToken);
 
             if (assemblyDocumentation == null) continue;
 
-            items.Add(assemblyDocumentation);
+            assemblies.Add(assemblyDocumentation);
         }
 
-        assemblies.Items = items.ToArray();
+        root.InternalAssemblies = assemblies.ToArray();
 
         foreach (var output in outputs)
         {
-            await output.WriteAsync(assemblies, cancellationToken);
+            await output.WriteAsync(root, cancellationToken);
         }
 
         foreach (var output in outputs)
@@ -243,10 +238,10 @@ public sealed partial class DocumentationGenerator
 
         var namespaces = types.Select(t => t.Namespace!).Distinct().ToList();
 
-        var namespaceItems = new List<DocumentationObject>();
+        var namespaceItems = new List<NamespaceDocumentation>();
         foreach (var @namespace in namespaces)
         {
-            var namespaceDocumentation = new ContentList
+            var namespaceDocumentation = new NamespaceDocumentation
             {
                 Id = @namespace,
                 Name = @namespace,
@@ -254,7 +249,7 @@ public sealed partial class DocumentationGenerator
                 Content = DocumentationContentType.Namespace
             };
 
-            var items = new List<DocumentationObject>();
+            var typeItems = new List<TypeDocumentation>();
             foreach (var type in types.Where(t => t.Namespace == @namespace))
             {
                 try
@@ -269,10 +264,7 @@ public sealed partial class DocumentationGenerator
                             },
                             cancellationToken);
 
-                    items.Add(new TypeDocumentationReference(typeDocumentation)
-                    {
-                        Parent = namespaceDocumentation
-                    });
+                    typeItems.Add(typeDocumentation);
                 }
                 catch (Exception e)
                 {
@@ -280,12 +272,12 @@ public sealed partial class DocumentationGenerator
                 }
             }
 
-            namespaceDocumentation.Items = items.ToArray();
+            namespaceDocumentation.InternalTypes = typeItems.ToArray();
 
             namespaceItems.Add(namespaceDocumentation);
         }
 
-        assemblyDocumentation.Items = namespaceItems.ToArray();
+        assemblyDocumentation.InternalNamespaces = namespaceItems.ToArray();
 
         return assemblyDocumentation;
     }

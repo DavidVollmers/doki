@@ -12,9 +12,9 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         return Task.CompletedTask;
     }
 
-    public async Task WriteAsync(ContentList contentList, CancellationToken cancellationToken = default)
+    public async Task WriteAsync(DocumentationRoot root, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(contentList);
+        ArgumentNullException.ThrowIfNull(root);
 
         var currentPath = contentList.GetPath();
 
