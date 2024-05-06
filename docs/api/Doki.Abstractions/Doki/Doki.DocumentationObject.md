@@ -20,7 +20,7 @@ public abstract record DocumentationObject
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → DocumentationObject
 
-Derived: [CodeBlock](Doki.CodeBlock.md), [ContentList](Doki.ContentList.md), [Link](Doki.Link.md), [MemberDocumentation](Doki.MemberDocumentation.md), [TextContent](Doki.TextContent.md)
+Derived: [AssemblyDocumentation](Doki.AssemblyDocumentation.md), [CodeBlock](Doki.CodeBlock.md), [DocumentationRoot](Doki.DocumentationRoot.md), [Link](Doki.Link.md), [MemberDocumentation](Doki.MemberDocumentation.md), [NamespaceDocumentation](Doki.NamespaceDocumentation.md), [TextContent](Doki.TextContent.md), [XmlDocumentation](Doki.XmlDocumentation.md)
 
 Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.DocumentationObject&gt;)
 
@@ -39,7 +39,7 @@ Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.mi
 |EqualityContract||
 |Id|Gets the ID of the documentation object.|
 |Parent|Gets the parent of the documentation object.|
-|Content|Gets the content type of the documentation object.|
+|ContentType|Gets the content type of the documentation object.|
 
 
 ## Methods

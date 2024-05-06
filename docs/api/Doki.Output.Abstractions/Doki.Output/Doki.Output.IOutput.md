@@ -24,7 +24,9 @@ public interface IOutput
 |---|---|
 |BeginAsync(System.Threading.CancellationToken)||
 |EndAsync(System.Threading.CancellationToken)||
-|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)|Writes the content list to the output.|
-|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)|Writes the type documentation to the output.|
+|WriteAsync(Doki.DocumentationRoot, System.Threading.CancellationToken)|Writes the documentation.|
+|WriteAsync(Doki.AssemblyDocumentation, System.Threading.CancellationToken)||
+|WriteAsync(Doki.NamespaceDocumentation, System.Threading.CancellationToken)||
+|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)|Writes a specific type documentation.|
 
 

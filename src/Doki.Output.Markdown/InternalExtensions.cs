@@ -96,6 +96,7 @@ internal static class InternalExtensions
         relativePath ??= indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
 
         text ??= to.Id;
+        if (text == "root") text = "Packages";
 
         if (to is not TypeDocumentationReference { IsGeneric: true } type ||
             type.GenericArguments.All(a => a.IsGenericParameter))

@@ -16,7 +16,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     {
         ArgumentNullException.ThrowIfNull(root);
 
-        var (file, markdown) = Prepare(root, root.Name);
+        var (file, markdown) = Prepare(root, "Packages");
 
         var items = new List<Element>();
         foreach (var assemblyDocumentation in root.Assemblies)
@@ -46,7 +46,8 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     {
         ArgumentNullException.ThrowIfNull(assemblyDocumentation);
 
-        var (file, markdown) = Prepare(assemblyDocumentation, assemblyDocumentation.Name);
+        var (file, markdown) = Prepare(assemblyDocumentation, assemblyDocumentation.Name,
+            assemblyDocumentation.Description);
 
         markdown.Add(new Heading("Namespaces", 2));
         markdown.Add(new List
@@ -62,7 +63,8 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     {
         ArgumentNullException.ThrowIfNull(namespaceDocumentation);
 
-        var (file, markdown) = Prepare(namespaceDocumentation, namespaceDocumentation.Name);
+        var (file, markdown) = Prepare(namespaceDocumentation, namespaceDocumentation.Name,
+            namespaceDocumentation.Description);
 
         markdown.Add(new Heading("Types", 2));
         markdown.Add(new List

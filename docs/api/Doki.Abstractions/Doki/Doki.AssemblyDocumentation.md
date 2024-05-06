@@ -15,10 +15,10 @@ Package: [Doki.Abstractions](https://www.nuget.org/packages/Doki.Abstractions)
 **Represents the documentation for an assembly.**
 
 ```csharp
-public sealed record AssemblyDocumentation : Doki.ContentList
+public sealed record AssemblyDocumentation : Doki.DocumentationObject
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → [ContentList](Doki.ContentList.md) → AssemblyDocumentation
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [DocumentationObject](Doki.DocumentationObject.md) → AssemblyDocumentation
 
 Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.AssemblyDocumentation&gt;)
 
@@ -37,6 +37,9 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 |FileName|Gets the name of the assembly.|
 |Version|Gets the version of the assembly.|
 |PackageId|Gets the NuGet package ID of the assembly.|
+|Name||
+|Description||
+|Namespaces||
 
 
 ## Methods
@@ -47,7 +50,7 @@ Implements: [System.IEquatable&lt;Doki.AssemblyDocumentation&gt;](https://learn.
 |PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
-|Equals(Doki.ContentList)||
+|Equals(Doki.DocumentationObject)||
 |Equals(Doki.AssemblyDocumentation)||
 
 

@@ -2,8 +2,6 @@
 
 public sealed record DocumentationRoot : DocumentationObject
 {
-    public string Name => "Packages";
-
     internal AssemblyDocumentation[] InternalAssemblies = [];
 
     public AssemblyDocumentation[] Assemblies

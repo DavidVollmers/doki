@@ -32,7 +32,6 @@ Implements: [IOutput](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.IOu
 |   |Summary|
 |---|---|
 |BeginAsync(System.Threading.CancellationToken)||
-|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
-|WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
+|WriteAsync(Doki.DocumentationRoot, System.Threading.CancellationToken)||
 
 
