@@ -33,7 +33,6 @@ Implements: [System.IEquatable&lt;Doki.XmlDocumentation&gt;](https://learn.micro
 |---|---|
 |EqualityContract||
 |Name||
-|Description||
 |Contents||
 
 

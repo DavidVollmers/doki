@@ -127,57 +127,149 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
         content.AppendLine($$"""
                              {{i}}new TypeDocumentation
                              {{i}}{
-                             {{i}}    Name = "{{typeDocumentation.Name}}",
                              {{i}}    ContentType = DocumentationContentType.{{Enum.GetName(typeDocumentation.ContentType)}},
                              {{i}}    Definition = "{{typeDocumentation.Definition}}",
-                             {{i}}    IsGeneric = {{typeDocumentation.IsGeneric.ToString().ToLowerInvariant()}},
-                             {{i}}    FullName = "{{typeDocumentation.FullName}}",
-                             {{i}}    IsDocumented = {{typeDocumentation.IsDocumented.ToString().ToLowerInvariant()}},
-                             {{i}}    IsMicrosoft = {{typeDocumentation.IsMicrosoft.ToString().ToLowerInvariant()}},
-                             {{i}}    Namespace = "{{typeDocumentation.Namespace}}",
-                             {{i}}    Assembly = "{{typeDocumentation.Assembly}}",
-                             {{i}}    Summary =
-                             """);
-
-        BuildXmlDocumentation(typeDocumentation.Summary, content, indent + 1);
-
-        content.AppendLine($$"""
-                             {{i}}    BaseType =
-                             """);
-
-        BuildTypeDocumentationReference(typeDocumentation.BaseType, content, indent + 1);
-
-        content.AppendLine($$"""
-                             {{i}}    GenericArguments =
+                             {{i}}    Examples =
                              {{i}}    [
                              """);
 
-        foreach (var genericTypeArgumentDocumentation in typeDocumentation.GenericArguments)
+        //TODO Examples
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Remarks =
+                            {i}    [
+                            """);
+
+        //TODO Remarks
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Interfaces =
+                            {i}    [
+                            """);
+
+        //TODO Interfaces
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    DerivedTypes =
+                            {i}    [
+                            """);
+
+        //TODO DerivedTypes
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Constructors =
+                            {i}    [
+                            """);
+
+        //TODO Constructors
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Fields =
+                            {i}    [
+                            """);
+
+        //TODO Fields
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Properties =
+                            {i}    [
+                            """);
+
+        //TODO Properties
+
+        content.AppendLine($"""
+                            {i}    ],
+                            {i}    Methods =
+                            {i}    [
+                            """);
+
+        //TODO Methods
+
+        content.AppendLine($"{i}    ],");
+
+        BuildTypeDocumentationReferenceProperties(typeDocumentation, content, indent);
+
+        content.AppendLine($$"""
+                             {{i}}},
+                             """);
+    }
+
+    private static void BuildTypeDocumentationReferenceProperties(TypeDocumentationReference typeDocumentationReference,
+        StringBuilder content, int indent)
+    {
+        var i = new string(' ', indent * 4);
+
+        content.Append($"""
+                        {i}    IsGeneric = {typeDocumentationReference.IsGeneric.ToString().ToLowerInvariant()},
+                        {i}    FullName = "{typeDocumentationReference.FullName}",
+                        {i}    IsDocumented = {typeDocumentationReference.IsDocumented.ToString().ToLowerInvariant()},
+                        {i}    IsMicrosoft = {typeDocumentationReference.IsMicrosoft.ToString().ToLowerInvariant()},
+                        {i}    BaseType =
+                        """);
+
+        if (typeDocumentationReference.BaseType == null) content.AppendLine(" null,");
+        //TODO BuildTypeDocumentationReference(typeDocumentation.BaseType, content, indent + 1);
+        else content.AppendLine(" null,");
+
+        content.AppendLine($"""
+                            {i}    GenericArguments =
+                            {i}    [
+                            """);
+
+        foreach (var genericTypeArgumentDocumentation in typeDocumentationReference.GenericArguments)
         {
-            BuildGenericTypeArgumentDocumentation(genericTypeArgumentDocumentation, content, indent + 1);
+            //TODO BuildGenericTypeArgumentDocumentation(genericTypeArgumentDocumentation, content, indent + 1);
+        }
+
+        content.AppendLine($"{i}    ],");
+
+        BuildMemberDocumentationProperties(typeDocumentationReference, content, indent);
+    }
+
+    private static void BuildMemberDocumentationProperties(MemberDocumentation memberDocumentation,
+        StringBuilder content, int indent)
+    {
+        var i = new string(' ', indent * 4);
+
+        content.Append($"""
+                        {i}    Name = "{memberDocumentation.Name}",
+                        {i}    Namespace = "{memberDocumentation.Namespace}",
+                        {i}    Assembly = "{memberDocumentation.Assembly}",
+                        {i}    Summary =
+                        """);
+
+        if (memberDocumentation.Summary == null) content.AppendLine(" null,");
+        else BuildXmlDocumentation(memberDocumentation.Summary, content, indent + 1, true);
+    }
+
+    private static void BuildXmlDocumentation(XmlDocumentation xmlDocumentation, StringBuilder content, int indent,
+        bool startInline = false)
+    {
+        var i = new string(' ', indent * 4);
+
+        content.Append(startInline ? " " : i);
+
+        content.AppendLine($$"""
+                             new XmlDocumentation
+                             {{i}}{
+                             {{i}}    Name = "{{xmlDocumentation.Name}}",
+                             {{i}}    Contents =
+                             {{i}}    [
+                             """);
+
+        foreach (var documentationObject in xmlDocumentation.Contents)
+        {
+            //TODO BuildDocumentationObject(documentationObject, content, indent + 1);
         }
 
         content.AppendLine($$"""
-                             {{i}}    ],
-                             """);
-
-        //TODO Examples
-        
-        //TODO Remarks
-        
-        //TODO Interfaces
-        
-        //TODO DerivedTypes
-        
-        //TODO Constructors
-        
-        //TODO Fields
-        
-        //TODO Properties
-        
-        //TODO Methods
-
-        content.AppendLine($$"""
+                             {{i}}    ]
                              {{i}}},
                              """);
     }
