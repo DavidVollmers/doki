@@ -2,8 +2,7 @@
   "$schema": "src/Doki.CommandLine/doki.config.schema.json",
   "input": [
     "src/**/*.csproj",
-    "!src/Doki.CommandLine/Doki.CommandLine.csproj",
-    "!src/Doki.Documentation.Content/Doki.Documentation.Content.csproj"
+    "!src/Doki.CommandLine/Doki.CommandLine.csproj"
   ],
   "output": [
     {
@@ -11,6 +10,13 @@
       "from": "src/Doki.Output.Markdown/Doki.Output.Markdown.csproj",
       "options": {
         "outputPath": "docs/api"
+      }
+    },
+    {
+      "type": "Doki.Output.Json",
+      "from": "src/Doki.Output.Json/Doki.Output.Json.csproj",
+      "options": {
+        "outputPath": "docs/json"
       }
     }
   ]

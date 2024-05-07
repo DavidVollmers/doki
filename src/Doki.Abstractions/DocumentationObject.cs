@@ -1,4 +1,6 @@
-﻿namespace Doki;
+﻿using System.Text.Json.Serialization;
+
+namespace Doki;
 
 /// <summary>
 /// Represents a documentation object.
@@ -13,6 +15,7 @@ public abstract record DocumentationObject
     /// <summary>
     /// Gets the parent of the documentation object.
     /// </summary>
+    [JsonIgnore]
     public DocumentationObject? Parent { get; internal init; }
 
     /// <summary>
