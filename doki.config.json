@@ -2,7 +2,8 @@
   "$schema": "src/Doki.CommandLine/doki.config.schema.json",
   "input": [
     "src/**/*.csproj",
-    "!src/Doki.CommandLine/Doki.CommandLine.csproj"
+    "!src/Doki.CommandLine/Doki.CommandLine.csproj",
+    "!src/Doki.Documentation.Content/Doki.Documentation.Content.csproj"
   ],
   "output": [
     {
