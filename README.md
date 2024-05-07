@@ -9,16 +9,14 @@
 Doki is a .NET code documentation framework that allows you to generate documentation from your codebase.
 
 It uses the XML documentation comments in your code to generate documentation in various formats, such as Markdown,
-Blazor, and more.
-
-> **Note:** Doki is still in preview. Currently, only the Markdown output is available.
+JSON, and more.
 
 ## Getting Started
 
 Install the `doki` Command-Line Interface:
 
 ```bash
-dotnet tool install --global Doki.CommandLine --version 0.3.0-preview
+dotnet tool install --global Doki.CommandLine --version 0.4.0-preview
 ```
 
 > **Note:** You can find the latest version of the CLI and how to install it
