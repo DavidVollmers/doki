@@ -133,7 +133,10 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                              {{i}}    [
                              """);
 
-        //TODO Examples
+        foreach (var xmlDocumentation in typeDocumentation.Examples)
+        {
+            BuildXmlDocumentation(xmlDocumentation, content, indent + 2);
+        }
 
         content.AppendLine($"""
                             {i}    ],
@@ -141,7 +144,10 @@ public sealed class ClassLibraryOutput(ClassLibraryOutputOptions options) : IOut
                             {i}    [
                             """);
 
-        //TODO Remarks
+        foreach (var xmlDocumentation in typeDocumentation.Remarks)
+        {
+            BuildXmlDocumentation(xmlDocumentation, content, indent + 2);
+        }
 
         content.AppendLine($"""
                             {i}    ],
