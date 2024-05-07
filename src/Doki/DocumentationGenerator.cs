@@ -376,33 +376,9 @@ public sealed partial class DocumentationGenerator
         typeDocumentation.InternalMethods =
             BuildMethodDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        var baseType = context.Current.BaseType;
-        TypeDocumentationReference baseParent = typeDocumentation;
-        while (baseType != null)
-        {
-            var baseTypeAssembly = baseType.Assembly.GetName();
-
-            var typeReference = new TypeDocumentationReference
-            {
-                Id = baseType.GetXmlDocumentationId(),
-                Parent = baseParent,
-                Name = baseType.GetSanitizedName(),
-                FullName = baseType.GetSanitizedName(true),
-                Namespace = baseType.Namespace,
-                Assembly = baseTypeAssembly.Name,
-                IsDocumented = IsTypeDocumented(baseType),
-                IsMicrosoft = IsAssemblyFromMicrosoft(baseTypeAssembly),
-                IsGeneric = baseType.IsGenericType
-            };
-
-            typeReference.InternalGenericArguments =
-                BuildGenericTypeArgumentDocumentation(baseType, typeReference, null, context.Logger).ToArray();
-
-            baseParent.InternalBaseType = typeReference;
-
-            baseType = baseType.BaseType;
-            baseParent = typeReference;
-        }
+        if (context.Current.BaseType != null)
+            typeDocumentation.InternalBaseType =
+                BuildTypeDocumentationReference(context.Current.BaseType, typeDocumentation);
 
         foreach (var output in context.Outputs)
         {

@@ -4,11 +4,7 @@ namespace Doki.Output.Json;
 
 public sealed class JsonOutput(OutputOptions<JsonOutput> options) : IOutput
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new();
 
     public Task BeginAsync(CancellationToken cancellationToken = default)
     {

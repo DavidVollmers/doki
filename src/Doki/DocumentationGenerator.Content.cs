@@ -60,6 +60,10 @@ public partial class DocumentationGenerator
                 Parent = parent,
             };
 
+            if (genericArgument.BaseType != null)
+                genericArgumentDocumentation.InternalBaseType =
+                    BuildTypeDocumentationReference(genericArgument.BaseType, genericArgumentDocumentation);
+
             if (description != null)
                 genericArgumentDocumentation.Description =
                     BuildXmlDocumentation(description, genericArgumentDocumentation);
@@ -360,7 +364,7 @@ public partial class DocumentationGenerator
 
         var assembly = type.Assembly.GetName();
 
-        return new TypeDocumentationReference
+        var typeDocumentationReference = new TypeDocumentationReference
         {
             Id = typeId,
             Name = type.GetSanitizedName(),
@@ -373,5 +377,11 @@ public partial class DocumentationGenerator
             IsMicrosoft = IsAssemblyFromMicrosoft(assembly),
             Parent = parent
         };
+
+        if (type.BaseType != null)
+            typeDocumentationReference.InternalBaseType =
+                BuildTypeDocumentationReference(type.BaseType, typeDocumentationReference);
+
+        return typeDocumentationReference;
     }
 }

@@ -15,7 +15,7 @@ public abstract record DocumentationObject
     /// <summary>
     /// Gets the ID of the documentation object.
     /// </summary>
-    public string Id { get; internal init; } = null!;
+    public string Id { get; init; } = null!;
 
     /// <summary>
     /// Gets the parent of the documentation object.
