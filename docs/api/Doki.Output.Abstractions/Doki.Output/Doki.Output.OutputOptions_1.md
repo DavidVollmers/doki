@@ -1,6 +1,6 @@
 [Packages](../../README.md) / [Doki.Output.Abstractions](../README.md) / [Doki.Output](README.md) / 
 
-# OutputOptions Class
+# OutputOptions&lt;T&gt; Class
 
 ## Definition
 
@@ -12,23 +12,24 @@ Package: [Doki.Output.Abstractions](https://www.nuget.org/packages/Doki.Output.A
 
 ---
 
-**Options for the output.**
-
 ```csharp
-public abstract record OutputOptions
+public record OutputOptions<T>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions&lt;T&gt;
 
-Derived: [DefaultOutputOptions](Doki.Output.DefaultOutputOptions.md)
+Implements: [IEquatable&lt;Doki.Output.OutputOptions&lt;T&gt;&gt;](https://learn.microsoft.com/en-us/dotnet/api/IEquatable&lt;Doki.Output.OutputOptions&lt;T&gt;&gt;)
 
-Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.microsoft.com/en-us/dotnet/api/System.IEquatable&lt;Doki.Output.OutputOptions&gt;)
+## Type Parameters
+
+- `T`
+
 
 ## Constructors
 
 |   |Summary|
 |---|---|
-|OutputOptions(Doki.Output.OutputOptions)||
+|OutputOptions(Doki.Output.OutputOptions&lt;T&gt;)||
 |OutputOptions()||
 
 
@@ -37,8 +38,8 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.m
 |   |Summary|
 |---|---|
 |EqualityContract||
-|OutputPath|Gets the output path.|
-|Default|Gets the default output options.|
+|OutputDirectory||
+|ClearOutput||
 
 
 ## Methods
@@ -49,6 +50,6 @@ Implements: [System.IEquatable&lt;Doki.Output.OutputOptions&gt;](https://learn.m
 |PrintMembers(System.Text.StringBuilder)||
 |GetHashCode()||
 |Equals(System.Object)||
-|Equals(Doki.Output.OutputOptions)||
+|Equals(Doki.Output.OutputOptions&lt;T&gt;)||
 
 

@@ -14,4 +14,9 @@ public sealed record CodeBlock : DocumentationObject
     /// Gets the code of the block.
     /// </summary>
     public string Code { get; internal init; } = null!;
+
+    public CodeBlock()
+    {
+        ContentType = DocumentationContentType.CodeBlock;
+    }
 }

@@ -43,6 +43,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 |Fields|Gets the fields of the type.|
 |Properties|Gets the properties of the type.|
 |Methods|Gets the methods of the type.|
+|ContentType||
 
 
 ## Methods

@@ -6,10 +6,10 @@ namespace Doki;
 
 public partial class DocumentationGenerator
 {
-    private static readonly BindingFlags AllMembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic |
-                                                                  BindingFlags.Instance | BindingFlags.Static;
+    private const BindingFlags AllMembersBindingFlags =
+        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-    private IEnumerable<DocumentationObject> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
+    private IEnumerable<XmlDocumentation> BuildXmlDocumentation(string xpath, XPathNavigator? typeXml,
         DocumentationObject parent)
     {
         var xml = typeXml?.Select(xpath);
@@ -51,7 +51,6 @@ public partial class DocumentationGenerator
                 Id = genericArgumentId,
                 Name = genericArgument.GetSanitizedName(),
                 FullName = genericArgument.GetSanitizedName(true),
-                Content = DocumentationContentType.GenericTypeArgument,
                 Namespace = genericArgument.Namespace,
                 Assembly = genericArgumentAssembly.Name,
                 IsGeneric = genericArgument.IsGenericType,
@@ -125,7 +124,7 @@ public partial class DocumentationGenerator
             {
                 Id = fieldId,
                 Name = field.Name,
-                Content = DocumentationContentType.Field,
+                ContentType = DocumentationContentType.Field,
                 Namespace = field.DeclaringType.Namespace,
                 Assembly = fieldAssembly.Name,
                 Parent = parent,
@@ -166,7 +165,7 @@ public partial class DocumentationGenerator
             {
                 Id = constructorId,
                 Name = constructor.GetSanitizedName(),
-                Content = DocumentationContentType.Constructor,
+                ContentType = DocumentationContentType.Constructor,
                 Namespace = constructor.DeclaringType.Namespace,
                 Assembly = constructorAssembly.Name,
                 Parent = parent,
@@ -207,7 +206,7 @@ public partial class DocumentationGenerator
             {
                 Id = propertyId,
                 Name = property.Name,
-                Content = DocumentationContentType.Property,
+                ContentType = DocumentationContentType.Property,
                 Namespace = property.DeclaringType.Namespace,
                 Assembly = propertyAssembly.Name,
                 Parent = parent,
@@ -250,7 +249,7 @@ public partial class DocumentationGenerator
             {
                 Id = methodId,
                 Name = method.GetSanitizedName(),
-                Content = DocumentationContentType.Property,
+                ContentType = DocumentationContentType.Property,
                 Namespace = method.DeclaringType.Namespace,
                 Assembly = methodAssembly.Name,
                 Parent = parent,
@@ -263,17 +262,16 @@ public partial class DocumentationGenerator
         }
     }
 
-    private DocumentationObject BuildXmlDocumentation(XPathNavigator navigator, DocumentationObject parent)
+    private XmlDocumentation BuildXmlDocumentation(XPathNavigator navigator, DocumentationObject parent)
     {
-        var content = new ContentList
+        var content = new XmlDocumentation
         {
             Id = navigator.BaseURI,
-            Content = DocumentationContentType.XmlDocumentation,
             Parent = parent,
             Name = navigator.Name
         };
 
-        var items = new List<DocumentationObject>();
+        var contents = new List<DocumentationObject>();
         var nodes = navigator.SelectChildren(XPathNodeType.All);
         while (nodes.MoveNext())
         {
@@ -289,12 +287,11 @@ public partial class DocumentationGenerator
                         case "see":
                             var cref = node.GetAttribute("cref", string.Empty);
                             var href = node.GetAttribute("href", string.Empty);
-                            if (cref != string.Empty) items.Add(BuildCRefDocumentation(cref, content));
+                            if (cref != string.Empty) contents.Add(BuildCRefDocumentation(cref, content));
                             else if (href != string.Empty)
-                                items.Add(new Link
+                                contents.Add(new Link
                                 {
                                     Id = node.BaseURI,
-                                    Content = DocumentationContentType.Link,
                                     Parent = content,
                                     Url = href,
                                     Text = node.Value.TrimIndentation()
@@ -303,26 +300,24 @@ public partial class DocumentationGenerator
                         case "code":
                             var language = node.GetAttribute("lang", string.Empty);
                             if (language == string.Empty) language = null;
-                            items.Add(new CodeBlock
+                            contents.Add(new CodeBlock
                             {
                                 Id = node.BaseURI,
-                                Content = DocumentationContentType.CodeBlock,
                                 Parent = content,
                                 Language = language,
                                 Code = node.Value.TrimIndentation().TrimEnd()
                             });
                             break;
                         default:
-                            items.Add(BuildXmlDocumentation(node, content));
+                            contents.Add(BuildXmlDocumentation(node, content));
                             break;
                     }
 
                     break;
                 case XPathNodeType.Text:
-                    items.Add(new TextContent
+                    contents.Add(new TextContent
                     {
                         Id = node.BaseURI,
-                        Content = DocumentationContentType.Text,
                         Parent = content,
                         Text = node.Value.TrimIndentation()
                     });
@@ -332,7 +327,7 @@ public partial class DocumentationGenerator
             }
         }
 
-        content.Items = items.ToArray();
+        content.InternalContents = contents.ToArray();
         return content;
     }
 
@@ -343,7 +338,7 @@ public partial class DocumentationGenerator
         var typeName = cref[2..];
         if (!typeName.Contains('.'))
         {
-            var @namespace = parent.TryGetParent<ContentList>(DocumentationContentType.Namespace);
+            var @namespace = parent.TryGetParent<NamespaceDocumentation>(DocumentationContentType.Namespace);
             if (@namespace != null) typeName = $"{@namespace.Id}.{typeName}";
         }
 
@@ -352,7 +347,6 @@ public partial class DocumentationGenerator
             return new TextContent
             {
                 Id = typeName,
-                Content = DocumentationContentType.Text,
                 Parent = parent,
                 Text = typeName
             };
@@ -371,7 +365,7 @@ public partial class DocumentationGenerator
             Id = typeId,
             Name = type.GetSanitizedName(),
             FullName = type.GetSanitizedName(true),
-            Content = DocumentationContentType.TypeReference,
+            ContentType = DocumentationContentType.TypeReference,
             Namespace = type.Namespace,
             Assembly = assembly.Name,
             IsGeneric = type.IsGenericType,

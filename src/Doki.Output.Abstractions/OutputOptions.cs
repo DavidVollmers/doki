@@ -2,18 +2,10 @@
 
 namespace Doki.Output;
 
-/// <summary>
-/// Options for the output.
-/// </summary>
-public abstract record OutputOptions
+// ReSharper disable once UnusedTypeParameter
+public record OutputOptions<T> where T : IOutput
 {
-    /// <summary>
-    /// Gets the output path.
-    /// </summary>
-    [JsonPropertyName("outputPath")] public string? OutputPath { get; init; }
-    
-    /// <summary>
-    /// Gets the default output options.
-    /// </summary>
-    public static OutputOptions Default { get; } = new DefaultOutputOptions();
+    [JsonPropertyName("outputPath")] public DirectoryInfo OutputDirectory { get; init; } = null!;
+
+    [JsonPropertyName("clearOutput")] public bool ClearOutput { get; init; } = true;
 }

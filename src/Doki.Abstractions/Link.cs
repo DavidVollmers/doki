@@ -14,4 +14,9 @@ public sealed record Link : DocumentationObject
     /// Gets the text of the link.
     /// </summary>
     public string Text { get; init; } = null!;
+
+    public Link()
+    {
+        ContentType = DocumentationContentType.Link;
+    }
 }

@@ -29,7 +29,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |   |Summary|
 |---|---|
 |TypeDocumentationReference()|Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
-|TypeDocumentationReference(Doki.TypeDocumentationReference)|Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
+|TypeDocumentationReference(Doki.TypeDocumentationReference)||
 
 
 ## Properties

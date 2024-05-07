@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml.XPath;
 using Doki.Output;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Doki;
@@ -29,6 +30,7 @@ public sealed partial class DocumentationGenerator
 {
     private readonly Dictionary<Assembly, XPathNavigator> _assemblies = new();
     private readonly Dictionary<string, XPathNavigator> _projects = new();
+    private readonly IServiceProvider? _serviceProvider;
     private readonly List<IOutput> _outputs = [];
 
     /// <summary>
@@ -85,6 +87,13 @@ public sealed partial class DocumentationGenerator
     {
     }
 
+    public DocumentationGenerator(IServiceProvider serviceProvider)
+    {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+
+        _serviceProvider = serviceProvider;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerator"/> class with the specified assembly and xml documentation.
     /// </summary>
@@ -137,50 +146,67 @@ public sealed partial class DocumentationGenerator
 
         if (_assemblies.Count == 0) throw new InvalidOperationException("No assemblies added for documentation.");
 
+        await using var builder = new OutputBuilder(_serviceProvider, _outputs);
+
+        var outputs = builder.Build().ToArray();
+
+        logger.LogDebug("{OutputCount} outputs found.", outputs.Length);
+
         logger.LogInformation("Generating documentation for {AssemblyCount} assemblies.", _assemblies.Count);
 
-        var assemblies = new ContentList
+        foreach (var output in outputs)
         {
-            Id = ContentList.Assemblies,
-            Name = ContentList.Assemblies,
-            Content = DocumentationContentType.Assemblies
-        };
+            await output.BeginAsync(cancellationToken);
+        }
 
-        var items = new List<DocumentationObject>();
+        var root = new DocumentationRoot();
+
+        var assemblies = new List<AssemblyDocumentation>();
         foreach (var (assembly, _) in _assemblies)
         {
             var assemblyDocumentation =
-                await GenerateAssemblyDocumentationAsync(assembly, assemblies, logger, cancellationToken);
+                await GenerateAssemblyDocumentationAsync(new GeneratorContext<Assembly>
+                {
+                    Logger = logger,
+                    Outputs = outputs,
+                    Parent = root,
+                    Current = assembly
+                }, cancellationToken);
 
             if (assemblyDocumentation == null) continue;
 
-            items.Add(assemblyDocumentation);
+            assemblies.Add(assemblyDocumentation);
         }
 
-        assemblies.Items = items.ToArray();
+        root.InternalAssemblies = assemblies.ToArray();
 
-        foreach (var output in _outputs)
+        foreach (var output in outputs)
         {
-            await output.WriteAsync(assemblies, cancellationToken);
+            await output.WriteAsync(root, cancellationToken);
+        }
+
+        foreach (var output in outputs)
+        {
+            await output.EndAsync(cancellationToken);
         }
     }
 
-    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(Assembly assembly,
-        DocumentationObject parent, ILogger logger, CancellationToken cancellationToken)
+    private async Task<AssemblyDocumentation?> GenerateAssemblyDocumentationAsync(GeneratorContext<Assembly> context,
+        CancellationToken cancellationToken)
     {
-        var assemblyName = assembly.GetName();
+        var assemblyName = context.Current.GetName();
 
         var assemblyId = assemblyName.Name;
         if (assemblyId == null)
         {
-            logger.LogWarning("No name found for assembly {Assembly}.", assembly);
+            context.Logger.LogWarning("No name found for assembly {Assembly}.", context.Current);
             return null;
         }
 
-        logger.LogInformation("Generating documentation for assembly {Assembly}.", assemblyId);
+        context.Logger.LogInformation("Generating documentation for assembly {Assembly}.", assemblyId);
 
         string? packageId = null;
-        var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+        var description = context.Current.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
         if (_projects.TryGetValue(assemblyId, out var projectMetadata))
         {
             packageId = projectMetadata.SelectSingleNode("/Project/PropertyGroup/PackageId")?.Value;
@@ -191,130 +217,166 @@ public sealed partial class DocumentationGenerator
 
         if (description == null)
         {
-            logger.LogWarning("No description found for assembly {Assembly}.", assemblyId);
+            context.Logger.LogWarning("No description found for assembly {Assembly}.", assemblyId);
         }
 
-        var types = GetTypesToDocument(assembly).ToArray();
+        var types = GetTypesToDocument(context.Current).ToArray();
 
         var assemblyDocumentation = new AssemblyDocumentation
         {
             Id = assemblyId,
             Name = assemblyId,
-            Parent = parent,
-            Content = DocumentationContentType.Assembly,
+            Parent = context.Parent,
             Description = description,
-            FileName = assembly.Location.Split(Path.DirectorySeparatorChar).Last(),
+            FileName = context.Current.Location.Split(Path.DirectorySeparatorChar).Last(),
             Version = assemblyName.Version?.ToString(),
             PackageId = packageId
         };
 
-        logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
+        context.Logger.LogInformation("Generating documentation for {TypeCount} types.", types.Length);
 
         var namespaces = types.Select(t => t.Namespace!).Distinct().ToList();
 
-        var namespaceItems = new List<DocumentationObject>();
+        var namespaceItems = new List<NamespaceDocumentation>();
         foreach (var @namespace in namespaces)
         {
-            var namespaceDocumentation = new ContentList
-            {
-                Id = @namespace,
-                Name = @namespace,
-                Parent = assemblyDocumentation,
-                Content = DocumentationContentType.Namespace
-            };
-
-            var items = new List<DocumentationObject>();
-            foreach (var type in types.Where(t => t.Namespace == @namespace))
-            {
-                try
-                {
-                    var typeDocumentation =
-                        await GenerateTypeDocumentationAsync(type, namespaceDocumentation, logger, cancellationToken);
-
-                    items.Add(new TypeDocumentationReference(typeDocumentation)
+            var namespaceDocumentation =
+                await GenerateNamespaceDocumentationAsync(new GeneratorContext<string>
                     {
-                        Parent = namespaceDocumentation
-                    });
-                }
-                catch (Exception e)
-                {
-                    logger.LogError(e, "Failed to generate documentation for type {Type}.", type);
-                }
-            }
-
-            namespaceDocumentation.Items = items.ToArray();
+                        Logger = context.Logger,
+                        Parent = assemblyDocumentation,
+                        Current = @namespace,
+                        Outputs = context.Outputs
+                    },
+                    types.Where(t => t.Namespace == @namespace),
+                    cancellationToken);
 
             namespaceItems.Add(namespaceDocumentation);
         }
 
-        assemblyDocumentation.Items = namespaceItems.ToArray();
+        assemblyDocumentation.InternalNamespaces = namespaceItems.ToArray();
+
+        foreach (var output in context.Outputs)
+        {
+            await output.WriteAsync(assemblyDocumentation, cancellationToken);
+        }
 
         return assemblyDocumentation;
     }
 
-    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(Type type, DocumentationObject parent,
-        ILogger logger, CancellationToken cancellationToken)
+    private async Task<NamespaceDocumentation> GenerateNamespaceDocumentationAsync(GeneratorContext<string> context,
+        IEnumerable<Type> types, CancellationToken cancellationToken)
     {
-        var typeId = type.GetXmlDocumentationId();
+        var @namespace = context.Current;
 
-        logger.LogDebug("Generating documentation for type {Type}.", typeId);
+        var namespaceDocumentation = new NamespaceDocumentation
+        {
+            Id = @namespace,
+            Name = @namespace,
+            Parent = context.Parent
+        };
 
-        var assemblyXml = _assemblies[type.Assembly];
+        var typeItems = new List<TypeDocumentation>();
+        foreach (var type in types)
+        {
+            try
+            {
+                var typeDocumentation =
+                    await GenerateTypeDocumentationAsync(new GeneratorContext<Type>
+                        {
+                            Logger = context.Logger,
+                            Parent = namespaceDocumentation,
+                            Current = type,
+                            Outputs = context.Outputs
+                        },
+                        cancellationToken);
+
+                typeItems.Add(typeDocumentation);
+            }
+            catch (Exception e)
+            {
+                context.Logger.LogError(e, "Failed to generate documentation for type {Type}.", type);
+            }
+        }
+
+        namespaceDocumentation.InternalTypes = typeItems.ToArray();
+
+        foreach (var output in context.Outputs)
+        {
+            await output.WriteAsync(namespaceDocumentation, cancellationToken);
+        }
+
+        return namespaceDocumentation;
+    }
+
+    private async Task<TypeDocumentation> GenerateTypeDocumentationAsync(GeneratorContext<Type> context,
+        CancellationToken cancellationToken)
+    {
+        var typeId = context.Current.GetXmlDocumentationId();
+
+        context.Logger.LogDebug("Generating documentation for type {Type}.", typeId);
+
+        var assemblyXml = _assemblies[context.Current.Assembly];
 
         var typeXml = assemblyXml.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
 
         var summary = typeXml?.SelectSingleNode("summary");
         if (summary == null)
         {
-            logger.LogWarning("No summary found for type {Type}.", typeId);
+            context.Logger.LogWarning("No summary found for type {Type}.", typeId);
         }
 
         var typeDocumentation = new TypeDocumentation
         {
             Id = typeId,
-            Content = type.IsClass
+            ContentType = context.Current.IsClass
                 ? DocumentationContentType.Class
-                : type.IsEnum
+                : context.Current.IsEnum
                     ? DocumentationContentType.Enum
-                    : type.IsInterface
+                    : context.Current.IsInterface
                         ? DocumentationContentType.Interface
-                        : type.IsValueType
+                        : context.Current.IsValueType
                             ? DocumentationContentType.Struct
                             : DocumentationContentType.Type,
-            Parent = parent,
-            Name = type.GetSanitizedName(),
-            FullName = type.GetSanitizedName(true),
-            Definition = type.GetTypeInfo().GetDefinition(),
-            Namespace = type.Namespace,
-            Assembly = type.Assembly.GetName().Name,
+            Parent = context.Parent,
+            Name = context.Current.GetSanitizedName(),
+            FullName = context.Current.GetSanitizedName(true),
+            Definition = context.Current.GetTypeInfo().GetDefinition(),
+            Namespace = context.Current.Namespace,
+            Assembly = context.Current.Assembly.GetName().Name,
             IsDocumented = true,
-            IsGeneric = type.IsGenericType,
+            IsGeneric = context.Current.IsGenericType,
         };
 
         if (summary != null) typeDocumentation.Summary = BuildXmlDocumentation(summary, typeDocumentation);
 
-        typeDocumentation.GenericArguments =
-            BuildGenericTypeArgumentDocumentation(type, typeDocumentation, typeXml, logger).ToArray();
+        typeDocumentation.InternalGenericArguments =
+            BuildGenericTypeArgumentDocumentation(context.Current, typeDocumentation, typeXml, context.Logger)
+                .ToArray();
 
-        typeDocumentation.Interfaces = BuildInterfaceDocumentation(type, typeDocumentation).ToArray();
+        typeDocumentation.InternalInterfaces =
+            BuildInterfaceDocumentation(context.Current, typeDocumentation).ToArray();
 
-        typeDocumentation.DerivedTypes = BuildDerivedTypeDocumentation(type, typeDocumentation).ToArray();
+        typeDocumentation.InternalDerivedTypes =
+            BuildDerivedTypeDocumentation(context.Current, typeDocumentation).ToArray();
 
-        typeDocumentation.Examples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
+        typeDocumentation.InternalExamples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
 
-        typeDocumentation.Remarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
+        typeDocumentation.InternalRemarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
 
-        typeDocumentation.Constructors =
-            BuildConstructorDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        typeDocumentation.InternalConstructors =
+            BuildConstructorDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Fields = BuildFieldDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        typeDocumentation.InternalFields =
+            BuildFieldDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Properties =
-            BuildPropertyDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        typeDocumentation.InternalProperties =
+            BuildPropertyDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        typeDocumentation.Methods = BuildMethodDocumentation(type, typeDocumentation, assemblyXml, logger).ToArray();
+        typeDocumentation.InternalMethods =
+            BuildMethodDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        var baseType = type.BaseType;
+        var baseType = context.Current.BaseType;
         TypeDocumentationReference baseParent = typeDocumentation;
         while (baseType != null)
         {
@@ -323,7 +385,6 @@ public sealed partial class DocumentationGenerator
             var typeReference = new TypeDocumentationReference
             {
                 Id = baseType.GetXmlDocumentationId(),
-                Content = DocumentationContentType.TypeReference,
                 Parent = baseParent,
                 Name = baseType.GetSanitizedName(),
                 FullName = baseType.GetSanitizedName(true),
@@ -334,16 +395,16 @@ public sealed partial class DocumentationGenerator
                 IsGeneric = baseType.IsGenericType
             };
 
-            typeReference.GenericArguments =
-                BuildGenericTypeArgumentDocumentation(baseType, typeReference, null, logger).ToArray();
+            typeReference.InternalGenericArguments =
+                BuildGenericTypeArgumentDocumentation(baseType, typeReference, null, context.Logger).ToArray();
 
-            baseParent.BaseType = typeReference;
+            baseParent.InternalBaseType = typeReference;
 
             baseType = baseType.BaseType;
             baseParent = typeReference;
         }
 
-        foreach (var output in _outputs)
+        foreach (var output in context.Outputs)
         {
             await output.WriteAsync(typeDocumentation, cancellationToken);
         }
@@ -369,5 +430,16 @@ public sealed partial class DocumentationGenerator
     private IEnumerable<Type> GetTypesToDocument(Assembly assembly)
     {
         return assembly.GetTypes().Where(TypeFilter.Expression ?? TypeFilter.Default);
+    }
+
+    private class GeneratorContext<T>
+    {
+        public ILogger Logger { get; init; } = null!;
+
+        public DocumentationObject? Parent { get; init; }
+
+        public IEnumerable<IOutput> Outputs { get; init; } = null!;
+
+        public T Current { get; init; } = default!;
     }
 }

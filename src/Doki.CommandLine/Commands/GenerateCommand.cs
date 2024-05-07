@@ -3,6 +3,9 @@ using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Xml.XPath;
+using Doki.CommandLine.Json;
+using Doki.Output.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -90,9 +93,30 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
-        var generator = new DocumentationGenerator();
+        var outputOptionsProvider = new JsonOutputOptionsProvider(dokiConfigFile.Directory!);
 
-        var configureResult = await ConfigureDocumentationGeneratorAsync(new GenerateContext
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddSingleton(_logger);
+        serviceCollection.AddSingleton<IOutputOptionsProvider>(outputOptionsProvider);
+        serviceCollection.AddSingleton(provider => new DocumentationGenerator(provider));
+
+        var outputResult = await LoadOutputServicesAsync(new ServiceContext
+        {
+            ServiceCollection = serviceCollection,
+            OutputOptionsProvider = outputOptionsProvider,
+            DokiConfig = dokiConfig,
+            AllowPreview = allowPreview,
+            BuildConfiguration = buildConfiguration,
+            NoBuild = noBuild,
+            Directory = dokiConfigFile.Directory!
+        }, cancellationToken);
+        if (outputResult != 0) return outputResult;
+
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var generator = serviceProvider.GetRequiredService<DocumentationGenerator>();
+
+        var configureResult = await ConfigureGeneratorAsync(new GeneratorContext
         {
             Generator = generator,
             DokiConfig = dokiConfig,
@@ -115,22 +139,18 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> ConfigureDocumentationGeneratorAsync(GenerateContext context,
-        CancellationToken cancellationToken)
+    private async Task<int> ConfigureGeneratorAsync(GeneratorContext context, CancellationToken cancellationToken)
     {
         context.Generator.IncludeInheritedMembers = context.DokiConfig.IncludeInheritedMembers;
 
         var inputResult = await LoadInputsAsync(context, cancellationToken);
         if (inputResult != 0) return inputResult;
 
-        var outputResult = await LoadOutputsAsync(context, cancellationToken);
-        if (outputResult != 0) return outputResult;
-
         var filterResult = CompileFilters(context);
         return filterResult != 0 ? filterResult : 0;
     }
 
-    private async Task<int> LoadInputsAsync(GenerateContext context, CancellationToken cancellationToken)
+    private async Task<int> LoadInputsAsync(GeneratorContext context, CancellationToken cancellationToken)
     {
         if (context.DokiConfig.Inputs == null)
         {
@@ -195,7 +215,7 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private async Task<int> LoadOutputsAsync(GenerateContext context, CancellationToken cancellationToken)
+    private async Task<int> LoadOutputServicesAsync(ServiceContext context, CancellationToken cancellationToken)
     {
         if (context.DokiConfig.Outputs == null)
         {
@@ -203,23 +223,35 @@ internal partial class GenerateCommand : Command
             return -1;
         }
 
+        var loadedOutputs = new List<string>();
         foreach (var output in context.DokiConfig.Outputs)
         {
             if (string.IsNullOrWhiteSpace(output.Type))
             {
-                _logger.LogError("No type configured.");
+                _logger.LogError("No output type configured.");
                 return -1;
             }
 
-            var instance = await LoadOutputAsync(context.Directory, output, context.AllowPreview, cancellationToken);
-
-            if (instance == null)
+            if (loadedOutputs.Contains(output.Type))
             {
-                _logger.LogError("Could not load output.");
+                _logger.LogWarning("Output already loaded: {OutputType}", output.Type);
+                continue;
+            }
+
+            var outputRegistration =
+                await LoadOutputRegistrationAsync(context.Directory, output, context.AllowPreview, cancellationToken);
+
+            if (outputRegistration == null)
+            {
+                _logger.LogError("Could not load output registration: {OutputType}", output.Type);
                 return -1;
             }
 
-            context.Generator.AddOutput(instance);
+            outputRegistration(context.ServiceCollection);
+
+            loadedOutputs.Add(output.Type);
+
+            context.OutputOptionsProvider.AddOptions(output.Type, output.Options);
         }
 
         return 0;
@@ -277,10 +309,20 @@ internal partial class GenerateCommand : Command
         return 0;
     }
 
-    private class GenerateContext
+    private class GeneratorContext : ContextBase
     {
         public DocumentationGenerator Generator { get; init; } = null!;
+    }
 
+    private class ServiceContext : ContextBase
+    {
+        public IServiceCollection ServiceCollection { get; init; } = null!;
+
+        public JsonOutputOptionsProvider OutputOptionsProvider { get; init; } = null!;
+    }
+
+    private abstract class ContextBase
+    {
         public DokiConfig DokiConfig { get; init; } = null!;
 
         public string BuildConfiguration { get; init; } = null!;

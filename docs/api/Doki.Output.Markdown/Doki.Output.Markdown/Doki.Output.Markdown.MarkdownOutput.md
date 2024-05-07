@@ -12,26 +12,29 @@ Package: [Doki.Output.Markdown](https://www.nuget.org/packages/Doki.Output.Markd
 
 ---
 
-**The markdown output.**
-
 ```csharp
-public sealed class MarkdownOutput : Doki.Output.OutputBase<Doki.Output.DefaultOutputOptions>
+public sealed class MarkdownOutput : Doki.Output.IOutput
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [OutputBase](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.OutputBase_1.md)&lt;[DefaultOutputOptions](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.DefaultOutputOptions.md)&gt; → MarkdownOutput
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → MarkdownOutput
+
+Implements: [IOutput](../../Doki.Output.Abstractions/Doki.Output/Doki.Output.IOutput.md)
 
 ## Constructors
 
 |   |Summary|
 |---|---|
-|MarkdownOutput(Doki.Output.OutputContext)|The markdown output.|
+|MarkdownOutput(Doki.Output.OutputOptions&lt;Doki.Output.Markdown.MarkdownOutput&gt;)||
 
 
 ## Methods
 
 |   |Summary|
 |---|---|
-|WriteAsync(Doki.ContentList, System.Threading.CancellationToken)||
+|BeginAsync(System.Threading.CancellationToken)||
+|WriteAsync(Doki.DocumentationRoot, System.Threading.CancellationToken)||
+|WriteAsync(Doki.AssemblyDocumentation, System.Threading.CancellationToken)||
+|WriteAsync(Doki.NamespaceDocumentation, System.Threading.CancellationToken)||
 |WriteAsync(Doki.TypeDocumentation, System.Threading.CancellationToken)||
 
 

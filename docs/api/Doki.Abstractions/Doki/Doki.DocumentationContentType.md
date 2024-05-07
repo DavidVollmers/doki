@@ -24,7 +24,8 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Assemblies|The root of the documentation, containing all assemblies/packages.|
+|Object|An object in the documentation. This is the default content type.|
+|Root|The root of the documentation, containing all assemblies/packages.|
 |Assembly|An assembly in the documentation.|
 |Namespace|A namespace in the documentation.|
 |TypeReference|A type reference in the documentation.|
@@ -34,7 +35,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |Interface|An interface in the documentation.|
 |Type|A type.|
 |GenericTypeArgument|A generic type argument.|
-|XmlDocumentation|A xml documentation object.|
+|Xml|A xml content.|
 |Text|A text content.|
 |CodeBlock|A code block.|
 |Link|A link.|

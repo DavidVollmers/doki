@@ -8,10 +8,15 @@ public sealed record GenericTypeArgumentDocumentation : TypeDocumentationReferen
     /// <summary>
     /// Gets the description of the generic type argument.
     /// </summary>
-    public DocumentationObject? Description { get; internal set; }
+    public XmlDocumentation? Description { get; internal set; }
 
     /// <summary>
     /// Gets a value indicating whether the generic type argument is a generic parameter.
     /// </summary>
     public bool IsGenericParameter { get; internal init; }
+
+    public GenericTypeArgumentDocumentation()
+    {
+        ContentType = DocumentationContentType.GenericTypeArgument;
+    }
 }
