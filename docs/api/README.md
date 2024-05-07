@@ -12,10 +12,6 @@
   
   Provides abstractions for Doki output generation
 
-- [Doki.Output.ClassLibrary](Doki.Output.ClassLibrary/README.md)
-  
-  Doki Class Library Generator
-
 - [Doki.Output.Extensions](Doki.Output.Extensions/README.md)
   
   Doki Output Extensions

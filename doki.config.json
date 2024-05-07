@@ -12,14 +12,6 @@
       "options": {
         "outputPath": "docs/api"
       }
-    },
-    {
-      "type": "Doki.Output.ClassLibrary",
-      "from": "src/Doki.Output.ClassLibrary/Doki.Output.ClassLibrary.csproj",
-      "options": {
-        "outputPath": "src/Doki.Documentation.Content",
-        "namespace": "Doki.Documentation.Content"
-      }
     }
   ]
 }

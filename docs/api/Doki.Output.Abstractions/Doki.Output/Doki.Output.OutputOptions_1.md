@@ -18,8 +18,6 @@ public record OutputOptions<T>
 
 Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → OutputOptions&lt;T&gt;
 
-Derived: [ClassLibraryOutputOptions](../../Doki.Output.ClassLibrary/Doki.Output.ClassLibrary/Doki.Output.ClassLibrary.ClassLibraryOutputOptions.md)
-
 Implements: [IEquatable&lt;Doki.Output.OutputOptions&lt;T&gt;&gt;](https://learn.microsoft.com/en-us/dotnet/api/IEquatable&lt;Doki.Output.OutputOptions&lt;T&gt;&gt;)
 
 ## Type Parameters
