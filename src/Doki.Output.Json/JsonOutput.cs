@@ -6,7 +6,8 @@ public sealed class JsonOutput(OutputOptions<JsonOutput> options) : IOutput
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public Task BeginAsync(CancellationToken cancellationToken = default)

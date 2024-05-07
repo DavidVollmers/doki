@@ -266,9 +266,9 @@ public partial class DocumentationGenerator
     {
         var content = new XmlDocumentation
         {
-            Id = navigator.BaseURI,
+            Id = navigator.Name,
             Parent = parent,
-            Name = navigator.Name
+            Name = navigator.LocalName
         };
 
         var contents = new List<DocumentationObject>();
@@ -291,7 +291,7 @@ public partial class DocumentationGenerator
                             else if (href != string.Empty)
                                 contents.Add(new Link
                                 {
-                                    Id = node.BaseURI,
+                                    Id = node.Name,
                                     Parent = content,
                                     Url = href,
                                     Text = node.Value.TrimIndentation()
@@ -302,7 +302,7 @@ public partial class DocumentationGenerator
                             if (language == string.Empty) language = null;
                             contents.Add(new CodeBlock
                             {
-                                Id = node.BaseURI,
+                                Id = node.Name,
                                 Parent = content,
                                 Language = language,
                                 Code = node.Value.TrimIndentation().TrimEnd()
@@ -317,7 +317,7 @@ public partial class DocumentationGenerator
                 case XPathNodeType.Text:
                     contents.Add(new TextContent
                     {
-                        Id = node.BaseURI,
+                        Id = "text",
                         Parent = content,
                         Text = node.Value.TrimIndentation()
                     });
@@ -346,7 +346,7 @@ public partial class DocumentationGenerator
         if (type == null)
             return new TextContent
             {
-                Id = typeName,
+                Id = "text",
                 Parent = parent,
                 Text = typeName
             };
