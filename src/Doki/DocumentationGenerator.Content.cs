@@ -60,6 +60,10 @@ public partial class DocumentationGenerator
                 Parent = parent,
             };
 
+            if (genericArgument.BaseType != null)
+                genericArgumentDocumentation.InternalBaseType =
+                    BuildTypeDocumentationReference(genericArgument.BaseType, genericArgumentDocumentation);
+
             if (description != null)
                 genericArgumentDocumentation.Description =
                     BuildXmlDocumentation(description, genericArgumentDocumentation);
@@ -266,9 +270,9 @@ public partial class DocumentationGenerator
     {
         var content = new XmlDocumentation
         {
-            Id = navigator.BaseURI,
+            Id = navigator.Name,
             Parent = parent,
-            Name = navigator.Name
+            Name = navigator.LocalName
         };
 
         var contents = new List<DocumentationObject>();
@@ -291,7 +295,7 @@ public partial class DocumentationGenerator
                             else if (href != string.Empty)
                                 contents.Add(new Link
                                 {
-                                    Id = node.BaseURI,
+                                    Id = node.Name,
                                     Parent = content,
                                     Url = href,
                                     Text = node.Value.TrimIndentation()
@@ -302,7 +306,7 @@ public partial class DocumentationGenerator
                             if (language == string.Empty) language = null;
                             contents.Add(new CodeBlock
                             {
-                                Id = node.BaseURI,
+                                Id = node.Name,
                                 Parent = content,
                                 Language = language,
                                 Code = node.Value.TrimIndentation().TrimEnd()
@@ -317,7 +321,7 @@ public partial class DocumentationGenerator
                 case XPathNodeType.Text:
                     contents.Add(new TextContent
                     {
-                        Id = node.BaseURI,
+                        Id = "text",
                         Parent = content,
                         Text = node.Value.TrimIndentation()
                     });
@@ -346,7 +350,7 @@ public partial class DocumentationGenerator
         if (type == null)
             return new TextContent
             {
-                Id = typeName,
+                Id = "text",
                 Parent = parent,
                 Text = typeName
             };
@@ -360,7 +364,7 @@ public partial class DocumentationGenerator
 
         var assembly = type.Assembly.GetName();
 
-        return new TypeDocumentationReference
+        var typeDocumentationReference = new TypeDocumentationReference
         {
             Id = typeId,
             Name = type.GetSanitizedName(),
@@ -373,5 +377,11 @@ public partial class DocumentationGenerator
             IsMicrosoft = IsAssemblyFromMicrosoft(assembly),
             Parent = parent
         };
+
+        if (type.BaseType != null)
+            typeDocumentationReference.InternalBaseType =
+                BuildTypeDocumentationReference(type.BaseType, typeDocumentationReference);
+
+        return typeDocumentationReference;
     }
 }

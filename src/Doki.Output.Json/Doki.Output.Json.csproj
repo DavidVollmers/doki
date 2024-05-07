@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>Doki.Abstractions</PackageId>
+        <PackageId>Doki.Output.Json</PackageId>
         <Authors>david@vollmers.org</Authors>
         <Copyright>David Vollmers</Copyright>
-        <Description>Provides abstractions for Doki documentation generation</Description>
+        <Description>Doki JSON Generator</Description>
         <PackageProjectUrl>https://github.com/DavidVollmers/doki</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -12,28 +12,20 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/DavidVollmers/doki.git</RepositoryUrl>
         <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+        <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Doki</RootNamespace>
         <PackageOutputPath>..\..\nuget</PackageOutputPath>
-        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Doki"/>
+        <ProjectReference Include="..\Doki.Output.Extensions\Doki.Output.Extensions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
         <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
         <None Include="..\..\assets\logo-64x64.png" Pack="true" PackagePath="\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.149">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
 </Project>

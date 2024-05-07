@@ -12,6 +12,13 @@
       "options": {
         "outputPath": "docs/api"
       }
+    },
+    {
+      "type": "Doki.Output.Json",
+      "from": "src/Doki.Output.Json/Doki.Output.Json.csproj",
+      "options": {
+        "outputPath": "docs/json"
+      }
     }
   ]
 }

@@ -14,7 +14,7 @@ Assembly: [Doki.TestAssembly.InheritanceChain.dll](../README.md)
 public class DerivedClass : Doki.TestAssembly.InheritanceChain.GenericBaseClass<Doki.TestAssembly.InheritanceChain.SimpleClass>
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [AbstractClass](../../Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.md) → [GenericBaseClass](Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md)&lt;[SimpleClass](Doki.TestAssembly.InheritanceChain.SimpleClass.md)&gt; → DerivedClass
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → [AbstractClass](../../Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions/Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.md) → [GenericBaseClass&lt;SimpleClass&gt;](Doki.TestAssembly.InheritanceChain.GenericBaseClass_1.md) → DerivedClass
 
 ## Constructors
 

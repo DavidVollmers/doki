@@ -1,18 +1,26 @@
-﻿namespace Doki;
+﻿using System.Text.Json.Serialization;
+
+namespace Doki;
 
 /// <summary>
 /// Represents a documentation object.
 /// </summary>
+[JsonDerivedType(typeof(CodeBlock), nameof(CodeBlock))]
+[JsonDerivedType(typeof(Link), nameof(Link))]
+[JsonDerivedType(typeof(TextContent), nameof(TextContent))]
+[JsonDerivedType(typeof(TypeDocumentationReference), nameof(TypeDocumentationReference))]
+[JsonDerivedType(typeof(XmlDocumentation), nameof(XmlDocumentation))]
 public abstract record DocumentationObject
 {
     /// <summary>
     /// Gets the ID of the documentation object.
     /// </summary>
-    public string Id { get; internal init; } = null!;
+    public string Id { get; init; } = null!;
 
     /// <summary>
     /// Gets the parent of the documentation object.
     /// </summary>
+    [JsonIgnore]
     public DocumentationObject? Parent { get; internal init; }
 
     /// <summary>
