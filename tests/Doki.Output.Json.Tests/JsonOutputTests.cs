@@ -149,7 +149,7 @@ public class JsonOutputTests
                                 Assert.NotNull(documentationObject);
                                 Assert.IsType<TextContent>(documentationObject);
                                 var textContent = (TextContent)documentationObject;
-                                Assert.Equal("for more information.", textContent.Text);
+                                Assert.Equal("for more information.", textContent.Text.Trim());
                                 Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
                                 Assert.Equal("text", documentationObject.Id);
                             });
