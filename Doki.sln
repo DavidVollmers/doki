@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Extensions", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Json", "src\Doki.Output.Json\Doki.Output.Json.csproj", "{00BCCBC0-A719-489C-A746-559B4D055B56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Output.Json.Tests", "tests\Doki.Output.Json.Tests\Doki.Output.Json.Tests.csproj", "{6CCD9EE6-B3FC-485F-9155-553165141B20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,7 @@ Global
 		{33DFFEBE-DB9E-4960-BB4E-3B58399E132C} = {568576F3-3D48-459E-B4D2-1790DAE80E7A}
 		{A89D22B2-2427-4863-A2D9-9E1BEFF37C61} = {568576F3-3D48-459E-B4D2-1790DAE80E7A}
 		{00BCCBC0-A719-489C-A746-559B4D055B56} = {568576F3-3D48-459E-B4D2-1790DAE80E7A}
+		{6CCD9EE6-B3FC-485F-9155-553165141B20} = {8C7B5305-B599-4F08-B28B-DD9F1715DD51}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6F31B87A-2BD3-4FB4-8C08-7E059A338D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -89,5 +92,9 @@ Global
 		{00BCCBC0-A719-489C-A746-559B4D055B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00BCCBC0-A719-489C-A746-559B4D055B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00BCCBC0-A719-489C-A746-559B4D055B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CCD9EE6-B3FC-485F-9155-553165141B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CCD9EE6-B3FC-485F-9155-553165141B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CCD9EE6-B3FC-485F-9155-553165141B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CCD9EE6-B3FC-485F-9155-553165141B20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
