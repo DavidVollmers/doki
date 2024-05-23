@@ -42,5 +42,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 |Constructor|A constructor in the documentation.|
 |Field|A field in the documentation.|
 |Property|A property in the documentation.|
+|Method|A method in the documentation.|
 
 

@@ -25,5 +25,10 @@ public record MemberDocumentation : DocumentationObject
     /// </summary>
     public XmlDocumentation? Summary { get; set; }
 
+    /// <summary>
+    /// Gets a value indicating whether the type is documented.
+    /// </summary>
+    public bool IsDocumented { get; init; }
+
     public new DocumentationContentType ContentType { get; init; }
 }

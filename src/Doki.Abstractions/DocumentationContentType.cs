@@ -94,4 +94,9 @@ public enum DocumentationContentType
     /// A property in the documentation.
     /// </summary>
     Property,
+
+    /// <summary>
+    /// A method in the documentation.
+    /// </summary>
+    Method,
 }

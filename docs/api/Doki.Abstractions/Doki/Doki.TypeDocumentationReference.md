@@ -39,7 +39,6 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |EqualityContract||
 |IsGeneric|Gets a value indicating whether the type is generic.|
 |FullName|Gets the full name of the type.|
-|IsDocumented|Gets a value indicating whether the type is documented.|
 |IsMicrosoft|Gets a value indicating whether the type is from Microsoft.|
 |BaseType|Gets the base type of the type.|
 |GenericArguments|Gets the generic arguments of the type.|

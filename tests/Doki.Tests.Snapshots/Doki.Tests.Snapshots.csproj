@@ -27,6 +27,8 @@
       <ProjectReference Include="..\..\src\Doki\Doki.csproj" />
       <ProjectReference Include="..\assemblies\Doki.TestAssembly.ParentRootNamespace\Doki.TestAssembly.ParentRootNamespace.csproj" />
       <ProjectReference Include="..\assemblies\Doki.TestAssembly.InheritanceChain\Doki.TestAssembly.InheritanceChain.csproj" />
+      <ProjectReference Include="..\assemblies\Doki.TestAssembly\Doki.TestAssembly.csproj" />
+      <ProjectReference Include="..\Doki.Tests.Common\Doki.Tests.Common.csproj" />
     </ItemGroup>
 
 </Project>
