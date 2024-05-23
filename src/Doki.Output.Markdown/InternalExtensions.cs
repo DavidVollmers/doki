@@ -57,6 +57,10 @@ internal static class InternalExtensions
                     text.Append(builder.BuildLinkTo(typeDocumentationReference));
                     text.Space();
                     break;
+                case MemberDocumentation memberDocumentation:
+                    text.Append(builder.BuildLinkTo(memberDocumentation));
+                    text.Space();
+                    break;
                 default:
                     throw new NotSupportedException(
                         $"Unsupported {nameof(DocumentationObject)} type: {content.GetType().Name}");
@@ -74,26 +78,50 @@ internal static class InternalExtensions
 
     public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
     {
-        var indexFile = to.ContentType is DocumentationContentType.Root or DocumentationContentType.Assembly
-            or DocumentationContentType.Namespace;
-
         var asText = false;
-        string? relativePath = null;
-        if (to is TypeDocumentationReference typeDocumentationReference)
+        string relativePath;
+        switch (to)
         {
-            text ??= typeDocumentationReference.IsDocumented
-                ? typeDocumentationReference.Name
-                : typeDocumentationReference.FullName;
-
-            asText = typeDocumentationReference is { IsDocumented: false, IsMicrosoft: false };
-
-            if (typeDocumentationReference.IsMicrosoft)
+            case TypeDocumentationReference typeDocumentationReference:
             {
-                relativePath = $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.FullName}";
+                text ??= typeDocumentationReference.IsDocumented
+                    ? typeDocumentationReference.Name
+                    : typeDocumentationReference.FullName;
+
+                asText = typeDocumentationReference is { IsDocumented: false, IsMicrosoft: false };
+
+                if (typeDocumentationReference.IsMicrosoft)
+                {
+                    relativePath =
+                        $"https://learn.microsoft.com/en-us/dotnet/api/{typeDocumentationReference.FullName}";
+                }
+                else
+                {
+                    relativePath = builder.BuildRelativePath(to) + ".md";
+                }
+
+                break;
+            }
+            case MemberDocumentation memberDocumentation:
+            {
+                text ??= memberDocumentation.Name;
+
+                asText = !memberDocumentation.IsDocumented;
+
+                relativePath = builder.BuildRelativePath(memberDocumentation.Parent!) + ".md";
+                break;
+            }
+            default:
+            {
+                var indexFile = to.ContentType is DocumentationContentType.Root or DocumentationContentType.Assembly
+                    or DocumentationContentType.Namespace;
+
+                relativePath = indexFile
+                    ? builder.BuildRelativePath(to, "README.md")
+                    : builder.BuildRelativePath(to) + ".md";
+                break;
             }
         }
-
-        relativePath ??= indexFile ? builder.BuildRelativePath(to, "README.md") : builder.BuildRelativePath(to) + ".md";
 
         text ??= to.Id;
         if (text == "root") text = "Packages";

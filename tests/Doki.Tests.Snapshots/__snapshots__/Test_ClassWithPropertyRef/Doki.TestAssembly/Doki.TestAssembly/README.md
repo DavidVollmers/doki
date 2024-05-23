@@ -2,5 +2,6 @@
 
 ## Types
 
+- [ClassWithPropertyRef](Doki.TestAssembly.ClassWithPropertyRef.md)
 
 
