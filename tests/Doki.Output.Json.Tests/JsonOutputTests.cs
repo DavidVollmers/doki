@@ -129,7 +129,7 @@ public class JsonOutputTests
                                 Assert.NotNull(documentationObject);
                                 Assert.IsType<TextContent>(documentationObject);
                                 var textContent = (TextContent)documentationObject;
-                                Assert.Equal("This is an abstract class. See ", textContent.Text);
+                                Assert.Equal("This is an abstract class. See", textContent.Text);
                                 Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
                                 Assert.Equal("text", documentationObject.Id);
                             },
@@ -149,7 +149,7 @@ public class JsonOutputTests
                                 Assert.NotNull(documentationObject);
                                 Assert.IsType<TextContent>(documentationObject);
                                 var textContent = (TextContent)documentationObject;
-                                Assert.Equal("for more information.", textContent.Text.Trim());
+                                Assert.Equal("for more information.", textContent.Text);
                                 Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
                                 Assert.Equal("text", documentationObject.Id);
                             });
