@@ -16,7 +16,7 @@ JSON, and more.
 Install the `doki` Command-Line Interface:
 
 ```bash
-dotnet tool install --global Doki.CommandLine --version 0.4.0-preview
+dotnet tool install --global Doki.CommandLine
 ```
 
 > **Note:** You can find the latest version of the CLI and how to install it
@@ -31,11 +31,8 @@ doki init
 Generate documentation:
 
 ```bash
-doki g --allow-preview
+doki g
 ```
-
-> **Note:** Doki is still in preview. Use the `--allow-preview` option to allow preview versions of the configured
-> output libraries to be used during documentation generation.
 
 ## Documentation
 
