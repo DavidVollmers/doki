@@ -42,12 +42,14 @@ internal static class InternalExtensions
             switch (content)
             {
                 case TextContent textContent:
+                    if (textContent.Text != "." && textContent.Text != "?" && textContent.Text != "!" &&
+                        textContent.Text != "," && textContent.Text != ":" && textContent.Text != ";")
+                        text.Space();
                     text.Append(textContent.Text);
-                    text.Space();
                     break;
                 case Link link:
-                    text.Append(new Elements.Link(link.Text, link.Url));
                     text.Space();
+                    text.Append(new Elements.Link(link.Text, link.Url));
                     break;
                 case CodeBlock codeBlock:
                     text.NewLine();
@@ -55,12 +57,12 @@ internal static class InternalExtensions
                     text.NewLine();
                     break;
                 case TypeDocumentationReference typeDocumentationReference:
-                    text.Append(builder.BuildLinkTo(typeDocumentationReference));
                     text.Space();
+                    text.Append(builder.BuildLinkTo(typeDocumentationReference));
                     break;
                 case MemberDocumentation memberDocumentation:
-                    text.Append(builder.BuildLinkTo(memberDocumentation));
                     text.Space();
+                    text.Append(builder.BuildLinkTo(memberDocumentation));
                     break;
                 default:
                     throw new NotSupportedException(

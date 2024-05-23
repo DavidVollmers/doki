@@ -50,6 +50,6 @@ internal record Text : Element
     {
         if (IsEmpty) return string.Empty;
         var escaped = _builder.ToString().Replace("<", "&lt;").Replace(">", "&gt;");
-        return IsBold ? $"**{escaped}**" : escaped;
+        return IsBold ? $"**{escaped.Trim()}**" : escaped;
     }
 }
