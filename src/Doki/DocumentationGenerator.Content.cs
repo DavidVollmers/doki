@@ -132,6 +132,7 @@ public partial class DocumentationGenerator
                 Namespace = field.DeclaringType.Namespace,
                 Assembly = fieldAssembly.Name,
                 Parent = parent,
+                IsDocumented = true
             };
 
             if (summary != null)
@@ -173,6 +174,7 @@ public partial class DocumentationGenerator
                 Namespace = constructor.DeclaringType.Namespace,
                 Assembly = constructorAssembly.Name,
                 Parent = parent,
+                IsDocumented = true
             };
 
             if (summary != null)
@@ -214,6 +216,7 @@ public partial class DocumentationGenerator
                 Namespace = property.DeclaringType.Namespace,
                 Assembly = propertyAssembly.Name,
                 Parent = parent,
+                IsDocumented = true
             };
 
             if (summary != null)
@@ -257,6 +260,7 @@ public partial class DocumentationGenerator
                 Namespace = method.DeclaringType.Namespace,
                 Assembly = methodAssembly.Name,
                 Parent = parent,
+                IsDocumented = true
             };
 
             if (summary != null)
@@ -337,13 +341,16 @@ public partial class DocumentationGenerator
 
     private DocumentationObject BuildCRefDocumentation(string cref, DocumentationObject parent)
     {
-        if (!cref.StartsWith("T:")) throw new ArgumentOutOfRangeException(nameof(cref), cref, "Unsupported cref.");
+        var parts = cref.Split(':');
+        if (parts.Length != 2) throw new ArgumentOutOfRangeException(nameof(cref), cref, "Invalid cref format.");
 
-        var typeName = cref[2..];
-        if (!typeName.Contains('.'))
+        var memberType = parts[0];
+        var memberName = parts[1];
+        var typeName = parts[1];
+        if (memberType != "T")
         {
-            var @namespace = parent.TryGetParent<NamespaceDocumentation>(DocumentationContentType.Namespace);
-            if (@namespace != null) typeName = $"{@namespace.Id}.{typeName}";
+            memberName = memberName.Split('.').Last();
+            typeName = typeName[..typeName.LastIndexOf('.')];
         }
 
         var type = LookupType(typeName);
@@ -352,10 +359,40 @@ public partial class DocumentationGenerator
             {
                 Id = "text",
                 Parent = parent,
-                Text = typeName
+                Text = memberName
             };
 
-        return BuildTypeDocumentationReference(type, parent);
+        var typeDocumentationReference = BuildTypeDocumentationReference(type, parent);
+
+        switch (memberType)
+        {
+            case "T":
+                return typeDocumentationReference;
+            case "P":
+            {
+                var property = type.GetProperty(memberName, AllMembersBindingFlags);
+                if (property == null)
+                    return new TextContent
+                    {
+                        Id = "text",
+                        Parent = parent,
+                        Text = memberName
+                    };
+
+                return new MemberDocumentation
+                {
+                    Id = property.GetXmlDocumentationId(),
+                    Name = property.Name,
+                    ContentType = DocumentationContentType.Property,
+                    Namespace = type.Namespace,
+                    Assembly = type.Assembly.GetName().Name,
+                    Parent = typeDocumentationReference,
+                    IsDocumented = PropertyFilter.Expression?.Invoke(property) ?? PropertyFilter.Default(property)
+                };
+            }
+            default:
+                throw new ArgumentOutOfRangeException(nameof(cref), cref, "Unsupported cref member type.");
+        }
     }
 
     private TypeDocumentationReference BuildTypeDocumentationReference(Type type, DocumentationObject parent)

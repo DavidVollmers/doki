@@ -16,11 +16,6 @@ public record TypeDocumentationReference : MemberDocumentation
     public string FullName { get; init; } = null!;
 
     /// <summary>
-    /// Gets a value indicating whether the type is documented.
-    /// </summary>
-    public bool IsDocumented { get; init; }
-
-    /// <summary>
     /// Gets a value indicating whether the type is from Microsoft.
     /// </summary>
     public bool IsMicrosoft { get; init; }
