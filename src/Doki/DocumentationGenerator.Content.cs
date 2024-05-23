@@ -414,7 +414,35 @@ public partial class DocumentationGenerator
             }
             case "M":
             {
+                if (memberName.StartsWith("#ctor"))
+                {
+                    var constructors = type.GetConstructors(AllMembersBindingFlags);
+
+                    var constructor = constructors.FirstOrDefault(c => c.GetXmlDocumentationId() == parts[1]);
+
+                    if (constructor == null)
+                        return new TextContent
+                        {
+                            Id = "text",
+                            Parent = parent,
+                            Text = memberName
+                        };
+
+                    return new MemberDocumentation
+                    {
+                        Id = constructor.GetXmlDocumentationId(),
+                        Name = constructor.GetSanitizedName(),
+                        ContentType = DocumentationContentType.Constructor,
+                        Namespace = type.Namespace,
+                        Assembly = type.Assembly.GetName().Name,
+                        Parent = typeDocumentationReference,
+                        IsDocumented = ConstructorFilter.Expression?.Invoke(constructor) ??
+                                       ConstructorFilter.Default(constructor)
+                    };
+                }
+
                 var method = type.GetMethod(memberName, AllMembersBindingFlags);
+
                 if (method == null)
                     return new TextContent
                     {
@@ -427,9 +455,7 @@ public partial class DocumentationGenerator
                 {
                     Id = method.GetXmlDocumentationId(),
                     Name = method.GetSanitizedName(),
-                    ContentType = method.IsConstructor
-                        ? DocumentationContentType.Constructor
-                        : DocumentationContentType.Method,
+                    ContentType = DocumentationContentType.Method,
                     Namespace = type.Namespace,
                     Assembly = type.Assembly.GetName().Name,
                     Parent = typeDocumentationReference,
