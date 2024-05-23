@@ -9,6 +9,7 @@ namespace Doki;
 [JsonDerivedType(typeof(Link), nameof(Link))]
 [JsonDerivedType(typeof(TextContent), nameof(TextContent))]
 [JsonDerivedType(typeof(TypeDocumentationReference), nameof(TypeDocumentationReference))]
+[JsonDerivedType(typeof(MemberDocumentation), nameof(MemberDocumentation))]
 [JsonDerivedType(typeof(XmlDocumentation), nameof(XmlDocumentation))]
 public abstract record DocumentationObject
 {
