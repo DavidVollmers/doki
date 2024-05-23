@@ -41,6 +41,7 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 |Namespace|Gets the namespace of the member.|
 |Assembly|Gets the assembly of the member.|
 |Summary|Gets the summary of the member.|
+|IsDocumented|Gets a value indicating whether the type is documented.|
 |ContentType||
 
 
