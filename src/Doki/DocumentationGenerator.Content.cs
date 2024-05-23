@@ -256,7 +256,7 @@ public partial class DocumentationGenerator
             {
                 Id = methodId,
                 Name = method.GetSanitizedName(),
-                ContentType = DocumentationContentType.Property,
+                ContentType = DocumentationContentType.Method,
                 Namespace = method.DeclaringType.Namespace,
                 Assembly = methodAssembly.Name,
                 Parent = parent,
@@ -388,6 +388,52 @@ public partial class DocumentationGenerator
                     Assembly = type.Assembly.GetName().Name,
                     Parent = typeDocumentationReference,
                     IsDocumented = PropertyFilter.Expression?.Invoke(property) ?? PropertyFilter.Default(property)
+                };
+            }
+            case "F":
+            {
+                var field = type.GetField(memberName, AllMembersBindingFlags);
+                if (field == null)
+                    return new TextContent
+                    {
+                        Id = "text",
+                        Parent = parent,
+                        Text = memberName
+                    };
+
+                return new MemberDocumentation
+                {
+                    Id = field.GetXmlDocumentationId(),
+                    Name = field.Name,
+                    ContentType = DocumentationContentType.Field,
+                    Namespace = type.Namespace,
+                    Assembly = type.Assembly.GetName().Name,
+                    Parent = typeDocumentationReference,
+                    IsDocumented = FieldFilter.Expression?.Invoke(field) ?? FieldFilter.Default(field)
+                };
+            }
+            case "M":
+            {
+                var method = type.GetMethod(memberName, AllMembersBindingFlags);
+                if (method == null)
+                    return new TextContent
+                    {
+                        Id = "text",
+                        Parent = parent,
+                        Text = memberName
+                    };
+
+                return new MemberDocumentation
+                {
+                    Id = method.GetXmlDocumentationId(),
+                    Name = method.GetSanitizedName(),
+                    ContentType = method.IsConstructor
+                        ? DocumentationContentType.Constructor
+                        : DocumentationContentType.Method,
+                    Namespace = type.Namespace,
+                    Assembly = type.Assembly.GetName().Name,
+                    Parent = typeDocumentationReference,
+                    IsDocumented = MethodFilter.Expression?.Invoke(method) ?? MethodFilter.Default(method)
                 };
             }
             default:
