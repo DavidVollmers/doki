@@ -22,20 +22,20 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|ClassWithCRefs()|Creates a new instance of [ClassWithCRefs](Doki.TestAssembly.ClassWithCRefs.md) .|
+|ClassWithCRefs()| Creates a new instance of [ClassWithCRefs](Doki.TestAssembly.ClassWithCRefs.md).|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Property|Is used in [Method()](Doki.TestAssembly.ClassWithCRefs.md) .|
+|Property| Is used in [Method()](Doki.TestAssembly.ClassWithCRefs.md).|
 
 
 ## Methods
 
 |   |Summary|
 |---|---|
-|Method()|Does something with [Property](Doki.TestAssembly.ClassWithCRefs.md) .|
+|Method()| Does something with [Property](Doki.TestAssembly.ClassWithCRefs.md).|
 
 
