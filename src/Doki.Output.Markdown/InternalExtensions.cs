@@ -43,6 +43,7 @@ internal static class InternalExtensions
             {
                 case TextContent textContent:
                     text.Append(textContent.Text);
+                    text.Space();
                     break;
                 case Link link:
                     text.Append(new Elements.Link(link.Text, link.Url));
