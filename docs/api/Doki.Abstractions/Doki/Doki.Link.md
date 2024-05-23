@@ -34,8 +34,8 @@ Implements: [System.IEquatable&lt;Doki.Link&gt;](https://learn.microsoft.com/en-
 |   |Summary|
 |---|---|
 |EqualityContract||
-|Url|Gets the URL of the link.|
-|Text|Gets the text of the link.|
+|Url| Gets the URL of the link.|
+|Text| Gets the text of the link.|
 
 
 ## Methods

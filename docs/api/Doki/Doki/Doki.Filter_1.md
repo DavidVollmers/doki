@@ -24,7 +24,7 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 - `T`
   
-  The type of the collection.
+   The type of the collection.
 
 
 
@@ -32,14 +32,14 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Filter(Func&lt;T, System.Boolean&gt;)|Creates a new filter with the given default filter.|
+|Filter(Func&lt;T, System.Boolean&gt;)| Creates a new filter with the given default filter.|
 
 
 ## Properties
 
 |   |Summary|
 |---|---|
-|Default|Gets the default filter.|
-|Expression|Gets or sets the expression to filter the collection.|
+|Default| Gets the default filter.|
+|Expression| Gets or sets the expression to filter the collection.|
 
 

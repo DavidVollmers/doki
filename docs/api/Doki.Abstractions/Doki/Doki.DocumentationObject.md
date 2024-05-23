@@ -37,9 +37,9 @@ Implements: [System.IEquatable&lt;Doki.DocumentationObject&gt;](https://learn.mi
 |   |Summary|
 |---|---|
 |EqualityContract||
-|Id|Gets the ID of the documentation object.|
-|Parent|Gets the parent of the documentation object.|
-|ContentType|Gets the content type of the documentation object.|
+|Id| Gets the ID of the documentation object.|
+|Parent| Gets the parent of the documentation object.|
+|ContentType| Gets the content type of the documentation object.|
 
 
 ## Methods

@@ -313,7 +313,7 @@ public partial class DocumentationGenerator
                                 Id = node.Name,
                                 Parent = content,
                                 Language = language,
-                                Code = node.Value.TrimIndentation()
+                                Code = node.Value.TrimIndentation().TrimEnd()
                             });
                             break;
                         default:

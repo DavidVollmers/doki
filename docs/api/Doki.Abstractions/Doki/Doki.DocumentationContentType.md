@@ -24,24 +24,24 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|Object|An object in the documentation. This is the default content type.|
-|Root|The root of the documentation, containing all assemblies/packages.|
-|Assembly|An assembly in the documentation.|
-|Namespace|A namespace in the documentation.|
-|TypeReference|A type reference in the documentation.|
-|Class|A class in the documentation.|
-|Enum|An enum in the documentation.|
-|Struct|A struct in the documentation.|
-|Interface|An interface in the documentation.|
-|Type|A type.|
-|GenericTypeArgument|A generic type argument.|
-|Xml|A xml content.|
-|Text|A text content.|
-|CodeBlock|A code block.|
-|Link|A link.|
-|Constructor|A constructor in the documentation.|
-|Field|A field in the documentation.|
-|Property|A property in the documentation.|
-|Method|A method in the documentation.|
+|Object| An object in the documentation. This is the default content type.|
+|Root| The root of the documentation, containing all assemblies/packages.|
+|Assembly| An assembly in the documentation.|
+|Namespace| A namespace in the documentation.|
+|TypeReference| A type reference in the documentation.|
+|Class| A class in the documentation.|
+|Enum| An enum in the documentation.|
+|Struct| A struct in the documentation.|
+|Interface| An interface in the documentation.|
+|Type| A type.|
+|GenericTypeArgument| A generic type argument.|
+|Xml| A xml content.|
+|Text| A text content.|
+|CodeBlock| A code block.|
+|Link| A link.|
+|Constructor| A constructor in the documentation.|
+|Field| A field in the documentation.|
+|Property| A property in the documentation.|
+|Method| A method in the documentation.|
 
 

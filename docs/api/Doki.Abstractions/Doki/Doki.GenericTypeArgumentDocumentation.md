@@ -34,8 +34,8 @@ Implements: [System.IEquatable&lt;Doki.GenericTypeArgumentDocumentation&gt;](htt
 |   |Summary|
 |---|---|
 |EqualityContract||
-|Description|Gets the description of the generic type argument.|
-|IsGenericParameter|Gets a value indicating whether the generic type argument is a generic parameter.|
+|Description| Gets the description of the generic type argument.|
+|IsGenericParameter| Gets a value indicating whether the generic type argument is a generic parameter.|
 
 
 ## Methods

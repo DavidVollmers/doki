@@ -28,7 +28,7 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 
 |   |Summary|
 |---|---|
-|TypeDocumentationReference()|Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
+|TypeDocumentationReference()| Initializes a new instance of the [TypeDocumentationReference](Doki.TypeDocumentationReference.md) class.|
 |TypeDocumentationReference(Doki.TypeDocumentationReference)||
 
 
@@ -37,11 +37,11 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentationReference&gt;](https://l
 |   |Summary|
 |---|---|
 |EqualityContract||
-|IsGeneric|Gets a value indicating whether the type is generic.|
-|FullName|Gets the full name of the type.|
-|IsMicrosoft|Gets a value indicating whether the type is from Microsoft.|
-|BaseType|Gets the base type of the type.|
-|GenericArguments|Gets the generic arguments of the type.|
+|IsGeneric| Gets a value indicating whether the type is generic.|
+|FullName| Gets the full name of the type.|
+|IsMicrosoft| Gets a value indicating whether the type is from Microsoft.|
+|BaseType| Gets the base type of the type.|
+|GenericArguments| Gets the generic arguments of the type.|
 
 
 ## Methods

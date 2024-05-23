@@ -34,8 +34,8 @@ Implements: [System.IEquatable&lt;Doki.CodeBlock&gt;](https://learn.microsoft.co
 |   |Summary|
 |---|---|
 |EqualityContract||
-|Language|Gets the language of the code block.|
-|Code|Gets the code of the block.|
+|Language| Gets the language of the code block.|
+|Code| Gets the code of the block.|
 
 
 ## Methods
