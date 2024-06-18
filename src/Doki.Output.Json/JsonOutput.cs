@@ -1,10 +1,14 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Doki.Output.Json;
 
 public sealed class JsonOutput(OutputOptions<JsonOutput> options) : IOutput
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new();
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+    };
 
     public Task BeginAsync(CancellationToken cancellationToken = default)
     {
