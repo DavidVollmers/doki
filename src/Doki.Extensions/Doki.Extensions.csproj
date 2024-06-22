@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>Doki.Extensions</PackageId>
+        <Authors>david@vollmers.org</Authors>
+        <Copyright>David Vollmers</Copyright>
+        <Description>Provides extensions for Doki documentation generation</Description>
+        <PackageProjectUrl>https://github.com/DavidVollmers/doki</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>logo-64x64.png</PackageIcon>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/DavidVollmers/doki.git</RepositoryUrl>
+        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageOutputPath>..\..\nuget</PackageOutputPath>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
+        <None Include="..\..\assets\logo-64x64.png" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Doki.Abstractions\Doki.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

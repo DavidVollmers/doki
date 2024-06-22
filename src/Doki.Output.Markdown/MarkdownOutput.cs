@@ -115,11 +115,14 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
 
         markdown.Add(Element.Separator);
 
-        if (typeDocumentation.Summary != null)
+        if (typeDocumentation.Summaries.Length != 0)
         {
-            var summary = markdown.BuildText(typeDocumentation.Summary);
-            summary.IsBold = true;
-            markdown.Add(summary);
+            foreach (var summary in typeDocumentation.Summaries)
+            {
+                var text = markdown.BuildText(summary);
+                text.IsBold = true;
+                markdown.Add(text);
+            }
         }
 
         markdown.Add(new Code(typeDocumentation.Definition));
@@ -209,8 +212,13 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             var table = new Table(new Text("   "), new Text("Summary"));
             foreach (var constructor in typeDocumentation.Constructors)
             {
-                table.AddRow(new Text(constructor.Name),
-                    constructor.Summary == null ? Text.Empty : markdown.BuildText(constructor.Summary));
+                var text = Text.Empty;
+                foreach (var summary in constructor.Summaries)
+                {
+                    text.Append(markdown.BuildText(summary));
+                }
+
+                table.AddRow(new Text(constructor.Name), text);
             }
 
             markdown.Add(table);
@@ -223,8 +231,13 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             var table = new Table(new Text("   "), new Text("Summary"));
             foreach (var field in typeDocumentation.Fields)
             {
-                table.AddRow(new Text(field.Name),
-                    field.Summary == null ? Text.Empty : markdown.BuildText(field.Summary));
+                var text = Text.Empty;
+                foreach (var summary in field.Summaries)
+                {
+                    text.Append(markdown.BuildText(summary));
+                }
+
+                table.AddRow(new Text(field.Name), text);
             }
 
             markdown.Add(table);
@@ -237,8 +250,13 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             var table = new Table(new Text("   "), new Text("Summary"));
             foreach (var property in typeDocumentation.Properties)
             {
-                table.AddRow(new Text(property.Name),
-                    property.Summary == null ? Text.Empty : markdown.BuildText(property.Summary));
+                var text = Text.Empty;
+                foreach (var summary in property.Summaries)
+                {
+                    text.Append(markdown.BuildText(summary));
+                }
+
+                table.AddRow(new Text(property.Name), text);
             }
 
             markdown.Add(table);
@@ -251,8 +269,13 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             var table = new Table(new Text("   "), new Text("Summary"));
             foreach (var method in typeDocumentation.Methods)
             {
-                table.AddRow(new Text(method.Name),
-                    method.Summary == null ? Text.Empty : markdown.BuildText(method.Summary));
+                var text = Text.Empty;
+                foreach (var summary in method.Summaries)
+                {
+                    text.Append(markdown.BuildText(summary));
+                }
+
+                table.AddRow(new Text(method.Name), text);
             }
 
             markdown.Add(table);

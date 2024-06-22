@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.TestAssembly", "tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Tests.Common", "tests\Doki.Tests.Common\Doki.Tests.Common.csproj", "{0FA0FF7A-6EDA-4CB1-8D81-2DFB1A4077CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.Extensions", "src\Doki.Extensions\Doki.Extensions.csproj", "{9961F717-DBD7-4987-9E68-2B85BB5830B4}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doki.CommandLine.Tests", "tests\Doki.CommandLine.Tests\Doki.CommandLine.Tests.csproj", "{67B12AF1-2696-411F-ADFD-B5C32A43BA71}"
 EndProject
 Global
@@ -113,6 +115,10 @@ Global
 		{0FA0FF7A-6EDA-4CB1-8D81-2DFB1A4077CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FA0FF7A-6EDA-4CB1-8D81-2DFB1A4077CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FA0FF7A-6EDA-4CB1-8D81-2DFB1A4077CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9961F717-DBD7-4987-9E68-2B85BB5830B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9961F717-DBD7-4987-9E68-2B85BB5830B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9961F717-DBD7-4987-9E68-2B85BB5830B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9961F717-DBD7-4987-9E68-2B85BB5830B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67B12AF1-2696-411F-ADFD-B5C32A43BA71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67B12AF1-2696-411F-ADFD-B5C32A43BA71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67B12AF1-2696-411F-ADFD-B5C32A43BA71}.Release|Any CPU.ActiveCfg = Release|Any CPU

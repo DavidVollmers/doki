@@ -39,10 +39,6 @@ public partial class DocumentationGenerator
             logger.LogDebug("Generating documentation for generic argument {GenericArgument}.", genericArgumentId);
 
             var description = typeXml?.SelectSingleNode($"typeparam[@name='{genericArgumentId}']");
-            if (description == null && typeXml != null)
-            {
-                logger.LogWarning("No description found for generic argument {GenericArgument}.", genericArgument);
-            }
 
             var genericArgumentAssembly = genericArgument.Assembly.GetName();
 
@@ -60,13 +56,16 @@ public partial class DocumentationGenerator
                 Parent = parent,
             };
 
-            if (genericArgument.BaseType != null)
-                genericArgumentDocumentation.InternalBaseType =
-                    BuildTypeDocumentationReference(genericArgument.BaseType, genericArgumentDocumentation);
-
             if (description != null)
                 genericArgumentDocumentation.Description =
                     BuildXmlDocumentation(description, genericArgumentDocumentation);
+
+            SetInternalTypeDocumentationReferenceProperties(genericArgumentDocumentation, genericArgument, null);
+
+            if (genericArgumentDocumentation.Description == null)
+            {
+                logger.LogWarning("No description found for generic argument {GenericArgument}.", genericArgument);
+            }
 
             yield return genericArgumentDocumentation;
         }
@@ -116,12 +115,6 @@ public partial class DocumentationGenerator
 
             var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='F:{fieldId}']");
 
-            var summary = memberXml?.SelectSingleNode("summary");
-            if (summary == null)
-            {
-                logger.LogWarning("No summary found for field {Field}.", fieldId);
-            }
-
             var fieldAssembly = field.DeclaringType!.Assembly.GetName();
 
             var fieldDocumentation = new MemberDocumentation
@@ -135,8 +128,12 @@ public partial class DocumentationGenerator
                 IsDocumented = true
             };
 
-            if (summary != null)
-                fieldDocumentation.Summary = BuildXmlDocumentation(summary, fieldDocumentation);
+            SetInternalMemberDocumentationProperties(fieldDocumentation, memberXml);
+
+            if (fieldDocumentation.Summaries.Length == 0)
+            {
+                logger.LogWarning("No summary found for field {Field}.", fieldId);
+            }
 
             yield return fieldDocumentation;
         }
@@ -158,12 +155,6 @@ public partial class DocumentationGenerator
 
             var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='M:{constructorId}']");
 
-            var summary = memberXml?.SelectSingleNode("summary");
-            if (summary == null)
-            {
-                logger.LogWarning("No summary found for constructor {Constructor}.", constructorId);
-            }
-
             var constructorAssembly = constructor.DeclaringType!.Assembly.GetName();
 
             var constructorDocumentation = new MemberDocumentation
@@ -177,8 +168,12 @@ public partial class DocumentationGenerator
                 IsDocumented = true
             };
 
-            if (summary != null)
-                constructorDocumentation.Summary = BuildXmlDocumentation(summary, constructorDocumentation);
+            SetInternalMemberDocumentationProperties(constructorDocumentation, memberXml);
+
+            if (constructorDocumentation.Summaries.Length == 0)
+            {
+                logger.LogWarning("No summary found for constructor {Constructor}.", constructorId);
+            }
 
             yield return constructorDocumentation;
         }
@@ -200,12 +195,6 @@ public partial class DocumentationGenerator
 
             var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='P:{propertyId}']");
 
-            var summary = memberXml?.SelectSingleNode("summary");
-            if (summary == null)
-            {
-                logger.LogWarning("No summary found for property {Property}.", propertyId);
-            }
-
             var propertyAssembly = property.DeclaringType!.Assembly.GetName();
 
             var propertyDocumentation = new MemberDocumentation
@@ -219,8 +208,12 @@ public partial class DocumentationGenerator
                 IsDocumented = true
             };
 
-            if (summary != null)
-                propertyDocumentation.Summary = BuildXmlDocumentation(summary, propertyDocumentation);
+            SetInternalMemberDocumentationProperties(propertyDocumentation, memberXml);
+
+            if (propertyDocumentation.Summaries.Length == 0)
+            {
+                logger.LogWarning("No summary found for property {Property}.", propertyId);
+            }
 
             yield return propertyDocumentation;
         }
@@ -244,12 +237,6 @@ public partial class DocumentationGenerator
 
             var memberXml = assemblyXml?.SelectSingleNode($"//doc//members//member[@name='M:{methodId}']");
 
-            var summary = memberXml?.SelectSingleNode("summary");
-            if (summary == null)
-            {
-                logger.LogWarning("No summary found for method {Method}.", methodId);
-            }
-
             var methodAssembly = method.DeclaringType!.Assembly.GetName();
 
             var methodDocumentation = new MemberDocumentation
@@ -263,8 +250,12 @@ public partial class DocumentationGenerator
                 IsDocumented = true
             };
 
-            if (summary != null)
-                methodDocumentation.Summary = BuildXmlDocumentation(summary, methodDocumentation);
+            SetInternalMemberDocumentationProperties(methodDocumentation, memberXml);
+
+            if (methodDocumentation.Summaries.Length == 0)
+            {
+                logger.LogWarning("No summary found for method {Method}.", methodId);
+            }
 
             yield return methodDocumentation;
         }
@@ -487,10 +478,27 @@ public partial class DocumentationGenerator
             Parent = parent
         };
 
+        SetInternalTypeDocumentationReferenceProperties(typeDocumentationReference, type, null);
+
+        return typeDocumentationReference;
+    }
+
+    private void SetInternalTypeDocumentationReferenceProperties(TypeDocumentationReference typeDocumentationReference,
+        Type type, XPathNavigator? xml)
+    {
         if (type.BaseType != null)
             typeDocumentationReference.InternalBaseType =
                 BuildTypeDocumentationReference(type.BaseType, typeDocumentationReference);
 
-        return typeDocumentationReference;
+        SetInternalMemberDocumentationProperties(typeDocumentationReference, xml);
+    }
+
+    private void SetInternalMemberDocumentationProperties(MemberDocumentation memberDocumentation, XPathNavigator? xml)
+    {
+        memberDocumentation.InternalSummaries = BuildXmlDocumentation("summary", xml, memberDocumentation).ToArray();
+
+        memberDocumentation.InternalExamples = BuildXmlDocumentation("example", xml, memberDocumentation).ToArray();
+
+        memberDocumentation.InternalRemarks = BuildXmlDocumentation("remarks", xml, memberDocumentation).ToArray();
     }
 }

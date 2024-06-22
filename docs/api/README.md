@@ -8,6 +8,10 @@
   
   Provides abstractions for Doki documentation generation
 
+- [Doki.Extensions](Doki.Extensions/README.md)
+  
+  Provides extensions for Doki documentation generation
+
 - [Doki.Output.Abstractions](Doki.Output.Abstractions/README.md)
   
   Provides abstractions for Doki output generation

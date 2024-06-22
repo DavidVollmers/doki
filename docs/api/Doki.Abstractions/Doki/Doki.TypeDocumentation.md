@@ -35,8 +35,6 @@ Implements: [System.IEquatable&lt;Doki.TypeDocumentation&gt;](https://learn.micr
 |---|---|
 |EqualityContract||
 |Definition| Gets the definition of the type.|
-|Examples| Get the examples of the type.|
-|Remarks| Gets the remarks of the type.|
 |Interfaces| Gets the interfaces implemented by the type.|
 |DerivedTypes| Gets the derived types of the type.|
 |Constructors| Gets the constructors of the type.|
