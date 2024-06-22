@@ -17,12 +17,13 @@ internal class NuGetLoader : IDisposable
 {
     private readonly SourceCacheContext _cacheContext = new();
 
-    //TODO use console logger (ASCII)
-    private readonly ILogger _logger = NullLogger.Instance;
+    private readonly NuGetLogger _logger;
     private readonly SourceRepositoryProvider _sourceRepositoryProvider;
 
-    public NuGetLoader(string? source = null)
+    public NuGetLoader(Microsoft.Extensions.Logging.ILogger logger, string? source = null)
     {
+        _logger = new NuGetLogger(logger);
+
         var sources = new List<PackageSource>
         {
             new("https://api.nuget.org/v3/index.json")

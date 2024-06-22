@@ -34,7 +34,7 @@ internal partial class GenerateCommand
 
         var nugetFolder = Path.Combine(workingDirectory.FullName, ".doki", "nuget");
 
-        using var nugetLoader = new NuGetLoader(output.From);
+        using var nugetLoader = new NuGetLoader(_logger, output.From);
 
         var assemblyPath =
             await nugetLoader.LoadPackageAsync(output.Type, nugetFolder, allowPreview, cancellationToken);
