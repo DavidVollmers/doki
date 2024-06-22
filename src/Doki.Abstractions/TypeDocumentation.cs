@@ -10,28 +10,6 @@ public sealed record TypeDocumentation : TypeDocumentationReference
     /// </summary>
     public string Definition { get; init; } = null!;
 
-    internal XmlDocumentation[] InternalExamples = [];
-
-    /// <summary>
-    /// Get the examples of the type.
-    /// </summary>
-    public XmlDocumentation[] Examples
-    {
-        get => InternalExamples;
-        init => InternalExamples = value;
-    }
-
-    internal XmlDocumentation[] InternalRemarks = [];
-
-    /// <summary>
-    /// Gets the remarks of the type.
-    /// </summary>
-    public XmlDocumentation[] Remarks
-    {
-        get => InternalRemarks;
-        init => InternalRemarks = value;
-    }
-
     internal TypeDocumentationReference[] InternalInterfaces = [];
 
     /// <summary>

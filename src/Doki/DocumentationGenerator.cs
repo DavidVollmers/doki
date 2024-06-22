@@ -320,12 +320,6 @@ public sealed partial class DocumentationGenerator
 
         var typeXml = assemblyXml.SelectSingleNode($"//doc//members//member[@name='T:{typeId}']");
 
-        var summary = typeXml?.SelectSingleNode("summary");
-        if (summary == null)
-        {
-            context.Logger.LogWarning("No summary found for type {Type}.", typeId);
-        }
-
         var typeDocumentation = new TypeDocumentation
         {
             Id = typeId,
@@ -348,8 +342,6 @@ public sealed partial class DocumentationGenerator
             IsGeneric = context.Current.IsGenericType,
         };
 
-        if (summary != null) typeDocumentation.Summary = BuildXmlDocumentation(summary, typeDocumentation);
-
         typeDocumentation.InternalGenericArguments =
             BuildGenericTypeArgumentDocumentation(context.Current, typeDocumentation, typeXml, context.Logger)
                 .ToArray();
@@ -359,10 +351,6 @@ public sealed partial class DocumentationGenerator
 
         typeDocumentation.InternalDerivedTypes =
             BuildDerivedTypeDocumentation(context.Current, typeDocumentation).ToArray();
-
-        typeDocumentation.InternalExamples = BuildXmlDocumentation("example", typeXml, typeDocumentation).ToArray();
-
-        typeDocumentation.InternalRemarks = BuildXmlDocumentation("remarks", typeXml, typeDocumentation).ToArray();
 
         typeDocumentation.InternalConstructors =
             BuildConstructorDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
@@ -376,9 +364,12 @@ public sealed partial class DocumentationGenerator
         typeDocumentation.InternalMethods =
             BuildMethodDocumentation(context.Current, typeDocumentation, assemblyXml, context.Logger).ToArray();
 
-        if (context.Current.BaseType != null)
-            typeDocumentation.InternalBaseType =
-                BuildTypeDocumentationReference(context.Current.BaseType, typeDocumentation);
+        SetInternalTypeDocumentationReferenceProperties(typeDocumentation, context.Current, typeXml);
+
+        if (typeDocumentation.Summaries.Length == 0)
+        {
+            context.Logger.LogWarning("No summary found for type {Type}.", typeId);
+        }
 
         foreach (var output in context.Outputs)
         {

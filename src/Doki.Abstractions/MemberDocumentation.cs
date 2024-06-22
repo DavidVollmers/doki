@@ -1,4 +1,5 @@
-﻿namespace Doki;
+﻿// ReSharper disable InconsistentNaming
+namespace Doki;
 
 /// <summary>
 /// Represents the documentation for a member.
@@ -20,10 +21,38 @@ public record MemberDocumentation : DocumentationObject
     /// </summary>
     public string? Assembly { get; init; }
 
+    internal XmlDocumentation[] InternalSummaries = [];
+
     /// <summary>
     /// Gets the summary of the member.
     /// </summary>
-    public XmlDocumentation? Summary { get; set; }
+    public XmlDocumentation[] Summaries
+    {
+        get => InternalSummaries;
+        init => InternalSummaries = value;
+    }
+
+    internal XmlDocumentation[] InternalExamples = [];
+
+    /// <summary>
+    /// Get the examples of the member.
+    /// </summary>
+    public XmlDocumentation[] Examples
+    {
+        get => InternalExamples;
+        init => InternalExamples = value;
+    }
+
+    internal XmlDocumentation[] InternalRemarks = [];
+
+    /// <summary>
+    /// Gets the remarks of the member.
+    /// </summary>
+    public XmlDocumentation[] Remarks
+    {
+        get => InternalRemarks;
+        init => InternalRemarks = value;
+    }
 
     /// <summary>
     /// Gets a value indicating whether the type is documented.
