@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Doki.Extensions;
 using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
@@ -90,14 +91,13 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.ContentType)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
 
-        var namespaceDocumentation =
-            typeDocumentation.TryGetParent<NamespaceDocumentation>(DocumentationContentType.Namespace);
+        var namespaceDocumentation = typeDocumentation.TryGetByParents<NamespaceDocumentation>();
         if (namespaceDocumentation != null)
         {
             markdown.Add(new Text("Namespace: ").Append(markdown.BuildLinkTo(namespaceDocumentation)));
         }
 
-        var assemblyAssemblyDocumentation = typeDocumentation.TryGetParent<AssemblyDocumentation>();
+        var assemblyAssemblyDocumentation = typeDocumentation.TryGetByParents<AssemblyDocumentation>();
         if (assemblyAssemblyDocumentation != null)
         {
             markdown.Add(new Text("Assembly: ").Append(markdown.BuildLinkTo(assemblyAssemblyDocumentation,

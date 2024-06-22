@@ -7,7 +7,7 @@ namespace Doki.CommandLine.Tests;
 public class NuGetTests(ITestOutputHelper testOutputHelper)
 {
     [Fact]
-    public async Task NuGetLoader_TestAsync()
+    public async Task Test_NuGetLoader()
     {
         const string packageId = "Doki.Output.Json";
         var tmpDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
