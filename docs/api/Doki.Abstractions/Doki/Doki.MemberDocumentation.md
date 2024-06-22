@@ -40,7 +40,9 @@ Implements: [System.IEquatable&lt;Doki.MemberDocumentation&gt;](https://learn.mi
 |Name| Gets the name of the member.|
 |Namespace| Gets the namespace of the member.|
 |Assembly| Gets the assembly of the member.|
-|Summary| Gets the summary of the member.|
+|Summaries| Gets the summary of the member.|
+|Examples| Get the examples of the member.|
+|Remarks| Gets the remarks of the member.|
 |IsDocumented| Gets a value indicating whether the type is documented.|
 |ContentType||
 

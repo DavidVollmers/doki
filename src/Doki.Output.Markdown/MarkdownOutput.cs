@@ -216,7 +216,6 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
                 foreach (var summary in constructor.Summaries)
                 {
                     text.Append(markdown.BuildText(summary));
-                    text.NewLine();
                 }
 
                 table.AddRow(new Text(constructor.Name), text);
@@ -236,9 +235,8 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
                 foreach (var summary in field.Summaries)
                 {
                     text.Append(markdown.BuildText(summary));
-                    text.NewLine();
                 }
-                
+
                 table.AddRow(new Text(field.Name), text);
             }
 
@@ -256,7 +254,6 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
                 foreach (var summary in property.Summaries)
                 {
                     text.Append(markdown.BuildText(summary));
-                    text.NewLine();
                 }
 
                 table.AddRow(new Text(property.Name), text);
@@ -276,7 +273,6 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
                 foreach (var summary in method.Summaries)
                 {
                     text.Append(markdown.BuildText(summary));
-                    text.NewLine();
                 }
 
                 table.AddRow(new Text(method.Name), text);
