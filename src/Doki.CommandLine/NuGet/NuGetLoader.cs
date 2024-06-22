@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyModel;
-using NuGet.Common;
+﻿using Microsoft.Extensions.DependencyModel;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;
