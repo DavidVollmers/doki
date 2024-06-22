@@ -6,7 +6,6 @@
 - [CodeBlock](Doki.CodeBlock.md)
 - [DocumentationContentType](Doki.DocumentationContentType.md)
 - [DocumentationObject](Doki.DocumentationObject.md)
-- [DocumentationObjectExtensions](Doki.DocumentationObjectExtensions.md)
 - [DocumentationRoot](Doki.DocumentationRoot.md)
 - [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md)
 - [Link](Doki.Link.md)

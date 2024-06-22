@@ -1,6 +1,6 @@
 [Packages](../../README.md) / [Doki.Extensions](../README.md) / [Doki.Extensions](README.md) / 
 
-# DocumentationObjectExtensions Class
+# DocumentationRootExtensions Class
 
 ## Definition
 
@@ -13,15 +13,15 @@ Package: [Doki.Extensions](https://www.nuget.org/packages/Doki.Extensions)
 ---
 
 ```csharp
-public static class DocumentationObjectExtensions
+public static class DocumentationRootExtensions
 ```
 
-Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → DocumentationObjectExtensions
+Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System.Object) → DocumentationRootExtensions
 
 ## Methods
 
 |   |Summary|
 |---|---|
-|TryGetByParents&lt;T&gt;(Doki.DocumentationObject, System.Nullable&lt;Doki.DocumentationContentType&gt;)||
+|TryGetParent&lt;T&gt;(Doki.DocumentationRoot, Doki.DocumentationObject)||
 
 
