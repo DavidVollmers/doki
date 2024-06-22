@@ -14,7 +14,6 @@
         <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Doki</RootNamespace>
         <PackageOutputPath>..\..\nuget</PackageOutputPath>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>

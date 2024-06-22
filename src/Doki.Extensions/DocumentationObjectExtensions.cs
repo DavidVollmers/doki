@@ -34,17 +34,48 @@ public static class DocumentationObjectExtensions
                 var field = SearchParentIn(typeDocumentation.Fields, to);
                 if (field != null) return field;
 
-                var example = SearchParentIn(typeDocumentation.Examples, to);
-                if (example != null) return example;
-
-                var remarks = SearchParentIn(typeDocumentation.Remarks, to);
-                if (remarks != null) return remarks;
-
                 var interfaceDocumentation = SearchParentIn(typeDocumentation.Interfaces, to);
                 if (interfaceDocumentation != null) return interfaceDocumentation;
 
                 var derivedType = SearchParentIn(typeDocumentation.DerivedTypes, to);
                 if (derivedType != null) return derivedType;
+
+                var result = SearchParentInTypeDocumentationReference(typeDocumentation, to);
+                if (result != null) return result;
+
+                break;
+            }
+            case GenericTypeArgumentDocumentation genericTypeArgumentDocumentation:
+            {
+                if (genericTypeArgumentDocumentation.Description != null)
+                {
+                    var description = SearchParent(genericTypeArgumentDocumentation.Description, to);
+                    if (description != null) return description;
+                }
+
+                var result = SearchParentInTypeDocumentationReference(genericTypeArgumentDocumentation, to);
+                if (result != null) return result;
+
+                break;
+            }
+            case TypeDocumentationReference typeDocumentationReference:
+            {
+                var result = SearchParentInTypeDocumentationReference(typeDocumentationReference, to);
+                if (result != null) return result;
+
+                break;
+            }
+            case MemberDocumentation memberDocumentation:
+            {
+                var result = SearchParentInMemberDocumentation(memberDocumentation, to);
+                if (result != null) return result;
+
+                break;
+            }
+            case XmlDocumentation xmlDocumentation:
+            {
+                var result = SearchParentIn(xmlDocumentation.Contents, to);
+                if (result != null) return result;
 
                 break;
             }
@@ -65,12 +96,18 @@ public static class DocumentationObjectExtensions
         var genericArgument = SearchParentIn(typeDocumentationReference.GenericArguments, to);
         return genericArgument ?? SearchParentInMemberDocumentation(typeDocumentationReference, to);
     }
-    
+
     private static DocumentationObject? SearchParentInMemberDocumentation(MemberDocumentation memberDocumentation,
         DocumentationObject to)
     {
-        var summary = SearchParentIn(memberDocumentation.Summary, to);
-        return summary ?? SearchParentIn(memberDocumentation.Remarks, to);
+        var summary = SearchParentIn(memberDocumentation.Summaries, to);
+        if (summary != null) return summary;
+
+        var remarks = SearchParentIn(memberDocumentation.Remarks, to);
+        if (remarks != null) return remarks;
+
+        var example = SearchParentIn(memberDocumentation.Examples, to);
+        return example;
     }
 
     private static DocumentationObject? SearchParentIn(IEnumerable<DocumentationObject> children,
