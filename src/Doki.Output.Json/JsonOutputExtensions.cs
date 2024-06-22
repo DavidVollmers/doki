@@ -6,7 +6,7 @@ namespace Doki.Output.Json;
 public static class JsonOutputExtensions
 {
     [DokiOutputRegistration]
-    public static IServiceCollection AddMarkdownOutput(this IServiceCollection services)
+    public static IServiceCollection AddJsonOutput(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
