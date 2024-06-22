@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyModel;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyModel;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -39,19 +40,27 @@ internal class NuGetLoader : IDisposable
     {
         ArgumentNullException.ThrowIfNull(packageId, nameof(packageId));
 
-        var packageIdentity = await GetPackageIdentityAsync(packageId, allowPreview, cancellationToken);
+        var currentVersion = NuGetVersion.Parse(typeof(DocumentationObject).Assembly.GetName().Version!.ToString());
 
-        var dependencyInfos = new HashSet<SourcePackageDependencyInfo>();
-        await CollectPackagesAsync(packageIdentity, dependencyInfos, cancellationToken);
+        var packageIdentities = await GetPackageIdentitiesAsync(packageId, allowPreview, cancellationToken);
+        foreach (var packageIdentity in packageIdentities)
+        {
+            var dependencyInfos = new HashSet<SourcePackageDependencyInfo>();
+            var result = await ScanPackagesAsync(currentVersion, packageIdentity, dependencyInfos, cancellationToken);
+            if (!result) continue;
 
-        var packagesToInstall = GetPackagesToInstall(packageId, dependencyInfos.ToArray());
+            var packagesToInstall = GetPackagesToInstall(packageId, dependencyInfos.ToArray());
 
-        var settings = Settings.LoadDefaultSettings(destinationDirectory);
+            var settings = Settings.LoadDefaultSettings(destinationDirectory);
 
-        await InstallPackagesAsync(packagesToInstall, destinationDirectory, settings, cancellationToken);
+            await InstallPackagesAsync(packagesToInstall, destinationDirectory, settings, cancellationToken);
 
-        return Path.Combine(destinationDirectory, $"{packageIdentity.Id}.{packageIdentity.Version}", "lib", "net8.0",
-            $"{packageIdentity.Id}.dll");
+            return Path.Combine(destinationDirectory, $"{packageIdentity.Id}.{packageIdentity.Version}", "lib",
+                "net8.0",
+                $"{packageIdentity.Id}.dll");
+        }
+
+        throw new InvalidOperationException($"No applicable package '{packageId}' found for version: {currentVersion}");
     }
 
     private async Task InstallPackagesAsync(IEnumerable<SourcePackageDependencyInfo> packagesToInstall,
@@ -90,9 +99,9 @@ internal class NuGetLoader : IDisposable
         var resolverContext = new PackageResolverContext(
             DependencyBehavior.Lowest,
             new[] { packageId },
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<PackageReference>(),
-            Enumerable.Empty<PackageIdentity>(),
+            [],
+            [],
+            [],
             dependencyInfos,
             _sourceRepositoryProvider.GetRepositories().Select(s => s.PackageSource),
             _logger);
@@ -103,10 +112,10 @@ internal class NuGetLoader : IDisposable
             .Select(p => dependencyInfos.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
     }
 
-    private async Task CollectPackagesAsync(PackageIdentity package, ICollection<SourcePackageDependencyInfo> packages,
-        CancellationToken cancellationToken)
+    private async Task<bool> ScanPackagesAsync(NuGetVersion currentVersion, PackageIdentity package,
+        ICollection<SourcePackageDependencyInfo> packages, CancellationToken cancellationToken)
     {
-        if (packages.Contains(package)) return;
+        if (packages.Contains(package)) return true;
 
         foreach (var repository in _sourceRepositoryProvider.GetRepositories())
         {
@@ -120,24 +129,45 @@ internal class NuGetLoader : IDisposable
                 cancellationToken);
             if (dependencyInfo == null) continue;
 
+            var dependencies = new List<PackageDependency>();
+            foreach (var dependency in dependencyInfo.Dependencies)
+            {
+                if (dependency.Id is "Doki" or "Doki.Abstractions" or "Doki.Output.Extensions"
+                    or "Doki.Output.Abstractions")
+                {
+                    if (dependency.VersionRange.Satisfies(currentVersion)) continue;
+
+                    _logger.LogDebug(
+                        $"Doki dependency '{dependency.Id}' version '{dependency.VersionRange}' does not satisfy current version '{currentVersion}'");
+
+                    return false;
+                }
+
+                if (!IsDependencyProvided(dependency)) dependencies.Add(dependency);
+            }
+
             var filteredSourceDependency = new SourcePackageDependencyInfo(
                 dependencyInfo.Id,
                 dependencyInfo.Version,
-                dependencyInfo.Dependencies.Where(d => !IsDependencyProvided(d)),
+                dependencies,
                 dependencyInfo.Listed,
                 dependencyInfo.Source);
 
             packages.Add(filteredSourceDependency);
 
-            foreach (var dependency in filteredSourceDependency.Dependencies)
+            foreach (var dependency in dependencies)
             {
-                await CollectPackagesAsync(new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
-                    packages, cancellationToken);
+                var result = await ScanPackagesAsync(currentVersion,
+                    new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion), packages,
+                    cancellationToken);
+                if (!result) return false;
             }
         }
+
+        return true;
     }
 
-    private async Task<PackageIdentity> GetPackageIdentityAsync(string packageId, bool allowPreview,
+    private async Task<IEnumerable<PackageIdentity>> GetPackageIdentitiesAsync(string packageId, bool allowPreview,
         CancellationToken cancellationToken)
     {
         foreach (var repository in _sourceRepositoryProvider.GetRepositories())
@@ -147,10 +177,12 @@ internal class NuGetLoader : IDisposable
             var versions = await packages.GetAllVersionsAsync(packageId, _cacheContext, _logger,
                 cancellationToken);
 
-            var latestVersion = versions.Where(v => allowPreview || !v.IsPrerelease).MaxBy(v => v);
-            if (latestVersion == null) continue;
+            var allowedVersions = versions.Where(v => allowPreview || !v.IsPrerelease).ToArray();
 
-            return new PackageIdentity(packageId, latestVersion);
+            if (allowedVersions.Length != 0)
+                return allowedVersions
+                    .OrderByDescending(v => v)
+                    .Select(v => new PackageIdentity(packageId, v));
         }
 
         throw new InvalidOperationException($"Package '{packageId}' not found.");
@@ -158,15 +190,13 @@ internal class NuGetLoader : IDisposable
 
     private static bool IsDependencyProvided(PackageDependency dependency)
     {
-        if (dependency.Id is "Doki" or "Doki.Abstractions" or "Doki.Output.Abstractions") return true;
-
         var runtimeLibrary = DependencyContext.Default!.RuntimeLibraries.FirstOrDefault(r => r.Name == dependency.Id);
 
         if (runtimeLibrary == null) return false;
 
         var parsedLibVersion = NuGetVersion.Parse(runtimeLibrary.Version);
 
-        return parsedLibVersion.IsPrerelease || dependency.VersionRange.Satisfies(parsedLibVersion);
+        return dependency.VersionRange.Satisfies(parsedLibVersion);
     }
 
     public void Dispose()
