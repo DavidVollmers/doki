@@ -100,7 +100,7 @@ public class JsonOutputTests
                         Assert.Equal("Object", typeDocumentation.BaseType.Name);
                         Assert.Equal("System", typeDocumentation.BaseType.Namespace);
                         Assert.Equal("System.Private.CoreLib", typeDocumentation.BaseType.Assembly);
-                        Assert.Null(typeDocumentation.BaseType.Summary);
+                        Assert.Empty(typeDocumentation.BaseType.Summaries);
                         Assert.Equal(DocumentationContentType.TypeReference, typeDocumentation.BaseType.ContentType);
                         Assert.Equal("System.Object", typeDocumentation.BaseType.Id);
 
@@ -113,45 +113,49 @@ public class JsonOutputTests
                                     memberDocumentation.Namespace);
                                 Assert.Equal("Doki.TestAssembly.InheritanceChain.Abstractions",
                                     memberDocumentation.Assembly);
-                                Assert.Null(memberDocumentation.Summary);
+                                Assert.Empty(memberDocumentation.Summaries);
                                 Assert.Equal(DocumentationContentType.Constructor, memberDocumentation.ContentType);
                                 Assert.Equal("Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass.#ctor",
                                     memberDocumentation.Id);
                             });
 
-                        Assert.NotNull(typeDocumentation.Summary);
-                        Assert.Equal("summary", typeDocumentation.Summary.Name);
-                        Assert.Equal("summary", typeDocumentation.Summary.Id);
-                        Assert.Equal(DocumentationContentType.Xml, typeDocumentation.Summary.ContentType);
-                        Assert.Collection(typeDocumentation.Summary.Contents,
-                            documentationObject =>
+                        Assert.Collection(typeDocumentation.Summaries,
+                            summary =>
                             {
-                                Assert.NotNull(documentationObject);
-                                Assert.IsType<TextContent>(documentationObject);
-                                var textContent = (TextContent)documentationObject;
-                                Assert.Equal("This is an abstract class. See", textContent.Text);
-                                Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
-                                Assert.Equal("text", documentationObject.Id);
-                            },
-                            documentationObject =>
-                            {
-                                Assert.NotNull(documentationObject);
-                                Assert.IsType<TypeDocumentationReference>(documentationObject);
-                                var typeDocumentationReference = (TypeDocumentationReference)documentationObject;
-                                Assert.False(typeDocumentationReference.IsGeneric);
-                                Assert.Equal("Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass",
-                                    typeDocumentationReference.FullName);
-                                Assert.True(typeDocumentationReference.IsDocumented);
-                                Assert.False(typeDocumentationReference.IsMicrosoft);
-                            },
-                            documentationObject =>
-                            {
-                                Assert.NotNull(documentationObject);
-                                Assert.IsType<TextContent>(documentationObject);
-                                var textContent = (TextContent)documentationObject;
-                                Assert.Equal("for more information.", textContent.Text);
-                                Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
-                                Assert.Equal("text", documentationObject.Id);
+                                Assert.Equal("summary", summary.Name);
+                                Assert.Equal("summary", summary.Id);
+                                Assert.Equal(DocumentationContentType.Xml, summary.ContentType);
+                                Assert.Collection(summary.Contents,
+                                    documentationObject =>
+                                    {
+                                        Assert.NotNull(documentationObject);
+                                        Assert.IsType<TextContent>(documentationObject);
+                                        var textContent = (TextContent)documentationObject;
+                                        Assert.Equal("This is an abstract class. See", textContent.Text);
+                                        Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
+                                        Assert.Equal("text", documentationObject.Id);
+                                    },
+                                    documentationObject =>
+                                    {
+                                        Assert.NotNull(documentationObject);
+                                        Assert.IsType<TypeDocumentationReference>(documentationObject);
+                                        var typeDocumentationReference =
+                                            (TypeDocumentationReference)documentationObject;
+                                        Assert.False(typeDocumentationReference.IsGeneric);
+                                        Assert.Equal("Doki.TestAssembly.InheritanceChain.Abstractions.AbstractClass",
+                                            typeDocumentationReference.FullName);
+                                        Assert.True(typeDocumentationReference.IsDocumented);
+                                        Assert.False(typeDocumentationReference.IsMicrosoft);
+                                    },
+                                    documentationObject =>
+                                    {
+                                        Assert.NotNull(documentationObject);
+                                        Assert.IsType<TextContent>(documentationObject);
+                                        var textContent = (TextContent)documentationObject;
+                                        Assert.Equal("for more information.", textContent.Text);
+                                        Assert.Equal(DocumentationContentType.Text, documentationObject.ContentType);
+                                        Assert.Equal("text", documentationObject.Id);
+                                    });
                             });
                     });
             });
