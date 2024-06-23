@@ -50,11 +50,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         var (file, markdown) = Prepare(assemblyDocumentation, assemblyDocumentation.Name,
             assemblyDocumentation.Description);
 
-        markdown.Add(new Heading("Namespaces", 2));
-        markdown.Add(new List
-        {
-            Items = assemblyDocumentation.Namespaces.Select(x => markdown.BuildLinkTo(x)).ToList()
-        });
+        markdown.AddHeadingWithList("Namespaces", assemblyDocumentation.Namespaces);
 
         await WriteMarkdownAsync(file, markdown, cancellationToken);
     }
@@ -67,11 +63,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         var (file, markdown) = Prepare(namespaceDocumentation, namespaceDocumentation.Name,
             namespaceDocumentation.Description);
 
-        markdown.Add(new Heading("Types", 2));
-        markdown.Add(new List
-        {
-            Items = namespaceDocumentation.Types.Select(x => markdown.BuildLinkTo(x)).ToList()
-        });
+        markdown.AddHeadingWithList("Types", namespaceDocumentation.Types);
 
         await WriteMarkdownAsync(file, markdown, cancellationToken);
     }
@@ -115,15 +107,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
 
         markdown.Add(Element.Separator);
 
-        if (typeDocumentation.Summaries.Length != 0)
-        {
-            foreach (var summary in typeDocumentation.Summaries)
-            {
-                var text = markdown.BuildText(summary);
-                text.IsBold = true;
-                markdown.Add(text);
-            }
-        }
+        markdown.AddBoldXmlDocumentation(typeDocumentation.Summaries);
 
         markdown.Add(new Code(typeDocumentation.Definition));
 
@@ -143,29 +127,9 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             markdown.Add(inheritanceText);
         }
 
-        if (typeDocumentation.DerivedTypes.Length != 0)
-        {
-            var derivedTypesText = new Text("Derived: ");
-            for (var i = 0; i < typeDocumentation.DerivedTypes.Length; i++)
-            {
-                if (i != 0) derivedTypesText.Append(", ");
-                derivedTypesText.Append(markdown.BuildLinkTo(typeDocumentation.DerivedTypes[i]));
-            }
+        markdown.AddTextWithTypeDocumentationReferences("Derived: ", typeDocumentation.DerivedTypes);
 
-            markdown.Add(derivedTypesText);
-        }
-
-        if (typeDocumentation.Interfaces.Length != 0)
-        {
-            var interfacesText = new Text("Implements: ");
-            for (var i = 0; i < typeDocumentation.Interfaces.Length; i++)
-            {
-                if (i != 0) interfacesText.Append(", ");
-                interfacesText.Append(markdown.BuildLinkTo(typeDocumentation.Interfaces[i]));
-            }
-
-            markdown.Add(interfacesText);
-        }
+        markdown.AddTextWithTypeDocumentationReferences("Implements: ", typeDocumentation.Interfaces);
 
         if (typeDocumentation.IsGeneric)
         {
@@ -185,101 +149,17 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
             });
         }
 
-        if (typeDocumentation.Examples.Length != 0)
-        {
-            markdown.Add(new Heading("Examples", 2));
+        markdown.AddHeadingWithXmlDocumentation("Examples", typeDocumentation.Examples);
 
-            foreach (var example in typeDocumentation.Examples)
-            {
-                markdown.Add(markdown.BuildText(example));
-            }
-        }
+        markdown.AddHeadingWithXmlDocumentation("Remarks", typeDocumentation.Remarks);
 
-        if (typeDocumentation.Remarks.Length != 0)
-        {
-            markdown.Add(new Heading("Remarks", 2));
+        markdown.AddHeadingWithMemberTable("Constructors", typeDocumentation.Constructors);
 
-            foreach (var remark in typeDocumentation.Remarks)
-            {
-                markdown.Add(markdown.BuildText(remark));
-            }
-        }
+        markdown.AddHeadingWithMemberTable("Fields", typeDocumentation.Fields);
 
-        if (typeDocumentation.Constructors.Length != 0)
-        {
-            markdown.Add(new Heading("Constructors", 2));
+        markdown.AddHeadingWithMemberTable("Properties", typeDocumentation.Properties);
 
-            var table = new Table(new Text("   "), new Text("Summary"));
-            foreach (var constructor in typeDocumentation.Constructors)
-            {
-                var text = Text.Empty;
-                foreach (var summary in constructor.Summaries)
-                {
-                    text.Append(markdown.BuildText(summary));
-                }
-
-                table.AddRow(new Text(constructor.Name), text);
-            }
-
-            markdown.Add(table);
-        }
-
-        if (typeDocumentation.Fields.Length != 0)
-        {
-            markdown.Add(new Heading("Fields", 2));
-
-            var table = new Table(new Text("   "), new Text("Summary"));
-            foreach (var field in typeDocumentation.Fields)
-            {
-                var text = Text.Empty;
-                foreach (var summary in field.Summaries)
-                {
-                    text.Append(markdown.BuildText(summary));
-                }
-
-                table.AddRow(new Text(field.Name), text);
-            }
-
-            markdown.Add(table);
-        }
-
-        if (typeDocumentation.Properties.Length != 0)
-        {
-            markdown.Add(new Heading("Properties", 2));
-
-            var table = new Table(new Text("   "), new Text("Summary"));
-            foreach (var property in typeDocumentation.Properties)
-            {
-                var text = Text.Empty;
-                foreach (var summary in property.Summaries)
-                {
-                    text.Append(markdown.BuildText(summary));
-                }
-
-                table.AddRow(new Text(property.Name), text);
-            }
-
-            markdown.Add(table);
-        }
-
-        if (typeDocumentation.Methods.Length != 0)
-        {
-            markdown.Add(new Heading("Methods", 2));
-
-            var table = new Table(new Text("   "), new Text("Summary"));
-            foreach (var method in typeDocumentation.Methods)
-            {
-                var text = Text.Empty;
-                foreach (var summary in method.Summaries)
-                {
-                    text.Append(markdown.BuildText(summary));
-                }
-
-                table.AddRow(new Text(method.Name), text);
-            }
-
-            markdown.Add(table);
-        }
+        markdown.AddHeadingWithMemberTable("Methods", typeDocumentation.Methods);
 
         await WriteMarkdownAsync(typeDocumentationFile, markdown, cancellationToken);
     }
