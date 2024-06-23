@@ -373,6 +373,26 @@ public sealed partial class DocumentationGenerator
 
         foreach (var output in context.Outputs)
         {
+            foreach (var memberDocumentation in typeDocumentation.Constructors)
+            {
+                await output.WriteAsync(memberDocumentation, cancellationToken);
+            }
+
+            foreach (var memberDocumentation in typeDocumentation.Fields)
+            {
+                await output.WriteAsync(memberDocumentation, cancellationToken);
+            }
+
+            foreach (var memberDocumentation in typeDocumentation.Properties)
+            {
+                await output.WriteAsync(memberDocumentation, cancellationToken);
+            }
+
+            foreach (var memberDocumentation in typeDocumentation.Methods)
+            {
+                await output.WriteAsync(memberDocumentation, cancellationToken);
+            }
+
             await output.WriteAsync(typeDocumentation, cancellationToken);
         }
 

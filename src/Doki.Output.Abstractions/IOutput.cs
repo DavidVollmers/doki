@@ -31,4 +31,7 @@ public interface IOutput
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task WriteAsync(TypeDocumentation typeDocumentation, CancellationToken cancellationToken = default) =>
         Task.CompletedTask;
+
+    Task WriteAsync(MemberDocumentation memberDocumentation, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
 }
