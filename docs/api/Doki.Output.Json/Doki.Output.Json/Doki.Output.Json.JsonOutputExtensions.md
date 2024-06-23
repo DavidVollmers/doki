@@ -22,6 +22,6 @@ Inheritance: [System.Object](https://learn.microsoft.com/en-us/dotnet/api/System
 
 |   |Summary|
 |---|---|
-|AddMarkdownOutput(Microsoft.Extensions.DependencyInjection.IServiceCollection)||
+|AddJsonOutput(Microsoft.Extensions.DependencyInjection.IServiceCollection)||
 
 
