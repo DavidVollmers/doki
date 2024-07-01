@@ -74,7 +74,8 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
 
         var currentPath = typeDocumentation.GetPath() + ".md";
 
-        var typeDocumentationFile = new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath));
+        var typeDocumentationFile =
+            new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath, "README.md"));
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
