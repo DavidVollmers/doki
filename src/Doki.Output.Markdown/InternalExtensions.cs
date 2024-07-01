@@ -177,7 +177,11 @@ internal static class InternalExtensions
                     else pathList.Add(typeDocumentationReference.Namespace);
                 }
 
-                pathList.Add(typeDocumentationReference.GetPathId());
+                var pathId = typeDocumentationReference.GetPathId();
+                if (typeDocumentationReference.Namespace != null &&
+                    pathId.StartsWith(typeDocumentationReference.Namespace + "."))
+                    pathList.Add(pathId[(typeDocumentationReference.Namespace.Length + 1)..]);
+                else pathList.Add(pathId);
 
                 return pathList;
             }
@@ -185,6 +189,7 @@ internal static class InternalExtensions
             {
                 var parentPathList = GetPathList(memberDocumentation.Parent);
 
+                //TODO path shortening (see TypeDocumentationReference)
                 parentPathList.Add(memberDocumentation.GetPathId());
 
                 return parentPathList;
