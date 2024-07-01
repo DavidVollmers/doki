@@ -168,7 +168,14 @@ internal static class InternalExtensions
                 // We cannot use TryGetParent because it will return the wrong namespace/assembly for base type references coming from a different namespace/assembly.
                 if (typeDocumentationReference.Assembly != null) pathList.Add(typeDocumentationReference.Assembly);
 
-                if (typeDocumentationReference.Namespace != null) pathList.Add(typeDocumentationReference.Namespace);
+                if (typeDocumentationReference.Namespace != null)
+                {
+                    if (typeDocumentationReference.Assembly != null &&
+                        typeDocumentationReference.Namespace.StartsWith(typeDocumentationReference.Assembly))
+                        pathList.Add(
+                            typeDocumentationReference.Namespace[(typeDocumentationReference.Assembly.Length + 1)..]);
+                    else pathList.Add(typeDocumentationReference.Namespace);
+                }
 
                 pathList.Add(typeDocumentationReference.GetPathId());
 
