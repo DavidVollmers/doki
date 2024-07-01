@@ -2,8 +2,8 @@
 
 ## Types
 
-- [DokiOutputRegistrationAttribute](Doki.Output.Extensions.DokiOutputRegistrationAttribute.md)
-- [IOutputOptionsProvider](Doki.Output.Extensions.IOutputOptionsProvider.md)
-- [OutputExtensions](Doki.Output.Extensions.OutputExtensions.md)
+- [DokiOutputRegistrationAttribute](Doki.Output.Extensions.DokiOutputRegistrationAttribute/README.md)
+- [IOutputOptionsProvider](Doki.Output.Extensions.IOutputOptionsProvider/README.md)
+- [OutputExtensions](Doki.Output.Extensions.OutputExtensions/README.md)
 
 

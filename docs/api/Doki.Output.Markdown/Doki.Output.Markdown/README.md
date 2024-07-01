@@ -2,7 +2,7 @@
 
 ## Types
 
-- [MarkdownOutput](Doki.Output.Markdown.MarkdownOutput.md)
-- [MarkdownOutputExtensions](Doki.Output.Markdown.MarkdownOutputExtensions.md)
+- [MarkdownOutput](Doki.Output.Markdown.MarkdownOutput/README.md)
+- [MarkdownOutputExtensions](Doki.Output.Markdown.MarkdownOutputExtensions/README.md)
 
 

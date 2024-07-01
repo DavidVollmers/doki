@@ -2,18 +2,18 @@
 
 ## Types
 
-- [AssemblyDocumentation](Doki.AssemblyDocumentation.md)
-- [CodeBlock](Doki.CodeBlock.md)
-- [DocumentationContentType](Doki.DocumentationContentType.md)
-- [DocumentationObject](Doki.DocumentationObject.md)
-- [DocumentationRoot](Doki.DocumentationRoot.md)
-- [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation.md)
-- [Link](Doki.Link.md)
-- [MemberDocumentation](Doki.MemberDocumentation.md)
-- [NamespaceDocumentation](Doki.NamespaceDocumentation.md)
-- [TextContent](Doki.TextContent.md)
-- [TypeDocumentation](Doki.TypeDocumentation.md)
-- [TypeDocumentationReference](Doki.TypeDocumentationReference.md)
-- [XmlDocumentation](Doki.XmlDocumentation.md)
+- [AssemblyDocumentation](Doki.AssemblyDocumentation/README.md)
+- [CodeBlock](Doki.CodeBlock/README.md)
+- [DocumentationContentType](Doki.DocumentationContentType/README.md)
+- [DocumentationObject](Doki.DocumentationObject/README.md)
+- [DocumentationRoot](Doki.DocumentationRoot/README.md)
+- [GenericTypeArgumentDocumentation](Doki.GenericTypeArgumentDocumentation/README.md)
+- [Link](Doki.Link/README.md)
+- [MemberDocumentation](Doki.MemberDocumentation/README.md)
+- [NamespaceDocumentation](Doki.NamespaceDocumentation/README.md)
+- [TextContent](Doki.TextContent/README.md)
+- [TypeDocumentation](Doki.TypeDocumentation/README.md)
+- [TypeDocumentationReference](Doki.TypeDocumentationReference/README.md)
+- [XmlDocumentation](Doki.XmlDocumentation/README.md)
 
 

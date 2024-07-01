@@ -2,7 +2,7 @@
 
 ## Types
 
-- [DocumentationObjectExtensions](Doki.Extensions.DocumentationObjectExtensions.md)
-- [DocumentationRootExtensions](Doki.Extensions.DocumentationRootExtensions.md)
+- [DocumentationObjectExtensions](Doki.Extensions.DocumentationObjectExtensions/README.md)
+- [DocumentationRootExtensions](Doki.Extensions.DocumentationRootExtensions/README.md)
 
 

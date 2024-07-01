@@ -2,7 +2,7 @@
 
 ## Types
 
-- [JsonOutput](Doki.Output.Json.JsonOutput.md)
-- [JsonOutputExtensions](Doki.Output.Json.JsonOutputExtensions.md)
+- [JsonOutput](Doki.Output.Json.JsonOutput/README.md)
+- [JsonOutputExtensions](Doki.Output.Json.JsonOutputExtensions/README.md)
 
 
