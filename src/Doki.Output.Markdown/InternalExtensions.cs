@@ -158,47 +158,47 @@ internal static class InternalExtensions
 
     private static List<string> GetPathList(DocumentationObject documentationObject)
     {
-        var pathParts = new List<string>();
+        var pathList = new List<string>();
 
         var current = documentationObject;
-        if (documentationObject is TypeDocumentationReference typeDocumentationReference)
+        switch (documentationObject)
         {
-            // We cannot use TryGetParent because it will return the wrong namespace/assembly for base type references coming from a different namespace/assembly.
-            if (typeDocumentationReference.Assembly != null) pathParts.Add(typeDocumentationReference.Assembly);
+            case TypeDocumentationReference typeDocumentationReference:
+            {
+                // We cannot use TryGetParent because it will return the wrong namespace/assembly for base type references coming from a different namespace/assembly.
+                if (typeDocumentationReference.Assembly != null) pathList.Add(typeDocumentationReference.Assembly);
 
-            if (typeDocumentationReference.Namespace != null) pathParts.Add(typeDocumentationReference.Namespace);
+                if (typeDocumentationReference.Namespace != null) pathList.Add(typeDocumentationReference.Namespace);
 
-            pathParts.Add(typeDocumentationReference.GetPathId());
+                pathList.Add(typeDocumentationReference.GetPathId());
 
-            return pathParts;
+                return pathList;
+            }
+            case MemberDocumentation { Parent: not null } memberDocumentation:
+            {
+                var parentPathList = GetPathList(memberDocumentation.Parent);
+
+                parentPathList.Add(memberDocumentation.GetPathId());
+
+                return parentPathList;
+            }
         }
 
         while (current.Parent != null)
         {
-            pathParts.Add(current.Id);
+            pathList.Add(current.Id);
 
             current = current.Parent;
         }
 
-        pathParts.Reverse();
+        pathList.Reverse();
 
-        return pathParts;
+        return pathList;
     }
 
     public static string GetPath(this DocumentationObject documentationObject)
     {
-        if (documentationObject is MemberDocumentation { Parent: not null } memberDocumentation)
-        {
-            var parentPathList = GetPathList(memberDocumentation.Parent);
-
-            parentPathList.Add(memberDocumentation.GetPathId());
-
-            return parentPathList.CombineToPath();
-        }
-
-        var pathList = GetPathList(documentationObject);
-
-        return pathList.CombineToPath();
+        return GetPathList(documentationObject).CombineToPath();
     }
 
     public static string CombineToPath(this ICollection<string> parts)
