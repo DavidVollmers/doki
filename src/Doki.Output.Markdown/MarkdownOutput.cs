@@ -72,7 +72,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
 
-        var currentPath = typeDocumentation.GetPath() + ".md";
+        var currentPath = typeDocumentation.GetPath();
 
         var typeDocumentationFile =
             new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath, "README.md"));
@@ -210,7 +210,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         var heading = new Heading(name, 1);
         if (documentationObject.ContentType == DocumentationContentType.Namespace) heading.Append(" Namespace");
 
-        var markdown = new MarkdownBuilder(documentationObject.GetPath()).Add(heading);
+        var markdown = new MarkdownBuilder(currentPath).Add(heading);
 
         if (description != null)
         {
