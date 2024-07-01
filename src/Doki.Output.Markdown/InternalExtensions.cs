@@ -73,10 +73,10 @@ internal static class InternalExtensions
         return text;
     }
 
-    public static string BuildRelativePath(this MarkdownBuilder builder, DocumentationObject to,
+    public static string BuildRelativePath(this MarkdownBuilder builder, DocumentationObject to, bool pathShortening,
         params string[] additionalParts)
     {
-        return builder.BuildRelativePath(to.GetPath(), additionalParts);
+        return builder.BuildRelativePath(to.GetPath(pathShortening), additionalParts);
     }
 
     public static Element BuildLinkTo(this MarkdownBuilder builder, DocumentationObject to, string? text = null)
@@ -100,7 +100,7 @@ internal static class InternalExtensions
                 }
                 else
                 {
-                    relativePath = builder.BuildRelativePath(to, "README.md");
+                    relativePath = builder.BuildRelativePath(to, builder.Options.PathShortening, "README.md");
                 }
 
                 break;
@@ -111,7 +111,7 @@ internal static class InternalExtensions
 
                 asText = !memberDocumentation.IsDocumented;
 
-                relativePath = builder.BuildRelativePath(memberDocumentation) + ".md";
+                relativePath = builder.BuildRelativePath(memberDocumentation, builder.Options.PathShortening) + ".md";
                 break;
             }
             default:
@@ -120,8 +120,8 @@ internal static class InternalExtensions
                     or DocumentationContentType.Namespace;
 
                 relativePath = indexFile
-                    ? builder.BuildRelativePath(to, "README.md")
-                    : builder.BuildRelativePath(to) + ".md";
+                    ? builder.BuildRelativePath(to, builder.Options.PathShortening, "README.md")
+                    : builder.BuildRelativePath(to, builder.Options.PathShortening) + ".md";
                 break;
             }
         }
@@ -156,7 +156,7 @@ internal static class InternalExtensions
         return documentationObject.Id.Replace('`', '_');
     }
 
-    private static List<string> GetPathList(DocumentationObject documentationObject)
+    private static List<string> GetPathList(DocumentationObject documentationObject, bool pathShortening)
     {
         var pathList = new List<string>();
 
@@ -170,15 +170,23 @@ internal static class InternalExtensions
 
                 if (typeDocumentationReference.Namespace != null)
                 {
-                    if (typeDocumentationReference.Assembly != null &&
-                        typeDocumentationReference.Namespace.StartsWith(typeDocumentationReference.Assembly + "."))
-                        pathList.Add(
-                            typeDocumentationReference.Namespace[(typeDocumentationReference.Assembly.Length + 1)..]);
+                    if (pathShortening && typeDocumentationReference.Assembly != null)
+                    {
+                        if (typeDocumentationReference.Namespace == typeDocumentationReference.Assembly)
+                            pathList.Add("_");
+                        else if (typeDocumentationReference.Namespace.StartsWith(typeDocumentationReference.Assembly +
+                                     "."))
+                            pathList.Add(
+                                typeDocumentationReference.Namespace
+                                    [(typeDocumentationReference.Assembly.Length + 1)..]);
+                        else pathList.Add(typeDocumentationReference.Namespace);
+                    }
                     else pathList.Add(typeDocumentationReference.Namespace);
                 }
 
                 var pathId = typeDocumentationReference.GetPathId();
-                if (typeDocumentationReference.Namespace != null &&
+                if (pathShortening &&
+                    typeDocumentationReference.Namespace != null &&
                     pathId.StartsWith(typeDocumentationReference.Namespace + "."))
                     pathList.Add(pathId[(typeDocumentationReference.Namespace.Length + 1)..]);
                 else pathList.Add(pathId);
@@ -187,7 +195,7 @@ internal static class InternalExtensions
             }
             case MemberDocumentation { Parent: not null } memberDocumentation:
             {
-                var parentPathList = GetPathList(memberDocumentation.Parent);
+                var parentPathList = GetPathList(memberDocumentation.Parent, pathShortening);
 
                 //TODO path shortening (see TypeDocumentationReference)
                 parentPathList.Add(memberDocumentation.GetPathId());
@@ -208,9 +216,9 @@ internal static class InternalExtensions
         return pathList;
     }
 
-    public static string GetPath(this DocumentationObject documentationObject)
+    public static string GetPath(this DocumentationObject documentationObject, bool pathShortening)
     {
-        return GetPathList(documentationObject).CombineToPath();
+        return GetPathList(documentationObject, pathShortening).CombineToPath();
     }
 
     public static string CombineToPath(this ICollection<string> parts)

@@ -10,11 +10,15 @@ internal class MarkdownBuilder
 
     private readonly string[] _currentPathParts;
     private readonly List<Element> _elements = [];
+    
+    public MarkdownOutputOptions Options { get; }
 
-    public MarkdownBuilder(string currentPath)
+    public MarkdownBuilder(string currentPath, MarkdownOutputOptions options)
     {
         var currentPathParts = currentPath.Split('/');
         _currentPathParts = currentPathParts.Where(PathPartFilter).ToArray();
+        
+        Options = options;
     }
 
     public MarkdownBuilder Add(Element element)
@@ -45,7 +49,7 @@ internal class MarkdownBuilder
         }
 
         relativePathParts.AddRange(path.Skip(commonPathParts));
-        
+
         relativePathParts.AddRange(additionalParts);
 
         return relativePathParts.CombineToPath();

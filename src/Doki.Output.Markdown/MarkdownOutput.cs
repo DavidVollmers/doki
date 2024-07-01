@@ -4,7 +4,7 @@ using Doki.Output.Markdown.Elements;
 
 namespace Doki.Output.Markdown;
 
-public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOutput
+public sealed class MarkdownOutput(MarkdownOutputOptions options) : IOutput
 {
     public Task BeginAsync(CancellationToken cancellationToken = default)
     {
@@ -72,14 +72,14 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     {
         ArgumentNullException.ThrowIfNull(typeDocumentation);
 
-        var currentPath = typeDocumentation.GetPath();
+        var currentPath = typeDocumentation.GetPath(options.PathShortening);
 
         var typeDocumentationFile =
             new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath, "README.md"));
 
         if (!typeDocumentationFile.Directory!.Exists) typeDocumentationFile.Directory.Create();
 
-        var markdown = new MarkdownBuilder(currentPath);
+        var markdown = new MarkdownBuilder(currentPath, options);
         markdown.Add(markdown.BuildBreadcrumbs(typeDocumentation))
             .Add(new Heading(typeDocumentation.Name, 1).Append($" {Enum.GetName(typeDocumentation.ContentType)}"))
             .Add(new Heading(nameof(TypeDocumentation.Definition), 2));
@@ -201,7 +201,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
     private (FileInfo, MarkdownBuilder) Prepare(DocumentationObject documentationObject, string name,
         string? description = null)
     {
-        var currentPath = documentationObject.GetPath();
+        var currentPath = documentationObject.GetPath(options.PathShortening);
 
         var file = new FileInfo(Path.Combine(options.OutputDirectory.FullName, currentPath, "README.md"));
 
@@ -210,7 +210,7 @@ public sealed class MarkdownOutput(OutputOptions<MarkdownOutput> options) : IOut
         var heading = new Heading(name, 1);
         if (documentationObject.ContentType == DocumentationContentType.Namespace) heading.Append(" Namespace");
 
-        var markdown = new MarkdownBuilder(currentPath).Add(heading);
+        var markdown = new MarkdownBuilder(currentPath, options).Add(heading);
 
         if (description != null)
         {

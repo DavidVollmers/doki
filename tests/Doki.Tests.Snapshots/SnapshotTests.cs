@@ -22,7 +22,7 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
 
         generator.AddAssembly(typeof(TestParentRootNamespaceClass).Assembly, emptyDocumentation);
 
-        generator.AddOutput(new MarkdownOutput(new OutputOptions<MarkdownOutput>
+        generator.AddOutput(new MarkdownOutput(new MarkdownOutputOptions
         {
             OutputDirectory = snapshot.OutputDirectory
         }));
@@ -48,7 +48,7 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
         generator.AddAssembly(typeof(AbstractClass).Assembly, emptyDocumentation);
         generator.AddAssembly(typeof(SimpleClass).Assembly, emptyDocumentation);
 
-        generator.AddOutput(new MarkdownOutput(new OutputOptions<MarkdownOutput>
+        generator.AddOutput(new MarkdownOutput(new MarkdownOutputOptions
         {
             OutputDirectory = snapshot.OutputDirectory
         }));
@@ -102,7 +102,7 @@ public class SnapshotTests(ITestOutputHelper testOutputHelper)
 
         generator.AddAssembly(typeof(ClassWithCRefs).Assembly, emptyDocumentation);
 
-        generator.AddOutput(new MarkdownOutput(new OutputOptions<MarkdownOutput>
+        generator.AddOutput(new MarkdownOutput(new MarkdownOutputOptions
         {
             OutputDirectory = snapshot.OutputDirectory
         }));
