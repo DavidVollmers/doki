@@ -171,7 +171,7 @@ internal static class InternalExtensions
                 if (typeDocumentationReference.Namespace != null)
                 {
                     if (typeDocumentationReference.Assembly != null &&
-                        typeDocumentationReference.Namespace.StartsWith(typeDocumentationReference.Assembly))
+                        typeDocumentationReference.Namespace.StartsWith(typeDocumentationReference.Assembly + "."))
                         pathList.Add(
                             typeDocumentationReference.Namespace[(typeDocumentationReference.Assembly.Length + 1)..]);
                     else pathList.Add(typeDocumentationReference.Namespace);
