@@ -72,7 +72,9 @@ internal static class MarkdownBuilderExtensions
             {
                 text.Append(markdown.BuildText(summary));
             }
-
+            
+            // var link = markdown.BuildLinkTo(item);
+    
             table.AddRow(new Text(item.Name), text);
         }
 

@@ -100,7 +100,7 @@ internal static class InternalExtensions
                 }
                 else
                 {
-                    relativePath = builder.BuildRelativePath(to) + ".md";
+                    relativePath = builder.BuildRelativePath(to, "README.md");
                 }
 
                 break;
@@ -111,7 +111,7 @@ internal static class InternalExtensions
 
                 asText = !memberDocumentation.IsDocumented;
 
-                relativePath = builder.BuildRelativePath(memberDocumentation.Parent!) + ".md";
+                relativePath = builder.BuildRelativePath(memberDocumentation) + ".md";
                 break;
             }
             default:
@@ -151,21 +151,26 @@ internal static class InternalExtensions
         return container;
     }
 
-    public static string GetPath(this DocumentationObject element)
+    private static string GetPathId(this DocumentationObject documentationObject)
+    {
+        return documentationObject.Id.Replace('`', '_');
+    }
+
+    private static List<string> GetPathList(DocumentationObject documentationObject)
     {
         var pathParts = new List<string>();
 
-        var current = element;
-        if (element is TypeDocumentationReference typeDocumentationReference)
+        var current = documentationObject;
+        if (documentationObject is TypeDocumentationReference typeDocumentationReference)
         {
             // We cannot use TryGetParent because it will return the wrong namespace/assembly for base type references coming from a different namespace/assembly.
             if (typeDocumentationReference.Assembly != null) pathParts.Add(typeDocumentationReference.Assembly);
 
             if (typeDocumentationReference.Namespace != null) pathParts.Add(typeDocumentationReference.Namespace);
 
-            pathParts.Add(typeDocumentationReference.Id.Replace('`', '_'));
+            pathParts.Add(typeDocumentationReference.GetPathId());
 
-            return pathParts.CombineToPath();
+            return pathParts;
         }
 
         while (current.Parent != null)
@@ -177,7 +182,23 @@ internal static class InternalExtensions
 
         pathParts.Reverse();
 
-        return pathParts.CombineToPath();
+        return pathParts;
+    }
+
+    public static string GetPath(this DocumentationObject documentationObject)
+    {
+        if (documentationObject is MemberDocumentation { Parent: not null } memberDocumentation)
+        {
+            var parentPathList = GetPathList(memberDocumentation.Parent);
+
+            parentPathList.Add(memberDocumentation.GetPathId());
+
+            return parentPathList.CombineToPath();
+        }
+
+        var pathList = GetPathList(documentationObject);
+
+        return pathList.CombineToPath();
     }
 
     public static string CombineToPath(this ICollection<string> parts)
